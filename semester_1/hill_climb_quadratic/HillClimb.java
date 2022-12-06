@@ -6,20 +6,22 @@ import java.util.Collections;
 /**
  * Hill Climb Algorithm
  * Also known as the greedy local search algorithm
- * we always select the best neighbour
+ * where we always select the best neighbour
  * @author Abdiwahab Salah
  * @version 06.12.22
  */
 public class HillClimb {
 
-    public static int hillClimb() {
-        int current = Problem.initial;
+    public static int hillClimb(Problem problem) {
+        int current = problem.getInitial();
         while (true) {
-            ArrayList<Integer> neighbours = Problem.getNeighbours(current);
+            if (problem.isEdge(current)) return current;
+            ArrayList<Integer> neighbours = problem.getNeighbours(current);
             int neighbour = Collections.max(neighbours);
-            if (QuadraticEvaluator(current) <= QuadraticEvaluator(neighbour)) return current;
-            current = neighbour;
 
+            if (QuadraticEvaluator.quadraticEvaluator(neighbour) <= QuadraticEvaluator.quadraticEvaluator(current)) 
+                return current;
+            current = neighbour;
         }
     }
 }
