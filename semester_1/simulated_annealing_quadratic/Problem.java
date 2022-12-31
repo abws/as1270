@@ -1,7 +1,6 @@
-package semester_1.hill_climb_quadratic;
+package semester_1.simulated_annealing_quadratic;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Random;
 
 /**
@@ -17,7 +16,7 @@ public class Problem {
     private int lowerBound;
     private int step;
 
-    public Problem() {
+    public Problem() {   // default constructor
         upperBound = 25;
         lowerBound = -25;
         step = 1;
@@ -42,13 +41,15 @@ public class Problem {
     }
 
     public ArrayList<Integer> getNeighbours(int input) {
-        ArrayList<Integer> neighbours = new ArrayList<Integer>(Arrays.asList(input - this.step, input + this.step));
-        return neighbours;
-    }
+        int leftNeigh = input - this.step;
+        int rightNeigh = input + this.step;
+        ArrayList<Integer> neighbours = new ArrayList<Integer>();
 
-    public boolean isEdge(int input) {
-        if ((input <= lowerBound) || (input >= upperBound)) return true;
-        else return false;
+        //only add neighbours if they are in the bounds of the search space
+        if (leftNeigh >= lowerBound) neighbours.add(leftNeigh); 
+        if (rightNeigh <= upperBound) neighbours.add(rightNeigh);
+        
+        return neighbours;
     }
 
     private int getRandomInt() {
