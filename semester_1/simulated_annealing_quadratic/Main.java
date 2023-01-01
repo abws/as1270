@@ -6,7 +6,7 @@ public class Main {
 
         SimulatedAnnealing sa = new SimulatedAnnealing();
 
-        int localMaxima = sa.SimulatedAnnealing(problem);
+        int localMaxima = sa.simulatedAnnealing(problem);
         System.out.println(localMaxima);
     }
     

@@ -1,7 +1,6 @@
 package semester_1.simulated_annealing_quadratic;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Random;
 
 /**
@@ -28,7 +27,7 @@ public class SimulatedAnnealing {
      * @param problem The (mathematical) formulation of our problem
      * @return maxima The maxima found
      */
-    public int SimulatedAnnealing(Problem problem) {
+    public int simulatedAnnealing(Problem problem) {
         int current = problem.getInitial();
         while (true) {
             timer--;
@@ -37,7 +36,10 @@ public class SimulatedAnnealing {
             temp *= scheduleRate;
             Random r = new Random();
             int index = r.nextInt(2);
-            int next = problem.getNeighbours(current).get(index);
+            ArrayList<Integer> neighbours = problem.getNeighbours(current);
+
+            // assign the random neighbour. make sure we check how many neighbours we have first. then either assign the only one (if at edge), or a random one
+            int next = (neighbours.size() == 1) ? (int) neighbours.get(0) : (int) neighbours.get(index);
 
             int delta = QuadraticEvaluator.quadraticEvaluator(next) - QuadraticEvaluator.quadraticEvaluator(current);
             if (delta > 0) current = next;
