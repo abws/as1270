@@ -11,7 +11,7 @@ import java.util.Random;
  * @version 06.12.22
  */
 public class Problem {
-    private  int initial = getRandomInt();
+    private int initial;
     private int upperBound;
     private int lowerBound;
     private int step;
@@ -20,9 +20,11 @@ public class Problem {
         upperBound = 25;
         lowerBound = -25;
         step = 1;
+        initial = getRandomInt();
     }
 
     public Problem(int uB, int lB, int s) {
+        initial = getRandomInt();
         upperBound = uB;
         lowerBound = lB;
         step = s;
@@ -50,6 +52,15 @@ public class Problem {
         if (rightNeigh <= upperBound) neighbours.add(rightNeigh);
         
         return neighbours;
+    }
+
+    public int getRandomNeighbour(int input) {
+        Random r = new Random();
+        ArrayList<Integer> neighbours = this.getNeighbours(input);
+
+        int index = r.nextInt(neighbours.size());
+        return neighbours.get(index);
+
     }
 
     private int getRandomInt() {
