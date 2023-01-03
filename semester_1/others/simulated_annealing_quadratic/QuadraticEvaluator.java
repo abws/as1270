@@ -1,4 +1,4 @@
-package semester_1.hill_climb_quadratic;
+package semester_1.others.simulated_annealing_quadratic;
 
 /**
  * Quadratic Evaluator

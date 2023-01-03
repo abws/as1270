@@ -1,4 +1,4 @@
-package semester_1.simulated_annealing_quadratic;
+package semester_1.objective_functions;
 
 /**
  * Quadratic Evaluator
@@ -12,6 +12,4 @@ public class QuadraticEvaluator {
         int output = input * input;
         return output;
     }
-
-    
 }

@@ -1,4 +1,4 @@
-package semester_1.hill_climb_quadratic;
+package semester_1.others.hill_climb_quadratic;
 
 public class Main {
     public static void main(String[] args) {
