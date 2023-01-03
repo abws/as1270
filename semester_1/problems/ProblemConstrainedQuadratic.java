@@ -90,10 +90,41 @@ public class ProblemConstrainedQuadratic {
         return bestNeighbour.isPresent() ? bestNeighbour.get() : null;
     }
 
+    public ArrayList<String> getRandomPopulation(int size) {
+        ArrayList<String> population = new ArrayList<>();
+
+        for (int i = 0; i < size; i++) {
+            population.add(encode(getRandomInt(), 5));
+        }
+        return population;
+    }
+
+    public String encode(int num, int bits) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = bits - 1; i >= 0; i--) {
+            int bit = (num >> i) & 1;
+            sb.append(bit);
+        }
+
+        return sb.toString();
+    }
+
+    public int decode(String binary) {
+        int num = 0;
+        for (int i = binary.length() - 1; i >= 0; i++) {
+            if (i == 0) num += -(Character.getNumericValue(binary.charAt(i)) * Math.pow(2, i));
+            else  num += Character.getNumericValue(binary.charAt(i)) * Math.pow(2, i);
+        }
+
+        return num;
+    }
+
     //private helper function
     private int getRandomInt() {
         Random r = new Random();
         int randomInt = r.nextInt(upperBound - lowerBound + 1) + lowerBound;
         return randomInt;
     }
+
+    
 }
