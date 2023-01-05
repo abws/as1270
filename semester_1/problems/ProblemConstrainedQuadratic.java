@@ -66,6 +66,12 @@ public class ProblemConstrainedQuadratic {
         return neighbours;
     }
 
+    /**
+     * Returns one random neighbour
+     * Used by Simulated Annealing
+     * @param input The current node
+     * @return A random neighbour
+     */
     public int getRandomNeighbour(int input) {
         Random r = new Random();
         ArrayList<Integer> neighbours = this.getNeighbours(input);
@@ -74,6 +80,12 @@ public class ProblemConstrainedQuadratic {
         return neighbours.get(index);
     }
 
+    /**
+     * Returns highest valued neighbour
+     * Only used by Hill Climb
+     * @param input The current node
+     * @return The best neighbour
+     */
     public int getBestNeighbour(int input) {
         ArrayList<Integer> neighbours = getNeighbours(input);
         HashMap<Integer, Integer> neighbourValue = new HashMap<>();
@@ -92,6 +104,12 @@ public class ProblemConstrainedQuadratic {
         return bestNeighbour.isPresent() ? bestNeighbour.get() : null;
     }
 
+    /**
+     * Random population generator
+     * @param size The size of the population
+     * @param bits How many bits to represent each individual
+     * @return population The random population
+     */
     public ArrayList<Individual> getRandomPopulation(int size, int bits) {
         ArrayList<Individual> population = new ArrayList<>();
 
@@ -101,6 +119,12 @@ public class ProblemConstrainedQuadratic {
         return population;
     }
 
+
+    /**
+     * Encoding operator: Denary -> Signed Binary
+     * @param num The denary representaion of the binary number
+     * @return binary The binary number to decode 
+     */
     public String encode(int num, int bits) {
         StringBuilder sb = new StringBuilder();
         for (int i = bits - 1; i >= 0; i--) {
@@ -111,6 +135,12 @@ public class ProblemConstrainedQuadratic {
         return sb.toString();
     }
 
+
+    /**
+     * Decoding operator: Signed binary -> Denary
+     * @param binary The binary number to decode
+     * @return num The denary representaion of the binary number
+     */
     public int decode(String binary) {
         int num = 0;
 
@@ -130,6 +160,4 @@ public class ProblemConstrainedQuadratic {
         int randomInt = r.nextInt(upperBound - lowerBound + 1) + lowerBound;
         return randomInt;
     }
-
-    
 }
