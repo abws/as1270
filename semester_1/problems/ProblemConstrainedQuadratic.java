@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 
+import semester_1.individuals.Individual;
 import semester_1.objective_functions.QuadraticEvaluator;
 
 /**
@@ -21,6 +22,7 @@ public class ProblemConstrainedQuadratic {
     private int upperBound;
     private int lowerBound;
     private int step;
+    private final int BASE = 2;
 
     public ProblemConstrainedQuadratic() {   // default constructor
         upperBound = 25;
@@ -90,11 +92,11 @@ public class ProblemConstrainedQuadratic {
         return bestNeighbour.isPresent() ? bestNeighbour.get() : null;
     }
 
-    public ArrayList<String> getRandomPopulation(int size) {
-        ArrayList<String> population = new ArrayList<>();
+    public ArrayList<Individual> getRandomPopulation(int size, int bits) {
+        ArrayList<Individual> population = new ArrayList<>();
 
         for (int i = 0; i < size; i++) {
-            population.add(encode(getRandomInt(), 5));
+            population.add(new Individual(encode(getRandomInt(), bits)));
         }
         return population;
     }
@@ -111,10 +113,13 @@ public class ProblemConstrainedQuadratic {
 
     public int decode(String binary) {
         int num = 0;
-        for (int i = binary.length() - 1; i >= 0; i++) {
-            if (i == 0) num += -(Character.getNumericValue(binary.charAt(i)) * Math.pow(2, i));
-            else  num += Character.getNumericValue(binary.charAt(i)) * Math.pow(2, i);
-        }
+
+        for (int i = 0; i < binary.length(); i++) {
+
+            //Used && to short circuit - think of a way to reduce conditions 
+            if (i == 0 &&  binary.charAt(i) == '1') num -= Character.getNumericValue(binary.charAt(i)) * Math.pow(BASE, binary.length() - i-1);
+            else num += Character.getNumericValue(binary.charAt(i)) * Math.pow(BASE, binary.length() - i-1);
+        }     
 
         return num;
     }
