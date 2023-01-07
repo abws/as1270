@@ -146,7 +146,7 @@ public class ProblemConstrainedQuadratic {
 
         for (int i = 0; i < binary.length(); i++) {
 
-            //Used && to short circuit - think of a way to reduce conditions 
+            //Used && to short circuit - think of a way to reduce conditions assessed
             if (i == 0 &&  binary.charAt(i) == '1') num -= Character.getNumericValue(binary.charAt(i)) * Math.pow(BASE, binary.length() - i-1);
             else num += Character.getNumericValue(binary.charAt(i)) * Math.pow(BASE, binary.length() - i-1);
         }     

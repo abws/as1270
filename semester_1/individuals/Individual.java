@@ -12,7 +12,7 @@ import semester_1.problems.ProblemConstrainedQuadratic;
  * @version 05.01.23
  */
 public class Individual {
-    public static String INDIVIDUAL;
+    public String INDIVIDUAL;
     public int VALUE;
     
     public Individual(String individual) {
