@@ -17,14 +17,14 @@ import semester_1.problems.ProblemConstrainedQuadratic;
  */
 public class SimpleGeneticAlgorithm {
     private static final int POP_SIZE = 4;
-    private static final double MUT_RATE = 1 / POP_SIZE;
+    private static final double MUT_RATE = 1.0 / POP_SIZE;    
     private static  final double CROSSOVER_RATE = 0.7;
 
     public static int run(ProblemConstrainedQuadratic problem) {
         ArrayList<Individual> population = problem.getRandomPopulation(4, 4); //fitness is calculated with the birth of an individual
         ArrayList<Integer> weights = calculateWeights(population);
-        ArrayList<Individual> offsprings = new ArrayList<>();
-        ArrayList<Individual> matingPool = reproduce(population, weights, POP_SIZE);
+        //ArrayList<Individual> offsprings = new ArrayList<>();
+        ArrayList<Individual> offSpring = reproduce(population, weights, POP_SIZE);
 
         newPopulation = matingPool.onePointCrossOver(POP_SIZE / 2);
 
@@ -38,8 +38,10 @@ public class SimpleGeneticAlgorithm {
     private int reproduce(ArrayList<Individual> population, ArrayList<Integer> weights, int populationSize) {
         ArrayList<Individual> matingPool = rouletteSelection(population, weights, POP_SIZE);
         ArrayList<Individual> offSpring = onePointCrossover(matingPool, CROSSOVER_RATE, POP_SIZE);
-        
-        offSpring = bitMutatation(offSpring, MUT_RATE, POP_SIZE);
+
+        for (int i = 0; i < offSpring.size(); i++) {
+            offSpring.set(i, bitMutation(offSpring.get(i));
+        }
 
 
         return 
@@ -67,7 +69,7 @@ public class SimpleGeneticAlgorithm {
     }
 
     //modularise this function - should really only be concerned with everything in the if statement (reproduce() is the 'manager function that calls and takes care of 'meta' tasks')
-    private ArrayList<Individual> onePointCrossOver(ArrayList<Individual> matingPool, double crossoverRate, int popSize) {
+    private ArrayList<Individual> onePointCrossover(ArrayList<Individual> matingPool, double crossoverRate, int popSize) {
         ArrayList<Individual> offSprings = new ArrayList<>();
         while (offSprings.size() < popSize) {
 
@@ -88,8 +90,19 @@ public class SimpleGeneticAlgorithm {
         return offSprings;
     }
 
-    private Individual bitMutation(Individual ind) {
+    public Individual bitMutation(Individual ind) {
+        StringBuilder sb = new StringBuilder();
 
+        for (int i = 0; i < ind.INDIVIDUAL.length(); i++) {
+            if (Math.random() < MUT_RATE) {
+                //sb.append(Integer.toString(~(Character.getNumericValue(ind.INDIVIDUAL.charAt(i)))));
+                char bit = (ind.INDIVIDUAL.charAt(i) == '1') ? '0' : '1';
+                sb.append(bit);
+            }
+            else sb.append(ind.INDIVIDUAL.charAt(i));
+        }
+        ind.INDIVIDUAL  = sb.toString();
+        return ind;
     }
 
     private static ArrayList<Integer> calculateWeights(ArrayList<Individual> population) {

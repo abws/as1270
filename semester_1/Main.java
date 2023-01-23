@@ -15,7 +15,12 @@ public class Main {
         //System.out.println(localMaxima);
 
         SimpleGeneticAlgorithm sa = new SimpleGeneticAlgorithm();
-        sa.run(problem);
+
+        //sa.run(problem);
+        Individual i = new Individual("10111");
+        System.out.println( sa.bitMutation(i));
+        //System.out.println(1  1);
+
 
 
 
