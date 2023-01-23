@@ -1,9 +1,5 @@
 package semester_1;
-
-import java.util.ArrayList;
-
 import semester_1.algorithms.SimpleGeneticAlgorithm;
-import semester_1.individuals.Individual;
 import semester_1.problems.ProblemConstrainedQuadratic;
 
 public class Main {
@@ -16,10 +12,9 @@ public class Main {
 
         SimpleGeneticAlgorithm sa = new SimpleGeneticAlgorithm();
 
-        //sa.run(problem);
-        Individual i = new Individual("10111");
-        System.out.println( sa.bitMutation(i));
-        //System.out.println(1  1);
+        System.out.println(sa.run(problem));
+        //Individual i = new Individual("10111");
+        //System.out.println( sa.bitMutation(i));
 
 
 

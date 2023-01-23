@@ -16,51 +16,43 @@ import semester_1.problems.ProblemConstrainedQuadratic;
  * @version 05.01.23
  */
 public class SimpleGeneticAlgorithm {
-    private static final int POP_SIZE = 4;
-    private static final double MUT_RATE = 1.0 / POP_SIZE;    
-    private static  final double CROSSOVER_RATE = 0.7;
+    private final int POP_SIZE = 4;
+    private  final double MUT_RATE = 1.0 / POP_SIZE;    
+    private final double CROSSOVER_RATE = 0.7;
 
-    public static int run(ProblemConstrainedQuadratic problem) {
+    public ArrayList<Individual> run(ProblemConstrainedQuadratic problem) {
         ArrayList<Individual> population = problem.getRandomPopulation(4, 4); //fitness is calculated with the birth of an individual
-        ArrayList<Integer> weights = calculateWeights(population);
-        //ArrayList<Individual> offsprings = new ArrayList<>();
+        System.out.println(population);
+        ArrayList<Double> weights = calculateWeights(population);
         ArrayList<Individual> offSpring = reproduce(population, weights, POP_SIZE);
 
-        newPopulation = matingPool.onePointCrossOver(POP_SIZE / 2);
-
-        for (Individual i : population) {
-
-        }
-
-        return 0;
+        return offSpring;
     }
 
-    private int reproduce(ArrayList<Individual> population, ArrayList<Integer> weights, int populationSize) {
+    private ArrayList<Individual> reproduce(ArrayList<Individual> population, ArrayList<Double> weights, int populationSize) {
         ArrayList<Individual> matingPool = rouletteSelection(population, weights, POP_SIZE);
+
         ArrayList<Individual> offSpring = onePointCrossover(matingPool, CROSSOVER_RATE, POP_SIZE);
 
         for (int i = 0; i < offSpring.size(); i++) {
-            offSpring.set(i, bitMutation(offSpring.get(i));
+            offSpring.set(i, bitMutation(offSpring.get(i)));
         }
 
-
-        return 
-
+        return offSpring;
     }
 
-
-    private ArrayList<Individual> rouletteSelection(ArrayList<Individual> population, ArrayList<Integer> weights, int populationSize) {
+    private ArrayList<Individual> rouletteSelection(ArrayList<Individual> population, ArrayList<Double> weights, int populationSize) {
         double randomSpin = Math.random();  //This generated a random number from 0-1 (similar to a random spin)
         double cumulativeWeight = 0;        //Represents the starting position of the roulette wheel
 
         ArrayList<Individual> matingPool = new ArrayList<>();
 
-        for (int n = 0; n < populationSize; n++) {
+        for (int n = 0; n < populationSize; n++) {  //Repeat so we select n individuals
             for (int i = 0; i < weights.size(); i++) {  //Stack up each weight. The space it takes up from 0-1 corresponds to how large it is (i.e. its weight)
                 cumulativeWeight += weights.get(i);
-
                 if (randomSpin <= cumulativeWeight) {
                     matingPool.add(population.get(i));
+                    break;
                 }
             }
         }
@@ -70,8 +62,8 @@ public class SimpleGeneticAlgorithm {
 
     //modularise this function - should really only be concerned with everything in the if statement (reproduce() is the 'manager function that calls and takes care of 'meta' tasks')
     private ArrayList<Individual> onePointCrossover(ArrayList<Individual> matingPool, double crossoverRate, int popSize) {
-        ArrayList<Individual> offSprings = new ArrayList<>();
-        while (offSprings.size() < popSize) {
+        ArrayList<Individual> offSpring = new ArrayList<>();
+        while (offSpring.size() < popSize) {
 
             //Select a random pair of parents
             Random r = new Random();
@@ -81,16 +73,16 @@ public class SimpleGeneticAlgorithm {
 
             //Crossover at rate 0.7
             if (Math.random() < crossoverRate) {
-                int crossoverPoint = r.nextInt(parent1.INDIVIDUAL.length() - 1) + 1;    //-1 so the random number has 5 positions to take (including 0). +1 as returning 0 would make us cut the string at the very start (so wont cut)
-                Individual child1 = new Individual(parent1.INDIVIDUAL.substring(0, crossoverPoint) + parent2.INDIVIDUAL.substring(crossoverPoint + 1));
-                Individual child2 = new Individual(parent2.INDIVIDUAL.substring(0, crossoverPoint) + parent1.INDIVIDUAL.substring(crossoverPoint + 1));
-                offSprings.addAll(Arrays.asList(child1, child2));
+                int crossoverPoint = r.nextInt(parent1.INDIVIDUAL.length() - 1) + 1;    //-1 so the random number has 3 positions to take (including 0). +1 as returning 0 would make us cut the string at the very start (so wont cut). The number refers to the position we cut at before it
+                Individual child1 = new Individual(parent1.INDIVIDUAL.substring(0, crossoverPoint) + parent2.INDIVIDUAL.substring(crossoverPoint));
+                Individual child2 = new Individual(parent2.INDIVIDUAL.substring(0, crossoverPoint) + parent1.INDIVIDUAL.substring(crossoverPoint));
+                offSpring.addAll(Arrays.asList(child1, child2));
             }
         }
-        return offSprings;
+        return offSpring;
     }
 
-    public Individual bitMutation(Individual ind) {
+    private Individual bitMutation(Individual ind) {
         StringBuilder sb = new StringBuilder();
 
         for (int i = 0; i < ind.INDIVIDUAL.length(); i++) {
@@ -105,9 +97,9 @@ public class SimpleGeneticAlgorithm {
         return ind;
     }
 
-    private static ArrayList<Integer> calculateWeights(ArrayList<Individual> population) {
-        int sum = 0;
-        ArrayList<Integer> weights = new ArrayList<>();
+    private ArrayList<Double> calculateWeights(ArrayList<Individual> population) {
+        double sum = 0;
+        ArrayList<Double> weights = new ArrayList<>();
 
         //Get total sum
         for (Individual individual : population) { 
