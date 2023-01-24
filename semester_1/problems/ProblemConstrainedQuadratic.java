@@ -150,7 +150,6 @@ public class ProblemConstrainedQuadratic {
             if (i == 0 &&  binary.charAt(i) == '1') num -= Character.getNumericValue(binary.charAt(i)) * Math.pow(BASE, binary.length() - i-1);
             else num += Character.getNumericValue(binary.charAt(i)) * Math.pow(BASE, binary.length() - i-1);
         }     
-
         return num;
     }
 

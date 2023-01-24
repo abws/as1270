@@ -18,7 +18,7 @@ public class Individual {
     }
 
     //Calculates fitness of individual
-    private int getValue(ProblemConstrainedQuadratic problem) {
+    public int getValue(ProblemConstrainedQuadratic problem) {
         return QuadraticEvaluator.quadraticEvaluator(problem.decode(INDIVIDUAL));
     }
 
