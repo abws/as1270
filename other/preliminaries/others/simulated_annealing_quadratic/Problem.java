@@ -1,4 +1,4 @@
-package semester_1.others.simulated_annealing_quadratic;
+package other.preliminaries.others.simulated_annealing_quadratic;
 
 import java.util.ArrayList;
 import java.util.Random;

@@ -1,7 +1,7 @@
-package semester_1.individuals;
+package other.preliminaries.individuals;
 
-import semester_1.objective_functions.QuadraticEvaluator;
-import semester_1.problems.ProblemConstrainedQuadratic;
+import other.preliminaries.objective_functions.QuadraticEvaluator;
+import other.preliminaries.problems.ProblemConstrainedQuadratic;
 
 /**
  * Class for representing binary individuals

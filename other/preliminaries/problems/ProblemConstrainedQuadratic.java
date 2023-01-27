@@ -1,4 +1,4 @@
-package semester_1.problems;
+package other.preliminaries.problems;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -6,8 +6,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 
-import semester_1.individuals.Individual;
-import semester_1.objective_functions.QuadraticEvaluator;
+import other.preliminaries.individuals.Individual;
+import other.preliminaries.objective_functions.QuadraticEvaluator;
 
 /**
  * Problem formulation for optimizing a quadratic function with inputs constrained to -25 and 25
@@ -88,11 +88,11 @@ public class ProblemConstrainedQuadratic {
      */
     public int getBestNeighbour(int input) {
         ArrayList<Integer> neighbours = getNeighbours(input);
-        HashMap<Integer, Integer> neighbourValue = new HashMap<>();
+        HashMap<Integer, Long> neighbourValue = new HashMap<>();
 
         //Make a map of neighbour and value
         for (int n : neighbours) {
-            int val = objectiveFunction(n);
+            long val = objectiveFunction(n);
             neighbourValue.put(n, val);
         }
 

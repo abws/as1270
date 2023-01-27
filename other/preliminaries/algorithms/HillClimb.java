@@ -1,9 +1,9 @@
-package semester_1.algorithms;
+package other.preliminaries.algorithms;
 
 import java.util.ArrayList;
 import java.util.Collections;
 
-import semester_1.problems.ProblemConstrainedQuadratic;
+import other.preliminaries.problems.ProblemConstrainedQuadratic;
 
 /**
  * Hill Climb Algorithm

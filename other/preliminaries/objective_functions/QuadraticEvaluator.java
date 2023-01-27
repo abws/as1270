@@ -1,4 +1,4 @@
-package semester_1.objective_functions;
+package other.preliminaries.objective_functions;
 
 /**
  * Quadratic Evaluator

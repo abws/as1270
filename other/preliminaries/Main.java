@@ -1,9 +1,9 @@
-package semester_1;
+package other.preliminaries;
 import java.util.ArrayList;
 
-import semester_1.algorithms.SimpleGeneticAlgorithm;
-import semester_1.individuals.Individual;
-import semester_1.problems.ProblemConstrainedQuadratic;
+import other.preliminaries.algorithms.SimpleGeneticAlgorithm;
+import other.preliminaries.individuals.Individual;
+import other.preliminaries.problems.ProblemConstrainedQuadratic;
 
 public class Main {
     public static void main(String[] args) {

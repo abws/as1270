@@ -1,11 +1,11 @@
-package semester_1.algorithms;
+package other.preliminaries.algorithms;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
-import semester_1.individuals.Individual;
-import semester_1.problems.ProblemConstrainedQuadratic;
+import other.preliminaries.individuals.Individual;
+import other.preliminaries.problems.ProblemConstrainedQuadratic;
 
 /**
  * Simple Genetic Algorithm

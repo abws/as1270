@@ -1,4 +1,4 @@
-package semester_1.others.simulated_annealing_quadratic;
+package other.preliminaries.others.simulated_annealing_quadratic;
 
 public class Main {
     public static void main(String[] args) {

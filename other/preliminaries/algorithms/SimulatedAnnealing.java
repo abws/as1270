@@ -1,6 +1,6 @@
-package semester_1.algorithms;
+package other.preliminaries.algorithms;
 
-import semester_1.problems.ProblemConstrainedQuadratic;
+import other.preliminaries.problems.ProblemConstrainedQuadratic;
 
 /**
  * Simulated Annealing
@@ -54,7 +54,7 @@ public class SimulatedAnnealing {
     private double getProbability(int current, int next, ProblemConstrainedQuadratic problem) {
 
         //Delta gives the difference in energies. Since this is an ascent (maximisation) we want a negative value (low energy) for 'bad' solutions, hence we minus current
-        int delta = problem.objectiveFunction((next) - problem.objectiveFunction(current));
+        long delta = problem.objectiveFunction((next) - problem.objectiveFunction(current));
 
         return Math.exp(delta / temp);  // a positive delta always gives a p higher than 1. A negative one gives a p between 0 and 1
     }
