@@ -25,6 +25,7 @@ public class Main {
 
         // ArrayList<Individual> offspring = sa.onePointCrossover(matingPool, 0.7, 4);
         // System.out.println(offspring);
+        //System.out.println(problem.decode("00011010000010010110") * problem.decode("00011010000010010110"));
         sa.run(problem);        
 
 

@@ -10,7 +10,7 @@ import semester_1.problems.ProblemConstrainedQuadratic;
  */
 public class Individual {
     public String INDIVIDUAL;
-    public int VALUE;
+    public long VALUE;
     
     public Individual(String individual) {
         INDIVIDUAL = individual.trim();
@@ -18,7 +18,7 @@ public class Individual {
     }
 
     //Calculates fitness of individual
-    public int getValue(ProblemConstrainedQuadratic problem) {
+    public long getValue(ProblemConstrainedQuadratic problem) {
         return QuadraticEvaluator.quadraticEvaluator(problem.decode(INDIVIDUAL));
     }
 

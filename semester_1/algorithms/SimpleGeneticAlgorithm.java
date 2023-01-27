@@ -19,10 +19,10 @@ public class SimpleGeneticAlgorithm {
     private final int POP_SIZE = 4;
     private final double MUT_RATE = 0.03;    
     private final double CROSSOVER_RATE = 0.7;
-    private final int GENERATIONS = 100;
+    private final int GENERATIONS = 50;
 
     public ArrayList<Individual> run(ProblemConstrainedQuadratic problem) {
-        ArrayList<Individual> population = problem.getRandomPopulation(4, 4);   //fitness is calculated with the birth of an individual
+        ArrayList<Individual> population = problem.getRandomPopulation(POP_SIZE, 20);   //fitness is calculated with the birth of an individual
 
         for (int i = 0; i < GENERATIONS; i++) {
             System.out.printf("generation %d: %s", i, population);

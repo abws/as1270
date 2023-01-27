@@ -8,8 +8,8 @@ package semester_1.objective_functions;
  * @version 06.12.22
  */
 public class QuadraticEvaluator {
-    public static int quadraticEvaluator(int input) {
-        int output = input * input;
+    public static long quadraticEvaluator(long input) {
+        long output = input * input;
         return output;
     }
 }

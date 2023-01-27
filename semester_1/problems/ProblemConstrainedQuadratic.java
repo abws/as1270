@@ -38,7 +38,7 @@ public class ProblemConstrainedQuadratic {
         step = s;
     }
 
-    public int objectiveFunction(int input) {
+    public long objectiveFunction(long input) {
         return QuadraticEvaluator.quadraticEvaluator(input);
     }
 
@@ -141,7 +141,7 @@ public class ProblemConstrainedQuadratic {
      * @param binary The binary number to decode
      * @return num The denary representaion of the binary number
      */
-    public int decode(String binary) {
+    public long decode(String binary) {
         int num = 0;
 
         for (int i = 0; i < binary.length(); i++) {
