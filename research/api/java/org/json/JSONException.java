@@ -1,4 +1,4 @@
-package org.json;
+package research.api.java.org.json;
 
 /**
  * The JSONException is thrown by the JSON.org classes when things are amiss.

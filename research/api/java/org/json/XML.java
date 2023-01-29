@@ -1,4 +1,4 @@
-package org.json;
+package research.api.java.org.json;
 
 /*
 Copyright (c) 2002 JSON.org

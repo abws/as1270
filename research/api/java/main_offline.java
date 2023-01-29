@@ -1,3 +1,4 @@
+package research.api.java;
 public class main_offline {
   public static int nSc;
 
