@@ -1,5 +1,7 @@
 package research.problems;
 
+import research.api.java.*;
+
 /**
  * Problem formulation for optimizing a wind farm
  * using the evaluation function provided by WindFLO
@@ -10,6 +12,22 @@ package research.problems;
  * @version 27.01.23
  */
 public class ProblemSGA extends Problem{
+    private KusiakLayoutEvaluator evaluator;
+    private WindScenario scenario;
+    private final int BASE = 2;
+
+    public ProblemSGA(KusiakLayoutEvaluator evaluator, WindScenario scenario) throws Exception {
+        this.scenario = scenario;
+        this.evaluator = evaluator;
+    }
+
+    @Override
+    public double evaluate(Object individual) {
+        double[][] phenotype = decode(individual);
+        double fitness = evaluator.evaluate(phenotype);
+
+        return fitness;
+    }
 
     @Override
     public Object encode(double[][] individual) {
@@ -18,16 +36,42 @@ public class ProblemSGA extends Problem{
     }
 
     @Override
-    public double[][] decode(Object individual) {
-        // TODO Auto-generated method stub
-        return null;
+    public double[][] decode(String individual) {
+        int columns = (int) (scenario.width % scenario.minDist);
+        double rows = (int) scenario.height % scenario.minDist;
+
+        int[][] gridIndividual = gridify(individual, columns, rows);
+
+        double[][] layout = new double [scenario.nturbines][2];
+
+        for (int i = 0; i < (columns); i++) {
+            for (int j = 0; j < rows; j++) {
+            }
+        }
+        return layout;
     }
 
-    @Override
-    public long evaluate(Object layout) {
-        // TODO Auto-generated method stub
-        return 0;
-    } 
+    /**
+     * Gridifies a string
+     * @param ind The string to be gridified
+     * @param x The width of the grid
+     * @param y The height of the grid
+     * @return A two-dimensional array representing the grid
+     */
+    private int[][] gridify(String ind, int x, int y) {
+        int[][] grid = new int[y][x]; //[rows][columns] since rows are 'bigger' and classified by first
+        int count = 0;
+
+        for (int i = 0; i < y; i ++) {
+            for (int j = 0; j < x; j++) {
+                grid[i][j] = Character.getNumericValue(ind.charAt(count));
+                System.out.println(grid[i][j]);
+                count++;
+            }
+        }
+
+        return grid;
+    }
 
 
     /**
