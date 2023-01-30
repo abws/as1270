@@ -35,20 +35,41 @@ public class ProblemSGA extends Problem{
         return null;
     }
 
+    /**
+     * Decodes a string of size h*w with n 1s
+     * into a n by 2 array corresponding to turbine 
+     * coordinates
+     * @param individual The string to be decoded
+     * @return A two-dimensional array representing the grid as turbine coordinates
+     */
     @Override
-    public double[][] decode(String individual) {
+    public double[][] decode(Object individual) {
         int columns = (int) (scenario.width % scenario.minDist);
-        double rows = (int) scenario.height % scenario.minDist;
+        int rows = (int) (scenario.height % scenario.minDist);
 
-        int[][] gridIndividual = gridify(individual, columns, rows);
+        int[][] gridIndividual = gridify((String) individual, columns, rows);
 
         double[][] layout = new double [scenario.nturbines][2];
+        int count = 0;
 
-        for (int i = 0; i < (columns); i++) {
-            for (int j = 0; j < rows; j++) {
+        for (int i = 0; i < (rows); i++) {
+            for (int j = 0; j < columns; j++) {
+                if (gridIndividual[i][j] == 1) {
+                    layout[count] = getCoordinates(i, j, scenario.minDist);
+                    count++;
+                }
             }
         }
         return layout;
+    }
+
+    private double[] getCoordinates(int y, int x, double minDist) {
+        double [] coordinates = new double[2];
+        coordinates[0] = (x * minDist + (minDist / 2));
+        coordinates[1] = (y * minDist + (minDist / 2));
+
+        return coordinates;
+
     }
 
     /**
