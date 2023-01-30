@@ -1,5 +1,8 @@
 package research.problems;
 
+import java.util.ArrayList;
+import java.util.Random;
+
 import research.api.java.*;
 
 /**
@@ -15,6 +18,7 @@ public class ProblemSGA extends Problem{
     private KusiakLayoutEvaluator evaluator;
     private WindScenario scenario;
     private final int BASE = 2;
+    private static double randProb = Math.random();
 
     public ProblemSGA(KusiakLayoutEvaluator evaluator, WindScenario scenario) throws Exception {
         this.scenario = scenario;
@@ -63,6 +67,15 @@ public class ProblemSGA extends Problem{
         return layout;
     }
 
+    /**
+     * Helper method to return
+     * turbine coordinates given 
+     * cell they're in within grid
+     * @param y
+     * @param x
+     * @param minDist
+     * @return Coordinates (x, y)
+     */
     private double[] getCoordinates(int y, int x, double minDist) {
         double [] coordinates = new double[2];
         coordinates[0] = (x * minDist + (minDist / 2));
@@ -95,19 +108,20 @@ public class ProblemSGA extends Problem{
     }
 
 
-    /**
-     * Encoding operator: Denary -> Signed Binary
-     * @param num The denary representaion of the binary number
-     * @return binary The binary number to decode 
-     */
-    public String encode(int num, int bits) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = bits - 1; i >= 0; i--) {
-            int bit = (num >> i) & 1;
-            sb.append(bit);
-        }
+    public ArrayList<String> getRandomPopulation(int popSize, int bits) {
+        Random rand = new Random();
+        ArrayList<String> population = new ArrayList<String>();
 
-        return sb.toString();
-    }
-    
+        for (int i = 0; i < popSize; i++) {
+            StringBuilder sb = new StringBuilder();
+
+            for (int j = 0; j < bits; j++) {
+                char bit = (char) ((rand.nextBoolean()) ? 1: 0);
+                sb.append(bit);
+            }
+            population.add(sb.toString());
+
+        }
+        return population;
+    }    
 }
