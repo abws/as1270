@@ -1,14 +1,9 @@
 package research;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Random;
-
 import research.algorithms.SimpleGeneticAlgorithm;
-import research.api.java.*;
-
-
 import research.problems.ProblemSGA;
+import research.api.java.*;
+import java.util.*;
 
 /*
  * Testing suite
@@ -31,16 +26,32 @@ public class Main {
         */
         //System.out.println(prob.evaluate(test));
 
-        ArrayList<String> t3 = prob.getRandomPopulation(4, prob.getStringLength(), ws.nturbines);
+        //ArrayList<String> t3 = prob.getRandomPopulation(4, prob.getStringLength(), ws.nturbines);
         //System.out.println(t3);
-        SimpleGeneticAlgorithm neww = new SimpleGeneticAlgorithm();
-        //System.out.println(Arrays.deepToString(prob.gridify(t3.get(0), (int) (ws.width % (8*ws.R)), (int) (ws.height % (8*ws.R)))));
-        System.out.println(t3.get(0));
-        //System.out.println(Arrays.deepToString(prob.decode(t3.get(0))));
-        System.out.println(prob.evaluate(t3.get(0)));
 
-        //System.out.println(prob.evaluate(t3.get(0)));
         //System.out.println(neww.calculateWeights(t3, prob));
+
+        SimpleGeneticAlgorithm sa = new SimpleGeneticAlgorithm();
+        sa.run(prob);
+        //System.out.println(onePointCrossover("0010111011", "1111111111"));
+
+        }
+
+        public static ArrayList<String> onePointCrossover(String parent1, String parent2) {
+            Random r = new Random();
+            ArrayList<String> offSpring = new ArrayList<String>();
+    
+            int crossoverPoint = r.nextInt(10 - 1) + 1;    //-1 so the random number has 3 positions to take (including 0). +1 as returning 0 would make us cut the string at the very start (so wont cut). The number refers to the position we cut at before
+            System.out.println(crossoverPoint);
+ 
+            String child1 = parent1.substring(0, crossoverPoint) + parent2.substring(crossoverPoint);
+            String child2 = parent2.substring(0, crossoverPoint) + parent1.substring(crossoverPoint);
+            //System.out.println(Arrays.deepToString(problem.decode(parent1)));
+    
+            //System.out.printf("%d %d %d %d%n", countTurbines(parent1), countTurbines(parent2), countTurbines(child1), countTurbines(child2));
+            offSpring.addAll(Arrays.asList(child1, child2));
+    
+            return offSpring;
         }
     
 }

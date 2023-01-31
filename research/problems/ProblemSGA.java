@@ -6,12 +6,12 @@ import research.api.java.*;
 
 /**
  * Problem formulation for optimizing a wind farm
- * using the evaluation function provided by WindFLO
+ * using the evaluation function provided by WindFLO.
  * Defines the nature and constraints of the problem
  * Contains any intitialization parameters and any 
  * extra things needed by the Simple Genetic Algorithm
- * @author Abdiwahab Salah 38.5
- * @version 27.01.23
+ * @author Abdiwahab Salah
+ * @version 31.01.23
  */
 public class ProblemSGA extends Problem{
     private KusiakLayoutEvaluator evaluator;
@@ -62,9 +62,11 @@ public class ProblemSGA extends Problem{
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
                 if (gridIndividual[i][j] == 1) {
+                    //System.out.printf("%d %d %n", i, j);
+                    //System.out.println(count);
+
                     layout[count] = getCoordinates(i, j, minDist);
                     count++;
-                    //System.out.println(count);
                 }
             }
         }
@@ -83,7 +85,6 @@ public class ProblemSGA extends Problem{
      */
     private double[] getCoordinates(int y, int x, double minDist) {
         double [] coordinates = new double[2];
-        //System.out.printf("[%d %d %f]", x, y, minDist);
         coordinates[0] = ((x * minDist) + (minDist / 2));
         coordinates[1] = ((y * minDist) + (minDist / 2));
 
@@ -105,7 +106,6 @@ public class ProblemSGA extends Problem{
         for (int i = 0; i < y; i ++) {
             for (int j = 0; j < x; j++) {
                 grid[i][j] = Character.getNumericValue(ind.charAt(count));
-                // System.out.println(grid[i][j]);
                 count++;
             }
         }
@@ -182,11 +182,8 @@ public class ProblemSGA extends Problem{
 
     private String createString(int[] indivArray) {
         StringBuilder sb = new StringBuilder();
-        int count = 0;
         for(int i : indivArray) {
-            sb.append(i);
-            //if (i == 1) {System.out.println(count); count++;}
-            
+            sb.append(i); 
         }
         return sb.toString();
     }
