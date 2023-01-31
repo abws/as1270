@@ -1,7 +1,6 @@
 package research.problems;
 
-import java.util.ArrayList;
-import java.util.Random;
+import java.util.*;
 
 import research.api.java.*;
 
@@ -28,7 +27,7 @@ public class ProblemSGA extends Problem{
     @Override
     public double evaluate(Object individual) {
         double[][] phenotype = decode(individual);
-        double fitness = evaluator.evaluate(phenotype);
+        double fitness = evaluator.evaluate_2014(phenotype);
 
         return fitness;
     }
@@ -45,22 +44,27 @@ public class ProblemSGA extends Problem{
      * coordinates
      * @param individual The string to be decoded
      * @return A two-dimensional array representing the grid as turbine coordinates
+     * Tested
      */
     @Override
     public double[][] decode(Object individual) {
-        int columns = (int) (scenario.width % scenario.minDist);
-        int rows = (int) (scenario.height % scenario.minDist);
+        double minDist = 8 * scenario.R;
+
+        int columns = (int) (scenario.width / minDist);
+        int rows = (int) (scenario.height / minDist);
 
         int[][] gridIndividual = gridify((String) individual, columns, rows);
+        //System.out.println(Arrays.deepToString(gridIndividual));
 
         double[][] layout = new double [scenario.nturbines][2];
         int count = 0;
 
-        for (int i = 0; i < (rows); i++) {
+        for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
                 if (gridIndividual[i][j] == 1) {
-                    layout[count] = getCoordinates(i, j, scenario.minDist);
+                    layout[count] = getCoordinates(i, j, minDist);
                     count++;
+                    //System.out.println(count);
                 }
             }
         }
@@ -75,14 +79,15 @@ public class ProblemSGA extends Problem{
      * @param x
      * @param minDist
      * @return Coordinates (x, y)
+     * Tested
      */
     private double[] getCoordinates(int y, int x, double minDist) {
         double [] coordinates = new double[2];
-        coordinates[0] = (x * minDist + (minDist / 2));
-        coordinates[1] = (y * minDist + (minDist / 2));
+        //System.out.printf("[%d %d %f]", x, y, minDist);
+        coordinates[0] = ((x * minDist) + (minDist / 2));
+        coordinates[1] = ((y * minDist) + (minDist / 2));
 
         return coordinates;
-
     }
 
     /**
@@ -91,15 +96,16 @@ public class ProblemSGA extends Problem{
      * @param x The width of the grid
      * @param y The height of the grid
      * @return A two-dimensional array representing the grid
+     * Tested
      */
-    private int[][] gridify(String ind, int x, int y) {
+    public int[][] gridify(String ind, int x, int y) {
         int[][] grid = new int[y][x]; //[rows][columns] since rows are 'bigger' and classified by first
         int count = 0;
 
         for (int i = 0; i < y; i ++) {
             for (int j = 0; j < x; j++) {
                 grid[i][j] = Character.getNumericValue(ind.charAt(count));
-                System.out.println(grid[i][j]);
+                // System.out.println(grid[i][j]);
                 count++;
             }
         }
@@ -107,7 +113,13 @@ public class ProblemSGA extends Problem{
         return grid;
     }
 
-
+    /**
+     * Generates a random string population
+     * @param popSize
+     * @param bits
+     * @return Random population
+     * Tested
+     */
     public ArrayList<String> getRandomPopulation(int popSize, int bits) {
         Random rand = new Random();
         ArrayList<String> population = new ArrayList<String>();
@@ -116,12 +128,66 @@ public class ProblemSGA extends Problem{
             StringBuilder sb = new StringBuilder();
 
             for (int j = 0; j < bits; j++) {
-                char bit = (char) ((rand.nextBoolean()) ? 1: 0);
+                char bit = (char) ((rand.nextBoolean()) ? '1': '0');
                 sb.append(bit);
             }
             population.add(sb.toString());
 
         }
         return population;
-    }    
+    }
+    
+    /**
+     * Generates a random string population
+     * with a given number of 1s (turbines)
+     * @param popSize
+     * @param bits
+     * @return Random population
+     * Tested
+     */
+    public ArrayList<String> getRandomPopulation(int popSize, int bits, int turbines) {
+        Random rand = new Random();
+        ArrayList<String> population = new ArrayList<String>();
+
+        for (int i = 0; i < popSize; i++) {
+            int[] indivArray = new int[bits];
+            ArrayList<Integer> taken = new ArrayList<>();
+
+            while (taken.size() < turbines) {
+                int randPosition = rand.nextInt(0, bits);
+                if (!taken.contains(randPosition)) {
+                    indivArray[randPosition] = 1;
+                    taken.add(randPosition);
+                }
+                indivArray[randPosition] = 1;
+            }
+
+            String individual = createString(indivArray);
+            population.add(individual);
+        }
+        return population;
+    }  
+    
+    public WindScenario getScenario() {
+        return this.scenario;
+    }
+
+    public int getStringLength() {
+        double minDist = 8 * scenario.R;
+
+        int columns = (int) (scenario.width / minDist);
+        int rows = (int) (scenario.height / minDist);
+        return columns * rows;
+    }
+
+    private String createString(int[] indivArray) {
+        StringBuilder sb = new StringBuilder();
+        int count = 0;
+        for(int i : indivArray) {
+            sb.append(i);
+            //if (i == 1) {System.out.println(count); count++;}
+            
+        }
+        return sb.toString();
+    }
 }
