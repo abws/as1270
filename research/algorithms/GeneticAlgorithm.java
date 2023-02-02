@@ -6,12 +6,14 @@ import research.problems.ProblemGA;
 
 public class GeneticAlgorithm {
     private ProblemGA problem;
-    private final int POP_SIZE = 100;
-    private final double MUT_RATE = 0.03;    
-    private final double CROSSOVER_RATE = 0.7;
-    private final int GENERATIONS = 10;
+    private final int POP_SIZE = 30;
+    private final double MUT_RATE = 0.1;    
+    private final double CROSSOVER_RATE = 0.9;
+    private final int GENERATIONS = 100;
     private int TURBINES;;
     private int INDIV_LENGTH;
+    private double[] lastFitness; //the fitness of the most recent population
+
     //private static double Math.random() = Math.random();
 
     public double run(ProblemGA problem) {
@@ -42,28 +44,35 @@ public class GeneticAlgorithm {
     public ArrayList<Double> calculateWeights(ArrayList<String> population) {
         double sum = 0;
         ArrayList<Double> weights = new ArrayList<>();
-
+        lastFitness = new double[population.size()];
         //Get total sum and store fitnesses
         for (String individual : population) { 
             double fitness = problem.evaluate(individual);
             sum += fitness;
             weights.add(fitness);
+            lastFitness[-1] = fitness;
         }
 
         //Get individual weights
         for (int i = 0; i < weights.size(); i++) { 
             weights.set(i, weights.get(i) / sum);
         }
-        System.out.println(sum/POP_SIZE);
 
         return weights;
     }
 
+    /**
+     * Function for managing last
+     * three operations:
+     * Parent selection, crossover and mutation
+     * @param population
+     * @param weights
+     * @return offSpring
+     */
     private ArrayList<String> reproduce(ArrayList<String> population, ArrayList<Double> weights) {
         //parent selection
         ArrayList<String> matingPool = rouletteSelection(population, weights, POP_SIZE);
  
-
 
         //crossover
         ArrayList<String> offSpring = new ArrayList<>();
@@ -90,6 +99,18 @@ public class GeneticAlgorithm {
         return offSpring;
     }
 
+    /**
+     * Parent selection mechanism
+     * For the WFLOP, this provides
+     * very little selection pressure
+     * as the fitnesses are so close to one another,
+     * thus we explore a lot, and exploit very little
+     * as selection becomes uniform and random
+     * @param population
+     * @param weights
+     * @param populationSize
+     * @return
+     */
     public ArrayList<String> rouletteSelection(ArrayList<String> population, ArrayList<Double> weights, int populationSize) {
         ArrayList<String> matingPool = new ArrayList<>();
 
@@ -109,6 +130,13 @@ public class GeneticAlgorithm {
         return matingPool;
     }
 
+    /**
+     * Recombination operator (2 parents)
+     * (2 children)
+     * @param parent1
+     * @param parent2
+     * @return
+     */
     public ArrayList<String> onePointCrossover(String parent1, String parent2) {
         Random r = new Random();
         ArrayList<String> offSpring = new ArrayList<String>();
@@ -122,6 +150,13 @@ public class GeneticAlgorithm {
         return offSpring;
     }
 
+    /**
+     * Recombination operator (2 parents)
+     * (2 children)
+     * @param parent1
+     * @param parent2
+     * @return
+     */
     public ArrayList<String> nPointCrossover(String parent1, String parent2, int n) {
         Random r = new Random();
         n = Math.max(n, INDIV_LENGTH); //make sure n never overflows
@@ -147,7 +182,12 @@ public class GeneticAlgorithm {
         return offSpring;
     }
 
-
+    /**
+     * Mutation operator
+     * @param parent1
+     * @param parent2
+     * @return
+     */
     private String bitMutation(String ind) {
         StringBuilder sb = new StringBuilder();
 
@@ -162,6 +202,14 @@ public class GeneticAlgorithm {
         return sb.toString();
     }
 
+    /**
+     * Calculautes the maximum fitness of
+     * a population. Becareful! It should only
+     * be used at the end of the algorithm, and even
+     * then we can calulate 
+     * @param population
+     * @return
+     */
     private double maxFitness(ArrayList<String> population) {
         double maxFitness = 0.0;
         for (String n : population) {
@@ -173,6 +221,13 @@ public class GeneticAlgorithm {
 
     }
 
+    /**
+     * Repair operator.
+     * Shoots randomly at the farm
+     * and eliminates as many turbines as specified
+     * @param pop
+     * @return
+     */
     private ArrayList<String> legalise(ArrayList<String> pop) {
         Random r = new Random();
         ArrayList<String> cleanPop = new ArrayList<>();
@@ -206,11 +261,51 @@ public class GeneticAlgorithm {
         return cleanPop;
     }
 
+    /**
+     * Counts the number of
+     * turbines in a state
+     * @param ind
+     * @return
+     */
     private int countTurbines(String ind) {
         int count = 0;
         for (int i = 0; i < ind.length(); i++) {
             if (ind.charAt(i) == '1') count++;
         }
         return count;
+    }
+
+    /**
+     * Performs a sigma scale
+     * on a given fitness
+     * @param fitnesses Array of fitnesses
+     * @return
+     */
+    private double sigmaScale(double[] fitnesses) {
+        double mean = calculateMean(fitnesses);
+        double sd = calculateStandardDeviation(fitnesses, mean); 
+        
+        int count = 0;
+        for (int i = 0; i < fitnesses.length; i++) {
+            if (ind.charAt(i) == '1') count++;
+        }
+        return count;
+    }
+
+    private double calculateMean(double[] fitnesses) {
+        double sum = 0.0;
+        for (double f : fitnesses) {
+            sum+=f;
+        }
+    return sum / fitnesses.length;
+    }
+
+    private double calculateStandardDeviation(double[] fitnesses, double mean) {
+        double sd = 0.0;
+        for (double f : fitnesses) {
+            sd += Math.pow((f - mean), 2);
+        }
+
+        return sd / fitnesses.length;
     }
 }
