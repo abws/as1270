@@ -13,13 +13,13 @@ import research.api.java.*;
  * @author Abdiwahab Salah
  * @version 31.01.23
  */
-public class ProblemSGA extends Problem{
+public class ProblemGA extends Problem{
     private KusiakLayoutEvaluator evaluator;
     private WindScenario scenario;
     private final int BASE = 2;
     private static double randProb = Math.random();
 
-    public ProblemSGA(KusiakLayoutEvaluator evaluator, WindScenario scenario) throws Exception {
+    public ProblemGA(KusiakLayoutEvaluator evaluator, WindScenario scenario) throws Exception {
         this.scenario = scenario;
         this.evaluator = evaluator;
     }

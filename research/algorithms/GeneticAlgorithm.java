@@ -2,10 +2,10 @@ package research.algorithms;
 
 import java.util.*;
 
-import research.problems.ProblemSGA;
+import research.problems.ProblemGA;
 
-public class SimpleGeneticAlgorithm {
-    private ProblemSGA problem;
+public class GeneticAlgorithm {
+    private ProblemGA problem;
     private final int POP_SIZE = 100;
     private final double MUT_RATE = 0.03;    
     private final double CROSSOVER_RATE = 0.7;
@@ -14,7 +14,7 @@ public class SimpleGeneticAlgorithm {
     private int INDIV_LENGTH;
     //private static double Math.random() = Math.random();
 
-    public double run(ProblemSGA problem) {
+    public double run(ProblemGA problem) {
         this.problem = problem;
         INDIV_LENGTH = problem.getStringLength();
         TURBINES = problem.getScenario().nturbines;
@@ -22,14 +22,6 @@ public class SimpleGeneticAlgorithm {
         ArrayList<String> population = problem.getRandomPopulation(POP_SIZE, INDIV_LENGTH, TURBINES);
 
         for (int i = 0; i < GENERATIONS; i++) {
-            // for (int j = 0; j < POP_SIZE; j++) {
-            //     System.out.println(countTurbines(population.get(j)));
-            // }
-
-            //System.out.println(maxFitness(population));
-
-            //System.out.println(countTurbines(population.get(0)));
-
             ArrayList<Double> weights = calculateWeights(population);
             population = reproduce(population, weights);
         }
@@ -54,7 +46,6 @@ public class SimpleGeneticAlgorithm {
         //Get total sum and store fitnesses
         for (String individual : population) { 
             double fitness = problem.evaluate(individual);
-            //System.out.println(fitness);
             sum += fitness;
             weights.add(fitness);
         }
@@ -112,7 +103,7 @@ public class SimpleGeneticAlgorithm {
                     matingPool.add(population.get(i));
                     break;
                 }
-            }
+            } 
         }
 
         return matingPool;
@@ -125,13 +116,37 @@ public class SimpleGeneticAlgorithm {
         int crossoverPoint = r.nextInt(INDIV_LENGTH - 1) + 1;    //-1 so the random number has 3 positions to take (including 0). +1 as returning 0 would make us cut the string at the very start (so wont cut). The number refers to the position we cut at before 
         String child1 = parent1.substring(0, crossoverPoint) + parent2.substring(crossoverPoint);
         String child2 = parent2.substring(0, crossoverPoint) + parent1.substring(crossoverPoint);
-        //System.out.println(Arrays.deepToString(problem.decode(parent1)));
 
-        //System.out.printf("%d %d %d %d%n", countTurbines(parent1), countTurbines(parent2), countTurbines(child1), countTurbines(child2));
         offSpring.addAll(Arrays.asList(child1, child2));
 
         return offSpring;
     }
+
+    public ArrayList<String> nPointCrossover(String parent1, String parent2, int n) {
+        Random r = new Random();
+        n = Math.max(n, INDIV_LENGTH); //make sure n never overflows
+        ArrayList<Integer> crossoverPoints = new ArrayList<>();
+        ArrayList<String> offSpring = new ArrayList<String>();
+
+        StringBuilder child1 = new StringBuilder(parent1);
+        StringBuilder child2 = new StringBuilder(parent2);
+
+        while (crossoverPoints.size() < n) {
+            int cp = r.nextInt(INDIV_LENGTH - 1) + 1;
+            if (!crossoverPoints.contains(cp)) crossoverPoints.add(cp);
+        }
+
+        Collections.sort(crossoverPoints);
+        int x = 0;
+        for (int point : crossoverPoints) {
+            child1.replace(x, point, child2.substring(x, n));
+            child2.replace(x, point, child1.substring(x, n));
+            x = point;
+        }
+        offSpring.addAll(Arrays.asList(child1.toString(), child2.toString()));
+        return offSpring;
+    }
+
 
     private String bitMutation(String ind) {
         StringBuilder sb = new StringBuilder();
@@ -167,7 +182,6 @@ public class SimpleGeneticAlgorithm {
             StringBuilder sb = new StringBuilder(indiv);
 
             int turbineCount = countTurbines(indiv);
-            //System.out.println(turbineCount);
             int difference = turbineCount - TURBINES;
             
             while (difference > 0) {    //we have too many turbines
@@ -177,9 +191,6 @@ public class SimpleGeneticAlgorithm {
                     sb.setCharAt(position, '0');
                     
                     difference--;
-                    //System.out.println(difference);
-                    //System.out.println(countTurbines(sb.toString()));
-
                 }
             }
             while (difference < 0) {    //we have too few turbines
@@ -190,8 +201,6 @@ public class SimpleGeneticAlgorithm {
                     difference++;
                 }
             }
-            //System.out.printf("new: %d", countTurbines(sb.toString()));
-            //System.out.printf("diff1: %d,,,, diff2: %d%n", countTurbines(sb.toString()), difference);
             cleanPop.add(sb.toString());
         }
         return cleanPop;
