@@ -10,6 +10,7 @@ public class GeneticAlgorithm {
     private final double MUT_RATE = 0.1;    
     private final double CROSSOVER_RATE = 0.9;
     private final int GENERATIONS = 100;
+    private final int C = 2; //constant for sigma scaling
     private int TURBINES;;
     private int INDIV_LENGTH;
     private double[] lastFitness; //the fitness of the most recent population
@@ -281,15 +282,15 @@ public class GeneticAlgorithm {
      * @param fitnesses Array of fitnesses
      * @return
      */
-    private double sigmaScale(double[] fitnesses) {
+    private double[] sigmaScale(double[] fitnesses) {
         double mean = calculateMean(fitnesses);
         double sd = calculateStandardDeviation(fitnesses, mean); 
         
-        int count = 0;
         for (int i = 0; i < fitnesses.length; i++) {
-            if (ind.charAt(i) == '1') count++;
+            double sigma = fitnesses[i] - (mean - (C*sd)); //sigma scaling formula
+            fitnesses[i] = Math.max(sigma, 0);
         }
-        return count;
+        return fitnesses;
     }
 
     private double calculateMean(double[] fitnesses) {
