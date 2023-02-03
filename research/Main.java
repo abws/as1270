@@ -21,8 +21,12 @@ public class Main {
 
         GeneticAlgorithm sa = new GeneticAlgorithm();
         sa.run(prob);
+    
 
         }
-}
+
+
+
+    }
 
 

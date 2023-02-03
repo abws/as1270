@@ -6,7 +6,7 @@ import research.problems.ProblemGA;
 
 public class GeneticAlgorithm {
     private ProblemGA problem;
-    private final int POP_SIZE = 30;
+    private final int POP_SIZE = 10;
     private final double MUT_RATE = 0.1;    
     private final double CROSSOVER_RATE = 0.9;
     private final int GENERATIONS = 100;
@@ -25,7 +25,8 @@ public class GeneticAlgorithm {
         ArrayList<String> population = problem.getRandomPopulation(POP_SIZE, INDIV_LENGTH, TURBINES);
 
         for (int i = 0; i < GENERATIONS; i++) {
-            ArrayList<Double> weights = calculateWeights(population);
+            System.out.println(maxFitness(population));
+            ArrayList<Double> weights = calculateWindowedWeights(population);
             population = reproduce(population, weights);
         }
 
@@ -45,13 +46,14 @@ public class GeneticAlgorithm {
     public ArrayList<Double> calculateWeights(ArrayList<String> population) {
         double sum = 0;
         ArrayList<Double> weights = new ArrayList<>();
-        lastFitness = new double[population.size()];
+        //lastFitness = new double[population.size()];    //refreshed for every new population WILL NEED A LONG TERM PLAN FOR THIS (FOR LATER OPERATORS .in fact ill take it out now - it should be only for the end (after the generation ends) - make an interface like individual later so value is only calculated once !!! - efficiency)
+
         //Get total sum and store fitnesses
         for (String individual : population) { 
             double fitness = problem.evaluate(individual);
             sum += fitness;
             weights.add(fitness);
-            lastFitness[-1] = fitness;
+            //lastFitness[-1] = fitness;
         }
 
         //Get individual weights
@@ -59,6 +61,34 @@ public class GeneticAlgorithm {
             weights.set(i, weights.get(i) / sum);
         }
 
+        return weights;
+    }
+
+    public ArrayList<Double> calculateWindowedWeights(ArrayList<String> population) {
+        double sum = 0;
+        ArrayList<Double> weights = new ArrayList<>();
+        double[] fitnesses = new double[population.size()];
+        int count = 0;
+
+        //Store fitnesses
+        for (String individual : population) { 
+            double fitness = problem.evaluate(individual);
+            fitnesses[count] = (fitness);
+            count++;
+        }
+
+        fitnesses = sigmaScale(fitnesses);  //Apply sigma scaling
+
+        for (double f : fitnesses) {
+            sum += f;                                     ;
+            weights.add(f);
+        }
+
+        //Get individual weights
+        for (int i = 0; i < weights.size(); i++) { 
+            weights.set(i, weights.get(i) / sum);
+        }
+        //System.out.println(weights);
         return weights;
     }
 
@@ -278,7 +308,7 @@ public class GeneticAlgorithm {
 
     /**
      * Performs a sigma scale
-     * on a given fitness
+     * on an array of fitnesses
      * @param fitnesses Array of fitnesses
      * @return
      */
@@ -301,12 +331,19 @@ public class GeneticAlgorithm {
     return sum / fitnesses.length;
     }
 
-    private double calculateStandardDeviation(double[] fitnesses, double mean) {
+    /**
+     * Calculate the standard deviation 
+     * of fitnesses in a population
+     * @param fitnesses
+     * @param mean
+     * @return Standard deviation
+     */
+    private static double calculateStandardDeviation(double[] fitnesses, double mean) {
         double sd = 0.0;
         for (double f : fitnesses) {
             sd += Math.pow((f - mean), 2);
         }
-
-        return sd / fitnesses.length;
+        sd = Math.sqrt((sd / (fitnesses.length - 1)));
+        return sd;
     }
 }
