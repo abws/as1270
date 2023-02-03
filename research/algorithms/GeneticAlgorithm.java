@@ -2,18 +2,21 @@ package research.algorithms;
 
 import java.util.*;
 
+import javax.swing.Popup;
+
 import research.problems.ProblemGA;
 
 public class GeneticAlgorithm {
     private ProblemGA problem;
     private final int POP_SIZE = 10;
-    private final double MUT_RATE = 0.1;    
-    private final double CROSSOVER_RATE = 0.9;
+    private final double MUT_RATE = 0.03;    
+    private final double CROSSOVER_RATE = 0.7;
     private final int GENERATIONS = 100;
     private final int C = 2; //constant for sigma scaling
     private int TURBINES;;
     private int INDIV_LENGTH;
     private double[] lastFitness; //the fitness of the most recent population
+    private ArrayList<String> CURRENT_POPULATION;
 
     //private static double Math.random() = Math.random();
 
@@ -25,8 +28,8 @@ public class GeneticAlgorithm {
         ArrayList<String> population = problem.getRandomPopulation(POP_SIZE, INDIV_LENGTH, TURBINES);
 
         for (int i = 0; i < GENERATIONS; i++) {
-            System.out.println(maxFitness(population));
-            ArrayList<Double> weights = calculateWindowedWeights(population);
+            System.out.println(avgFitness(population) +"   -----> (max):  "+ maxFitness(population));
+            ArrayList<Double> weights = calculateRankedWeights(population);
             population = reproduce(population, weights);
         }
 
@@ -92,6 +95,25 @@ public class GeneticAlgorithm {
         return weights;
     }
 
+    public ArrayList<Double> calculateRankedWeights(ArrayList<String> population) {
+        ArrayList<Double> weights = new ArrayList<>();
+        TreeMap<Double, String> fitnessMapping = new TreeMap<>();
+
+        //Get total sum and store fitnesses
+        for (String individual : population) { 
+            double fitness = problem.evaluate(individual);
+            fitnessMapping.put(fitness, individual);
+        }
+        Collection<String> values = fitnessMapping.values();
+        CURRENT_POPULATION = new ArrayList<String>(values); //ordered the same as the weight now
+
+        for (int i = 0; i < fitnessMapping.size(); i++ ) {
+            double weight = (((2 * i * (C - 1)) / (double) (POP_SIZE * (POP_SIZE - 1)))); // formula for calulating selection probability using linear selection
+            weights.add(weight);
+        }
+        return weights;
+    }
+
     /**
      * Function for managing last
      * three operations:
@@ -102,7 +124,7 @@ public class GeneticAlgorithm {
      */
     private ArrayList<String> reproduce(ArrayList<String> population, ArrayList<Double> weights) {
         //parent selection
-        ArrayList<String> matingPool = rouletteSelection(population, weights, POP_SIZE);
+    ArrayList<String> matingPool = rouletteSelection(CURRENT_POPULATION, weights, POP_SIZE); //CHANGE TO NORMAL POPULATION LATER OR USE THE GLOBAL PASS ALONGER
  
 
         //crossover
@@ -237,7 +259,7 @@ public class GeneticAlgorithm {
      * Calculautes the maximum fitness of
      * a population. Becareful! It should only
      * be used at the end of the algorithm, and even
-     * then we can calulate 
+     * then we can calulate, soon make use of ATTRIBUTE LAST FITNESS AFTER WE MAKE INDIV CLASS
      * @param population
      * @return
      */
@@ -249,7 +271,15 @@ public class GeneticAlgorithm {
         }
 
         return maxFitness;
+    }
 
+    private double avgFitness(ArrayList<String> population) {
+        double sum = 0.0;
+        for (String n : population) {
+            double fitness = problem.evaluate(n);
+            sum += fitness;
+        }
+        return sum / population.size();
     }
 
     /**
