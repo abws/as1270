@@ -13,7 +13,7 @@ public class GeneticAlgorithm {
     private final double CROSSOVER_RATE = 0.7;
     private final int GENERATIONS = 100;
     private final int C = 2; //constant for sigma scaling
-    private int TURBINES;;
+    private int TURBINES;
     private int INDIV_LENGTH;
     private double[] lastFitness; //the fitness of the most recent population
     private ArrayList<String> CURRENT_POPULATION;
@@ -246,7 +246,7 @@ public class GeneticAlgorithm {
 
         for (int i = 0; i < INDIV_LENGTH; i++) {
             if (Math.random() < MUT_RATE) {
-                char bit = (ind.charAt(i) == '1') ? '0' : '1'; //flips the bit
+                char bit = (ind.charAt(i) == '1') ? '0' : '1'; //flips the bit, //could use XOR
                 sb.append(bit);
             }
             else sb.append(ind.charAt(i));  //else add the bit as it is
