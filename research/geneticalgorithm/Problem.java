@@ -20,14 +20,16 @@ public class Problem {
     public int INDIV_LENGTH;
     public int N_TURBINES;
     public int POP_SIZE;
+    public int GENERATIONS;
 
 
-    public Problem(KusiakLayoutEvaluator evaluator, WindScenario scenario, int populationSize) throws Exception {
+    public Problem(KusiakLayoutEvaluator evaluator, WindScenario scenario, int populationSize, int generations) throws Exception {
         this.scenario = scenario;
         this.evaluator = evaluator;
         INDIV_LENGTH = this.getStringLength();
         N_TURBINES = scenario.nturbines;
         POP_SIZE = populationSize;
+        GENERATIONS = generations;
     }
 
     public double evaluate(Object individual) {
