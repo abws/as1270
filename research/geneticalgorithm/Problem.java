@@ -125,12 +125,21 @@ public class Problem {
      */
     public int[][] gridifyAlternate(String ind, int x, int y) {
         int[][] grid = new int[y][x]; //[rows][columns] since rows are 'bigger' and classified by first
-        int count = 0;
+        int pos = 0;
 
         for (int i = 0; i < y; i ++) {
-            for (int j = 0; j < x; j++) { //this part must go down for i % 2 == 0
-                grid[i][j] = Character.getNumericValue(ind.charAt(count));
-                count++;
+
+            switch (i % 2) {
+                case 0:
+                    for (int j = 0; j < x; j++) { //this part must go down for i % 2 == 0
+                        grid[i][j] = Character.getNumericValue(ind.charAt(pos));
+                        pos++;
+                    }
+                case 1:
+                    for (int j = x; j > 0; j--) { 
+                        grid[i][j] = Character.getNumericValue(ind.charAt(pos)); //we start from the right and fill in from the left now
+                        pos++;
+                    }
             }
         }
 

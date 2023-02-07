@@ -63,6 +63,7 @@ public class ParentSelection {
             }
             matingPool.add(tournament(candidates, indexes));
         }
+        return matingPool;
     }
 
 
