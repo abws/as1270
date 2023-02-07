@@ -64,6 +64,24 @@ public class Recombination {
         return offSpring;
     }
 
+    public ArrayList<String> recombineUniformt(ArrayList<String> matingPool, int offspringSize, int p) {
+        //crossover
+        ArrayList<String> offSpring = new ArrayList<>();
+        while (offSpring.size() < offspringSize) {
+
+            //Select a random pair of parents
+            Random r = new Random();
+            String parent1; String parent2;
+            parent1 = matingPool.get(r.nextInt( offspringSize)); parent2 = matingPool.get(r.nextInt(offspringSize));
+
+            //Crossover at rate 0.7
+            if (Math.random() < CROSSOVER_RATE) {
+                offSpring.addAll(uniformCrossover(parent1, parent2, p));
+            }
+        }
+        return offSpring;
+    }
+
     /**
      * Recombination operator 
      * (2 parents)
@@ -86,41 +104,62 @@ public class Recombination {
     }
 
     /**
-     * Recombination operator 
-     * (2 parents)
-     * (2 children)
+     * N-point crossover.
+     * Crosses over two parents
+     * at n points and creates
+     * two children
      * @param parent1
      * @param parent2
+     * @param n
      * @return
      */
-    public ArrayList<String> nPointCrossover(String parent1, String parent2, int n) {
+    public static ArrayList<String> nPointCrossover(String parent1, String parent2, int n) {
         Random r = new Random();
-        n = Math.min(n, INDIV_LENGTH); //make sure n never overflows
-        ArrayList<Integer> crossoverPoints = new ArrayList<>();
+        n = Math.min(n, 9); //make sure n never overflows
+        ArrayList<Integer> crossoverPoints = new ArrayList<>(Arrays.asList(0));
         ArrayList<String> offSpring = new ArrayList<String>();
 
         StringBuilder child1 = new StringBuilder(parent1);
         StringBuilder child2 = new StringBuilder(parent2);
 
-        while (crossoverPoints.size() < n) {
-            int cp = r.nextInt(INDIV_LENGTH - 1) + 1;
+        while (crossoverPoints.size() < n+1) { //since 0 is already contained, we want to 'ignore' it
+            int cp = r.nextInt(10 - 1) + 1;
             if (!crossoverPoints.contains(cp)) crossoverPoints.add(cp);
         }
 
+        Collections.sort(crossoverPoints);
+
+        if (n % 2 == 0) crossoverPoints.add(10); //so we can wrap to the end. use INDIV_LENGHTH
         System.out.println(crossoverPoints);
 
-        Collections.sort(crossoverPoints);
-        int x = 0;
-        for (int point : crossoverPoints) {
-            child1.replace(x, point, child2.substring(x, point));
-            child2.replace(x, point, child1.substring(x, point));
-            x = point;                                              //shift to the last point. note, point will contain something else in the next run
+        int lower, upper;
+
+        for (int i = 1; i < crossoverPoints.size(); i+=2) {
+            lower = crossoverPoints.get(i - 1);
+            upper = crossoverPoints.get(i); //account for i and i+1 here so no need to loop n times 
+
+            String temp = child1.substring(lower, upper); //save here since child1 is about to change for good
+
+            child1.replace(lower, upper, child2.substring(lower, upper));
+            child2.replace(lower, upper, temp);
         }
+        
         offSpring.addAll(Arrays.asList(child1.toString(), child2.toString()));
         return offSpring;
     }
 
-    public ArrayList<String> uniformCrossover(String parent1, String parent2, int p) {
+    /**
+     * Uniform crossover.
+     * Crosses over two parents
+     * bitwise, where the child takes
+     * a bit from either either parent
+     * with probability 0.5
+     * @param parent1
+     * @param parent2
+     * @param p
+     * @return
+     */
+    public ArrayList<String> uniformCrossover(String parent1, String parent2, int p) { //probably better for wflop, since we want to decrease positional bias (due to crowding)
         double[] randomVariables = new double[INDIV_LENGTH];
         IntStream.range(0, randomVariables.length).forEach(i -> randomVariables[i] = Math.random());
 
@@ -132,11 +171,11 @@ public class Recombination {
             if (randomVariables[i] < p) child1.append(parent1.charAt(i));
             else child1.append(parent2.charAt(i));
         }
-        String child2 = child1.toString().replace('0', 'a').replace('1', '0').replace('a', '1');
+        String child2 = child1.toString().replace('0', 'a').replace('1', '0').replace('a', '1'); //find a more mathematical way of doing this 
 
         offSpring.addAll(Arrays.asList(child1.toString(), child2.toString()));
         return offSpring;
-        }
+    }
 
     
 }

@@ -19,14 +19,9 @@ public class Main {
         Problem p = new Problem(evaluator, ws, 10, 10);        
         Recombination r = new Recombination(p);
 
-        //ArrayList<String> test = nPointCrossover("1011110011", "1010110011", 1);
+        ArrayList<String> test = nPointCrossover("0000000000", "1111111111", 8);
+        System.out.println(test);
 
-        double[] randomVariables = new double[5];
-        IntStream.range(0, randomVariables.length).forEach(i -> randomVariables[i] = Math.random());
-
-        System.out.println(Arrays.toString(randomVariables));
-        //System.out.println(test);
-        
     }
 
         /**
@@ -39,7 +34,7 @@ public class Main {
      */
     public static ArrayList<String> nPointCrossover(String parent1, String parent2, int n) {
         Random r = new Random();
-        n = Math.min(n, 10); //make sure n never overflows
+        n = Math.min(n, 9); //make sure n never overflows
         ArrayList<Integer> crossoverPoints = new ArrayList<>(Arrays.asList(0));
         ArrayList<String> offSpring = new ArrayList<String>();
 
@@ -51,19 +46,21 @@ public class Main {
             if (!crossoverPoints.contains(cp)) crossoverPoints.add(cp);
         }
 
+        Collections.sort(crossoverPoints);
+
+        if (n % 2 == 0) crossoverPoints.add(10); //so we can wrap to the end. use INDIV_LENGHTH
         System.out.println(crossoverPoints);
 
-        Collections.sort(crossoverPoints);
-        int lower = 0;
-        int upper = crossoverPoints.get(0);
+        int lower, upper;
 
-        for (int i = 3; i < crossoverPoints.size(); i+=2) {
+        for (int i = 1; i < crossoverPoints.size(); i+=2) {
+            lower = crossoverPoints.get(i - 1);
+            upper = crossoverPoints.get(i); //account for i and i+1 here so no need to loop n times 
+
             String temp = child1.substring(lower, upper); //save here since child1 is about to change for good
 
             child1.replace(lower, upper, child2.substring(lower, upper));
             child2.replace(lower, upper, temp);
-            lower = crossoverPoints.get(i - 1);
-            upper = crossoverPoints.get(i); //account for i and i+1 here so no need to loop n times 
         }
         
         offSpring.addAll(Arrays.asList(child1.toString(), child2.toString()));
@@ -71,12 +68,6 @@ public class Main {
     }
 
     
-
-    public void uniformCrossover(String parent1, String parent2, int n) {
-        double[] randomVariables = new double[5];
-        Arrays.fill(randomVariables, Math.random());
-        System.out.println(Arrays.toString(randomVariables));
-    }
     
     
 }
