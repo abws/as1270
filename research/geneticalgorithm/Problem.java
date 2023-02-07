@@ -16,20 +16,20 @@ import research.api.java.*;
 public class Problem {
     private KusiakLayoutEvaluator evaluator;
     private WindScenario scenario;
+    
+    public ArrayList<Double> populationFitness; //last generations population fitness, measured after survival selector done
 
     public int INDIV_LENGTH;
     public int N_TURBINES;
     public int POP_SIZE;
-    public int GENERATIONS;
 
 
-    public Problem(KusiakLayoutEvaluator evaluator, WindScenario scenario, int populationSize, int generations) throws Exception {
+    public Problem(KusiakLayoutEvaluator evaluator, WindScenario scenario, int populationSize) throws Exception {
         this.scenario = scenario;
         this.evaluator = evaluator;
         INDIV_LENGTH = this.getStringLength();
         N_TURBINES = scenario.nturbines;
         POP_SIZE = populationSize;
-        GENERATIONS = generations;
     }
 
     public double evaluate(Object individual) {
@@ -261,4 +261,50 @@ public class Problem {
         }
         return count;
     }
+
+    /**
+     * After survival selection, it must call this function
+     * @param population
+     * @return
+     */
+    public ArrayList<Double> calulateFitnesses(ArrayList<String> population) {
+        ArrayList<Double> fitnesses = new ArrayList<Double>();
+
+        //Get total sum and store fitnesses
+        for (String individual : population) { 
+            double fitness = evaluate(individual);
+            fitnesses.add(fitness);
+        }
+        this.populationFitness = fitnesses;
+
+        return fitnesses;
+
+    }
+    /**
+     * Calculautes the maximum fitness of
+     * a population. Becareful! It should only
+     * be used at the end of the algorithm, and even
+     * then we can calulate, soon make use of ATTRIBUTE LAST FITNESS AFTER WE MAKE INDIV CLASS
+     * @param population
+     * @return
+     */
+    public double maxFitness(ArrayList<String> population) {
+        double maxFitness = 0.0;
+        for (String n : population) {
+            double fitness = evaluate(n);
+            if (fitness > maxFitness) maxFitness = fitness;
+        }
+
+        return maxFitness;
+    }
+
+    public double avgFitness(ArrayList<String> population) {
+        double sum = 0.0;
+        for (String n : population) {
+            double fitness = evaluate(n);
+            sum += fitness;
+        }
+        return sum / population.size();
+    }
+
 }

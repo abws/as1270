@@ -19,13 +19,14 @@ import java.util.stream.IntStream;
  */
 public class Recombination {
     private Problem problem;
-    public int CROSSOVER_RATE;
+    public double CROSSOVER_RATE;
     public int INDIV_LENGTH;
 
 
-    Recombination(Problem problem) {
+    Recombination(Problem problem, double crossoverRate) {
         this.problem = problem;
         this.INDIV_LENGTH = problem.INDIV_LENGTH;
+        this.CROSSOVER_RATE = crossoverRate;
     }
 
     public ArrayList<String> recombineOnePoint(ArrayList<String> matingPool, int offspringSize) {
@@ -64,7 +65,7 @@ public class Recombination {
         return offSpring;
     }
 
-    public ArrayList<String> recombineUniformt(ArrayList<String> matingPool, int offspringSize, int p) {
+    public ArrayList<String> recombineUniform(ArrayList<String> matingPool, int offspringSize, double p) {
         //crossover
         ArrayList<String> offSpring = new ArrayList<>();
         while (offSpring.size() < offspringSize) {
@@ -113,9 +114,9 @@ public class Recombination {
      * @param n
      * @return
      */
-    public static ArrayList<String> nPointCrossover(String parent1, String parent2, int n) {
+    public ArrayList<String> nPointCrossover(String parent1, String parent2, int n) {
         Random r = new Random();
-        n = Math.min(n, 9); //make sure n never overflows
+        n = Math.min(n, INDIV_LENGTH - 1); //make sure n never overflows
         ArrayList<Integer> crossoverPoints = new ArrayList<>(Arrays.asList(0));
         ArrayList<String> offSpring = new ArrayList<String>();
 
@@ -123,14 +124,13 @@ public class Recombination {
         StringBuilder child2 = new StringBuilder(parent2);
 
         while (crossoverPoints.size() < n+1) { //since 0 is already contained, we want to 'ignore' it
-            int cp = r.nextInt(10 - 1) + 1;
+            int cp = r.nextInt(INDIV_LENGTH - 1) + 1;
             if (!crossoverPoints.contains(cp)) crossoverPoints.add(cp);
         }
 
         Collections.sort(crossoverPoints);
 
-        if (n % 2 == 0) crossoverPoints.add(10); //so we can wrap to the end. use INDIV_LENGHTH
-        System.out.println(crossoverPoints);
+        if (n % 2 == 0) crossoverPoints.add(INDIV_LENGTH); //so we can wrap to the end
 
         int lower, upper;
 
@@ -159,7 +159,7 @@ public class Recombination {
      * @param p
      * @return
      */
-    public ArrayList<String> uniformCrossover(String parent1, String parent2, int p) { //probably better for wflop, since we want to decrease positional bias (due to crowding)
+    public ArrayList<String> uniformCrossover(String parent1, String parent2, double p) { //probably better for wflop, since we want to decrease positional bias (due to crowding)
         double[] randomVariables = new double[INDIV_LENGTH];
         IntStream.range(0, randomVariables.length).forEach(i -> randomVariables[i] = Math.random());
 

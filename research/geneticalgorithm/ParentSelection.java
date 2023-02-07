@@ -57,14 +57,11 @@ public class ParentSelection {
 
     public ArrayList<Double> calculateWeights(ArrayList<String> population) {
         double sum = 0;
-        ArrayList<Double> weights = new ArrayList<>();
-        //lastFitness = new double[population.size()];    //refreshed for every new population WILL NEED A LONG TERM PLAN FOR THIS (FOR LATER OPERATORS .in fact ill take it out now - it should be only for the end (after the generation ends) - make an interface like individual later so value is only calculated once !!! - efficiency)
+        ArrayList<Double> weights = problem.populationFitness;
 
         //Get total sum and store fitnesses
-        for (String individual : population) { 
-            double fitness = problem.evaluate(individual);
+        for (double fitness : weights) { 
             sum += fitness;
-            weights.add(fitness);
         }
 
         //Get individual weights
@@ -78,20 +75,13 @@ public class ParentSelection {
     public ArrayList<Double> calculateSigmaWeights(ArrayList<String> population, double c) {
         double sum = 0;
         ArrayList<Double> weights = new ArrayList<>();
-        double[] fitnesses = new double[population.size()];
-        int count = 0;
-
-        //Store fitnesses
-        for (String individual : population) { 
-            double fitness = problem.evaluate(individual);
-            fitnesses[count] = (fitness);
-            count++;
-        }
+        ArrayList<Double> populationFitnesses = problem.populationFitness;
+        double[] fitnesses = populationFitnesses.stream().mapToDouble(Double::doubleValue).toArray();
 
         fitnesses = sigmaScale(fitnesses, c);  //Apply sigma scaling
 
         for (double f : fitnesses) {
-            sum += f;                                     ;
+            sum += f;                                     
             weights.add(f);
         }
 
@@ -107,10 +97,12 @@ public class ParentSelection {
         TreeMap<Double, String> fitnessMapping = new TreeMap<>();
         int popSize = problem.POP_SIZE;
 
+        ArrayList<Double> populationFitnesses = problem.populationFitness;
+        double[] fitnesses = populationFitnesses.stream().mapToDouble(Double::doubleValue).toArray(); //performance, apparently
+
         //Get total sum and store fitnesses
-        for (String individual : population) { 
-            double fitness = problem.evaluate(individual);
-            fitnessMapping.put(fitness, individual);
+        for (int i = 0; i < population.size(); i++) { 
+            fitnessMapping.put(fitnesses[i], population.get(i));
         }
         Collection<String> values = fitnessMapping.values();
         population = new ArrayList<String>(values); //ordered the same as the weight now
