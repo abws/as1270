@@ -11,7 +11,7 @@ import research.api.java.*;
  * Contains any intitialization parameters and any 
  * extra things needed by the Simple Genetic Algorithm
  * @author Abdiwahab Salah
- * @version 05.02.23
+ * @version 07.02.23
  */
 public class Problem {
     private KusiakLayoutEvaluator evaluator;
@@ -101,6 +101,34 @@ public class Problem {
 
         for (int i = 0; i < y; i ++) {
             for (int j = 0; j < x; j++) {
+                grid[i][j] = Character.getNumericValue(ind.charAt(count));
+                count++;
+            }
+        }
+
+        return grid;
+    }
+
+    /**
+     * Gridifies a string but with the knowledge
+     * that we're dealing with a wind farm. Hence 
+     * interpreting a string of 0s and 1s would be 
+     * best if we could keep the spacial structure and
+     * characteristics of the farm intact. Hence, by alternating,
+     * close crowded 1s in the string are crowded in the grid.
+     * @Useful for when we apply heuristics to the strings
+     * @param ind The string to be gridified
+     * @param x The width of the grid
+     * @param y The height of the grid
+     * @return A two-dimensional array representing the grid
+     * NOT COMPLETE
+     */
+    public int[][] gridifyAlternate(String ind, int x, int y) {
+        int[][] grid = new int[y][x]; //[rows][columns] since rows are 'bigger' and classified by first
+        int count = 0;
+
+        for (int i = 0; i < y; i ++) {
+            for (int j = 0; j < x; j++) { //this part must go down for i % 2 == 0
                 grid[i][j] = Character.getNumericValue(ind.charAt(count));
                 count++;
             }
