@@ -2,12 +2,9 @@ package research.geneticalgorithm;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Random;
 import java.util.TreeMap;
 
-import javax.print.attribute.HashAttributeSet;
 
 /**
  * Responsible for providing parent selection
@@ -61,6 +58,7 @@ public class ParentSelection {
                 candidates[i] = population.get(index);
                 //candidates.put(index, population.get(index)); //some high level thinking going on here
             }
+            //System.out.println(Arrays.toString(candidates) + " \n" + Arrays.toString(indexes));
             matingPool.add(tournament(candidates, indexes));
         }
         return matingPool;
@@ -157,14 +155,14 @@ public class ParentSelection {
         return new Object[] {population, weights};
     }
 
-    public String tournament(String[] candidates, int[] indexes) { //integer is the individuals' position in the fitness array
+    private String tournament(String[] candidates, int[] indexes) { //integer is the individuals' position in the fitness array
         ArrayList<Double> fitnesses = problem.populationFitness;
         //candidates.values().iterator().next();
         double max = fitnesses.get(indexes[0]).doubleValue();
         String best = candidates[0];
 
-        for (int i : indexes) {
-            double current = fitnesses.get(i);
+        for (int i = 1; i < indexes.length; i++) {
+            double current = fitnesses.get(indexes[i]);
             if (current > max) {
                 max = current;
                 best = candidates[i];

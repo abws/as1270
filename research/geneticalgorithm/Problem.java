@@ -11,14 +11,11 @@ import research.api.java.*;
  * Contains any intitialization parameters and any 
  * extra things needed by the Simple Genetic Algorithm
  * @author Abdiwahab Salah
- * @version 07.02.23
+ * @version 08.02.23
  */
 public class Problem {
     private KusiakLayoutEvaluator evaluator;
     private WindScenario scenario;
-    
-    public ArrayList<Double> populationFitness; //last generations population fitness, measured after survival selector done
-
     public int INDIV_LENGTH;
     public int N_TURBINES;
     public int POP_SIZE;
@@ -27,12 +24,14 @@ public class Problem {
     public Problem(KusiakLayoutEvaluator evaluator, WindScenario scenario, int populationSize) throws Exception {
         this.scenario = scenario;
         this.evaluator = evaluator;
+
+        //Commonly used
         INDIV_LENGTH = this.getStringLength();
         N_TURBINES = scenario.nturbines;
         POP_SIZE = populationSize;
     }
 
-    public double evaluate(Object individual) {
+    public double evaluate(String individual) {
         double[][] phenotype = decode(individual);
         double fitness = evaluator.evaluate_2014(phenotype);
 
@@ -47,13 +46,13 @@ public class Problem {
      * @return A two-dimensional array representing the grid as turbine coordinates
      * Tested
      */
-    public double[][] decode(Object individual) {
+    public double[][] decode(String individual) {
         double minDist = 8 * scenario.R;
 
         int columns = (int) (scenario.width / minDist);
         int rows = (int) (scenario.height / minDist);
 
-        int[][] gridIndividual = gridify((String) individual, columns, rows);
+        int[][] gridIndividual = gridify(individual, columns, rows);
 
         double[][] layout = new double [scenario.nturbines][2];
         int count = 0;
@@ -151,20 +150,21 @@ public class Problem {
      * @param popSize
      * @param bits
      * @return Random population
-     * Tested
      */
-    public ArrayList<String> getRandomPopulation(int popSize, int bits) {
+    public ArrayList<Individual> getRandomPopulation(int popSize, int bits) {
         Random rand = new Random();
-        ArrayList<String> population = new ArrayList<String>();
+        ArrayList<Individual> population = new ArrayList<>();
 
         for (int i = 0; i < popSize; i++) {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder indivArray = new StringBuilder();
 
             for (int j = 0; j < bits; j++) {
                 char bit = (char) ((rand.nextBoolean()) ? '1': '0');   
-                sb.append(bit);
+                indivArray.append(bit);
             }
-            population.add(sb.toString());
+            Individual individual = new Individual(indivArray.toString(), this, true);
+
+            population.add(individual);
         }
 
         return population;
@@ -178,9 +178,9 @@ public class Problem {
      * @return Random population
      * Tested
      */
-    public ArrayList<String> getRandomPopulation(int popSize, int bits, int turbines) {
+    public ArrayList<Individual> getRandomPopulation(int popSize, int bits, int turbines) {
         Random rand = new Random();
-        ArrayList<String> population = new ArrayList<String>();
+        ArrayList<Individual> population = new ArrayList<>();
 
         for (int i = 0; i < popSize; i++) {
             int[] indivArray = new int[bits];
@@ -195,7 +195,8 @@ public class Problem {
                 indivArray[randPosition] = 1;
             }
 
-            String individual = createString(indivArray);
+            String value = createString(indivArray);
+            Individual individual = new Individual(value, this, true);
             population.add(individual);
         }
         return population;
@@ -205,6 +206,11 @@ public class Problem {
         return this.scenario;
     }
 
+    /**
+     * Calculates how many bits 
+     * are needed to represent the wind farm
+     * @return
+     */
     public int getStringLength() {
         double minDist = 8 * scenario.R;
 
@@ -221,17 +227,22 @@ public class Problem {
         return sb.toString();
     }
 
+    /**
+     * Calculates the mean from an array of means
+     * @param fitnesses
+     * @return
+     */
     public double calculateMean(double[] fitnesses) {
         double sum = 0.0;
         for (double f : fitnesses) {
             sum+=f;
         }
-    return sum / fitnesses.length;
+        return sum / fitnesses.length;
     }
 
     /**
      * Calculate the standard deviation 
-     * of fitnesses in a population
+     * of an array of fitnesses
      * @param fitnesses
      * @param mean
      * @return Standard deviation
@@ -245,22 +256,24 @@ public class Problem {
         return sd;
     }
 
-        /**
+    /**
      * Repair operator.
      * Shoots randomly at the farm
-     * and eliminates as many turbines as specified
+     * and eliminates or introduces 
+     * as many turbines as needed.
      * @param pop
      * @return
      */
-    public ArrayList<String> legalise(ArrayList<String> pop) {
+    public ArrayList<Individual> legalise(ArrayList<Individual> pop) {
         Random r = new Random();
-        ArrayList<String> cleanPop = new ArrayList<>();
+        ArrayList<Individual> cleanPop = new ArrayList<>();
 
         for (int i = 0; i < pop.size(); i++) {
-            String indiv = pop.get(i);
-            StringBuilder sb = new StringBuilder(indiv);
+            Individual individual = pop.get(i);
+            String value = pop.get(i).getValue();
+            StringBuilder sb = new StringBuilder(value);
 
-            int turbineCount = countTurbines(indiv);
+            int turbineCount = countTurbines(value);
             int difference = turbineCount - N_TURBINES;
             
             while (difference > 0) {    //we have too many turbines
@@ -268,7 +281,6 @@ public class Problem {
                 Character c = sb.charAt(position);
                 if (c == '1') {
                     sb.setCharAt(position, '0');
-                    
                     difference--;
                 }
             }
@@ -280,7 +292,8 @@ public class Problem {
                     difference++;
                 }
             }
-            cleanPop.add(sb.toString());
+            individual.setValue(value);
+            cleanPop.add(individual);
         }
         return cleanPop;
     }
@@ -288,35 +301,51 @@ public class Problem {
     /**
      * Counts the number of
      * turbines in a state
-     * @param ind
+     * @param value 
      * @return
      */
-    public int countTurbines(String ind) {
+    public int countTurbines(String value) {
         int count = 0;
-        for (int i = 0; i < ind.length(); i++) {
-            if (ind.charAt(i) == '1') count++;
+        for (int i = 0; i < value.length(); i++) {
+            if (value.charAt(i) == '1') count++;
         }
         return count;
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     /**
-     * After survival selection, it must call this function
+     * Generates an array of
+     * fitnesses without 
      * @param population
      * @return
      */
-    public ArrayList<Double> calulateFitnesses(ArrayList<String> population) {
-        ArrayList<Double> fitnesses = new ArrayList<Double>();
+    public double[] calulateFitnesses(ArrayList<Individual> population) {
+        double[] fitnesses = new double[population.size()];
 
         //Get total sum and store fitnesses
-        for (String individual : population) { 
-            double fitness = evaluate(individual);
-            fitnesses.add(fitness);
+        for (int i = 0; i < fitnesses.length; i++) {
+            Individual individual = population.get(i);
+            double fitness = individual.getFitness();
+            fitnesses[i] = fitness;
         }
-        this.populationFitness = fitnesses;
 
         return fitnesses;
 
     }
+
     /**
      * Calculautes the maximum fitness of
      * a population. Becareful! It should only

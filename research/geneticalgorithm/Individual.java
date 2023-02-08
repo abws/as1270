@@ -6,23 +6,31 @@ package research.geneticalgorithm;
  * @version 05.02.23
  */
 public class Individual {
-    public String VALUE;
+    public String value;
     public double fitness;
+
     public Problem problem;
 
 
     Individual(String value, Problem problem, boolean wantsFitness) {
-        this.VALUE = value;
-        fitness = (wantsFitness) ? setFitness() : 0;
+        this.value = value;
+        fitness = (wantsFitness) ? getFitness() : 0;
     }
 
+    public String getValue() {
+        return this.value;
+    }
+
+    public void setValue(String value){
+        this.value = value;
+    }
+    
     public void updateFitness() {
-        this.fitness = problem.evaluate(VALUE);
+        this.fitness = problem.evaluate(value);
     }
-    
 
-
-
-
-    
+    public double getFitness() {
+        double fitness = problem.evaluate(value);
+        return fitness;
+    }    
 }

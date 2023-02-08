@@ -20,7 +20,7 @@ public class Main {
         
 
 
-        System.out.println(GeneticAlgorithm.run(problem, 50, 10));
+        System.out.println(GeneticAlgorithm.run(problem, 100, 10));
 
     }
 
