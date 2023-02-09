@@ -15,7 +15,8 @@ public class Individual {
 
     Individual(String value, Problem problem, boolean wantsFitness) {
         this.value = value;
-        fitness = (wantsFitness) ? getFitness() : 0;
+        this.problem = problem;
+        fitness = (wantsFitness) ? problem.evaluate(value) : 0; //called
     }
 
     public String getValue() {
@@ -30,17 +31,16 @@ public class Individual {
         return this.weight;
     }
 
-    public void setWeight(double weight){
+    public void setWeight(double weight){ 
         this.weight = weight;
     }
 
     
-    public void updateFitness() {
+    public void updateFitness() { //called
         this.fitness = problem.evaluate(value);
     }
 
     public double getFitness() {
-        double fitness = problem.evaluate(value);
-        return fitness;
+        return this.fitness;
     }    
 }

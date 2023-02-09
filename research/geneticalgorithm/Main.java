@@ -1,11 +1,5 @@
 package research.geneticalgorithm;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Random;
-import java.util.stream.IntStream;
-
 import research.api.java.KusiakLayoutEvaluator;
 import research.api.java.WindScenario;
 
@@ -17,10 +11,10 @@ public class Main {
         evaluator.initialize(ws);
         Problem problem = new Problem(evaluator, ws, 10);
 
-        
+        //List<String> values = output.stream().map(Individual::getValue).collect(Collectors.toList());
+    
 
-
-        System.out.println(GeneticAlgorithm.run(problem, 100, 10));
+        GeneticAlgorithm.run(problem, 100, 10);
 
     }
 

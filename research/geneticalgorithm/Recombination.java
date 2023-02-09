@@ -48,7 +48,7 @@ public class Recombination {
         return offSpring;
     }
 
-    public List<Individual> recombineNPoint(ArrayList<Individual> matingPool, int offspringSize, int n) {
+    public List<Individual> recombineNPoint(List<Individual> matingPool, int offspringSize, int n) {
         //crossover
         List<Individual> offSpring = new ArrayList<>();
         while (offSpring.size() < offspringSize) {

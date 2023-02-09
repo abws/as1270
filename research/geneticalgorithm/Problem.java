@@ -292,7 +292,7 @@ public class Problem {
                     difference++;
                 }
             }
-            individual.setValue(value);
+            individual.setValue(sb.toString());
             cleanPop.add(individual);
         }
         return cleanPop;
@@ -329,6 +329,7 @@ public class Problem {
         //Get total sum and store fitnesses
         for (int i = 0; i < fitnesses.length; i++) {
             Individual individual = population.get(i);
+            individual.updateFitness();
             double fitness = individual.getFitness();
             fitnesses[i] = fitness;
         }
@@ -346,7 +347,6 @@ public class Problem {
     public double[] getFitnesses(List<Individual> population) {
         double[] fitnesses = new double[population.size()];
 
-        //Get total sum and store fitnesses
         for (int i = 0; i < population.size(); i++) {
             Individual individual = population.get(i);
             double fitness = individual.getFitness();
@@ -354,6 +354,12 @@ public class Problem {
         }
 
         return fitnesses;
+    }
+
+    public void updateAllFitnesses(List<Individual> population) {
+        for (int i = 0; i < population.size(); i++) {
+            population.get(i).updateFitness();
+        }
     }
 
     /**

@@ -1,11 +1,10 @@
 package research.geneticalgorithm;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
-import java.util.TreeMap;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -61,15 +60,17 @@ public class ParentSelection {
      */
     public List<Individual> tournamentSelection(List<Individual> population, int popSize, int k, boolean withoutReplacement) {
         List<Individual> matingPool = new ArrayList<>();
-        List<Individual> candidates = new ArrayList<>();
-        List<Integer> indexes = new ArrayList<>();
+        List<Integer> indexes;
+        List<Individual> candidates;
         Random r = new Random();
         if (withoutReplacement) Math.min(k, popSize); //limit k value or we'll get stuck in foreverness
 
         while (matingPool.size() < popSize) {
+            candidates = new ArrayList<>(); //thanks for garbage collection mr Jaavapius
+            indexes = new ArrayList<>();
             while (candidates.size() < k) { //pick k random individuals
                 int index = r.nextInt(population.size());
-                if (withoutReplacement && indexes.contains(index)) continue;    //skip index if its already contained. here k cannot be greater than popsize
+                if (withoutReplacement && indexes.contains(index)) {continue;}    //skip index if its already contained. here k cannot be greater than popsize
 
                 indexes.add(index);
                 candidates.add(population.get(index));
@@ -168,8 +169,10 @@ public class ParentSelection {
 
     private Individual tournament(List<Individual> candidates) {
         candidates = candidates.stream().sorted(Comparator.comparingDouble(individual -> individual.getFitness())).collect(Collectors.toList());    //sort candidates by fitness
-        
+        // double[] p = problem.getFitnesses(candidates);
+        // System.out.println(Arrays.toString(p));
         Individual best = candidates.get(candidates.size() - 1);
+        // System.out.println(best.getFitness());
 
         return best;
     }
