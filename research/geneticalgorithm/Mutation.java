@@ -1,6 +1,7 @@
 package research.geneticalgorithm;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Mutation {
     private Problem problem;
@@ -14,7 +15,7 @@ public class Mutation {
         this.MUT_RATE = mutRate;
     }
 
-    public ArrayList<String> mutatePopulation(ArrayList<String> offSpring) {
+    public List<Individual> mutatePopulation(List<Individual> offSpring) {
         //mutation
         for (int i = 0; i < offSpring.size(); i++) {
             offSpring.set(i, bitMutation(offSpring.get(i)));    //mutate each individual in the offspring array
@@ -29,17 +30,16 @@ public class Mutation {
      * @param parent2
      * @return
      */
-    private String bitMutation(String ind) {
-        StringBuilder sb = new StringBuilder();
+    private Individual bitMutation(Individual individual) {
+        StringBuilder indivArray = new StringBuilder(individual.getValue());
 
-        for (int i = 0; i < INDIV_LENGTH; i++) {
+        for (int i = 0; i < indivArray.length(); i++) {
             if (Math.random() < MUT_RATE) {
-                char bit = (ind.charAt(i) == '1') ? '0' : '1'; //flips the bit, //could use XOR
-                sb.append(bit);
+                char newChar = indivArray.charAt(i) == '1' ? '0' : '1'; //flips the bit, //could use XOR
+                indivArray.setCharAt(i, newChar);
             }
-            else sb.append(ind.charAt(i));  //else add the bit as it is
         }
-
-        return sb.toString();
+        individual.setValue(indivArray.toString());
+        return individual;
     }
 }

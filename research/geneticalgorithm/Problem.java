@@ -151,9 +151,9 @@ public class Problem {
      * @param bits
      * @return Random population
      */
-    public ArrayList<Individual> getRandomPopulation(int popSize, int bits) {
+    public List<Individual> getRandomPopulation(int popSize, int bits) {
         Random rand = new Random();
-        ArrayList<Individual> population = new ArrayList<>();
+        List<Individual> population = new ArrayList<>();
 
         for (int i = 0; i < popSize; i++) {
             StringBuilder indivArray = new StringBuilder();
@@ -178,13 +178,13 @@ public class Problem {
      * @return Random population
      * Tested
      */
-    public ArrayList<Individual> getRandomPopulation(int popSize, int bits, int turbines) {
+    public List<Individual> getRandomPopulation(int popSize, int bits, int turbines) {
         Random rand = new Random();
-        ArrayList<Individual> population = new ArrayList<>();
+        List<Individual> population = new ArrayList<>();
 
         for (int i = 0; i < popSize; i++) {
             int[] indivArray = new int[bits];
-            ArrayList<Integer> taken = new ArrayList<>();
+            List<Integer> taken = new ArrayList<>();
 
             while (taken.size() < turbines) {
                 int randPosition = rand.nextInt(0, bits);
@@ -264,9 +264,9 @@ public class Problem {
      * @param pop
      * @return
      */
-    public ArrayList<Individual> legalise(ArrayList<Individual> pop) {
+    public List<Individual> legalise(List<Individual> pop) {
         Random r = new Random();
-        ArrayList<Individual> cleanPop = new ArrayList<>();
+        List<Individual> cleanPop = new ArrayList<>();
 
         for (int i = 0; i < pop.size(); i++) {
             Individual individual = pop.get(i);
@@ -314,25 +314,16 @@ public class Problem {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
     /**
      * Generates an array of
-     * fitnesses without 
+     * fitnesses by calling function.
+     * Only call this for the offspring
+     * list after the last operator and before
+     * survivor selection
      * @param population
      * @return
      */
-    public double[] calulateFitnesses(ArrayList<Individual> population) {
+    public double[] calculateFitnesses(List<Individual> population) {
         double[] fitnesses = new double[population.size()];
 
         //Get total sum and store fitnesses
@@ -343,7 +334,45 @@ public class Problem {
         }
 
         return fitnesses;
+    }
 
+
+    /**
+     * Generates an array of
+     * fitnesses without calling function
+     * @param population
+     * @return
+     */
+    public double[] getFitnesses(List<Individual> population) {
+        double[] fitnesses = new double[population.size()];
+
+        //Get total sum and store fitnesses
+        for (int i = 0; i < population.size(); i++) {
+            Individual individual = population.get(i);
+            double fitness = individual.getFitness();
+            fitnesses[i] = fitness;
+        }
+
+        return fitnesses;
+    }
+
+    /**
+     * Generates an array of
+     * fitnesses without calling function
+     * @param population
+     * @return
+     */
+    public List<Double> getFitnessesArrayList(List<Individual> population) {
+        List<Double> fitnesses = new ArrayList<Double>(population.size());
+
+        //Get total sum and store fitnesses
+        for (int i = 0; i < population.size(); i++) {
+            Individual individual = population.get(i);
+            double fitness = individual.getFitness();
+            fitnesses.add(fitness);
+        }
+
+        return fitnesses;
     }
 
     /**
@@ -354,7 +383,7 @@ public class Problem {
      * @param population
      * @return
      */
-    public double maxFitness(ArrayList<String> population) {
+    public double maxFitness(List<String> population) {
         double maxFitness = 0.0;
         for (String n : population) {
             double fitness = evaluate(n);
@@ -364,7 +393,7 @@ public class Problem {
         return maxFitness;
     }
 
-    public double avgFitness(ArrayList<String> population) {
+    public double avgFitness(List<String> population) {
         double sum = 0.0;
         for (String n : population) {
             double fitness = evaluate(n);

@@ -2,8 +2,11 @@ package research.geneticalgorithm;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Random;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 
 /**
@@ -22,47 +25,52 @@ public class ParentSelection {
         this.problem = problem;
     }
 
-    public ArrayList<String> fitnessProportionalSelection(ArrayList<String> population, int populationSize) { //here pop size is for the size of the mating pool
-        ArrayList<Double> weights = calculateWeights(population);
-        ArrayList<String> matingPool = rouletteWheel(population, weights, populationSize);
+    public List<Individual> fitnessProportionalSelection(List<Individual> population, int populationSize) {
+        List<Double> weights = calculateWeights(population);
+        List<Individual> matingPool = rouletteWheel(population, weights, populationSize);
 
         return matingPool;
     }
 
-    public ArrayList<String> fitnessProportionalSigmaSelection(ArrayList<String> population, int populationSize, double sigmaConstant) {
-        ArrayList<Double> weights = calculateSigmaWeights(population, sigmaConstant);
-        ArrayList<String> matingPool = rouletteWheel(population, weights, populationSize);
+    public List<Individual> fitnessProportionalSigmaSelection(List<Individual> population, int populationSize, double sigmaConstant) {
+        List<Double> weights = calculateSigmaWeights(population, sigmaConstant);
+        List<Individual> matingPool = rouletteWheel(population, weights, populationSize);
 
         return matingPool;
     }
 
-    public ArrayList<String> linearRankingSelection(ArrayList<String> population, int populationSize, double constant) {
+    public List<Individual> linearRankingSelection(List<Individual> population, int populationSize, double constant) {
         Object[] pair =  calculateLinearRankedWeights(population, constant);
-        ArrayList<Double> weights =  (ArrayList<Double>)  pair[1];
-        population =  (ArrayList<String>)  pair[0];
-        ArrayList<String> matingPool = rouletteWheel(population, weights, populationSize);
+        List<Double> weights =  (ArrayList<Double>)  pair[1];
+        population =  (ArrayList<Individual>)  pair[0];
+
+        List<Individual> matingPool = rouletteWheel(population, weights, populationSize);
 
         return matingPool;
     }
 
-    public ArrayList<String> tournamentSelection(ArrayList<String> population, int populationSize, int k) {
-        ArrayList<String> matingPool = new ArrayList<>();
+    public List<Individual> tournamentSelection(List<Individual> population, int popSize, int k, boolean withoutReplacement) {
+        List<Individual> matingPool = new ArrayList<>();
+        List<Individual> candidates = new ArrayList<>();
+        List<Integer> indexes = new ArrayList<>();
         Random r = new Random();
-        String[] candidates = new String[k];
-        int[] indexes = new int[k];
-        //LinkedHashMap<Integer, String> candidates = new LinkedHashMap(k); //specifying a capacitiy increases performance
-        while (matingPool.size() < populationSize) {
-            for (int i = 0; i < k; i++) { //pick k random individuals
+        if (withoutReplacement) Math.min(k, popSize); //limit k value
+        
+        while (matingPool.size() < popSize) {
+            while (candidates.size() < k) { //pick k random individuals
                 int index = r.nextInt(population.size());
-                indexes[i] = index;
-                candidates[i] = population.get(index);
-                //candidates.put(index, population.get(index)); //some high level thinking going on here
+                if (withoutReplacement && indexes.contains(index)) continue;    //skip index if its already contained. here k cannot be greater than popsize
+
+                indexes.add(index);
+                candidates.add(population.get(index));
             }
-            //System.out.println(Arrays.toString(candidates) + " \n" + Arrays.toString(indexes));
-            matingPool.add(tournament(candidates, indexes));
+            //after we pick candidates, start tournament
+            matingPool.add(tournament(candidates));
         }
+
         return matingPool;
     }
+
 
 
         
@@ -81,12 +89,16 @@ public class ParentSelection {
      * Tested
      */
 
-    public ArrayList<Double> calculateWeights(ArrayList<String> population) {
+    public List<Double> calculateWeights(List<Individual> population) {
         double sum = 0;
-        ArrayList<Double> weights = problem.populationFitness;
+        double fitness;
+        List<Double> weights = new ArrayList<>(population.size());
 
         //Get total sum and store fitnesses
-        for (double fitness : weights) { 
+        for (Individual i : population) { 
+            fitness = i.getFitness();
+
+            weights.add(fitness);
             sum += fitness;
         }
 
@@ -102,25 +114,24 @@ public class ParentSelection {
      * Calculates the weights after
      * applying sigma scaling
      * @param population
-     * @param c
+     * @param c Sigma constant
      * @return
      */
-    public ArrayList<Double> calculateSigmaWeights(ArrayList<String> population, double c) {
+    public List<Double> calculateSigmaWeights(List<Individual> population, double c) {
         double sum = 0;
-        ArrayList<Double> weights = new ArrayList<>();
-        ArrayList<Double> populationFitnesses = problem.populationFitness;
-        double[] fitnesses = populationFitnesses.stream().mapToDouble(Double::doubleValue).toArray();
+        List<Double> weights = new ArrayList<>();
+        double[] fitnesses = problem.getFitnesses(population);
 
         fitnesses = sigmaScale(fitnesses, c);  //Apply sigma scaling
 
-        for (double f : fitnesses) {
+        for (double f : fitnesses) {    //get sum
             sum += f;                                     
             weights.add(f);
         }
 
         //Get individual weights
         for (int i = 0; i < weights.size(); i++) { 
-            weights.set(i, weights.get(i) / sum);
+            weights.set(i, weights.get(i) / sum); //set that position with whatever thats in it over the sum
         }
         return weights;
     }
@@ -132,42 +143,23 @@ public class ParentSelection {
      * @param c
      * @return
      */
-    public Object[] calculateLinearRankedWeights(ArrayList<String> population, double c) {
-        ArrayList<Double> weights = new ArrayList<>();
-        TreeMap<Double, String> fitnessMapping = new TreeMap<>();
-        int popSize = problem.POP_SIZE;
+    public Object[] calculateLinearRankedWeights(List<Individual> population, double c) {
+        List<Double> weights = new ArrayList<>();
+        int popSize = population.size();
 
-        ArrayList<Double> populationFitnesses = problem.populationFitness;
-        double[] fitnesses = populationFitnesses.stream().mapToDouble(Double::doubleValue).toArray(); //performance, apparently
+        population = population.stream().sorted(Comparator.comparingDouble(individual -> individual.getFitness())).collect(Collectors.toList());    //sort arraylist by fitness
 
-        //Get total sum and store fitnesses
-        for (int i = 0; i < population.size(); i++) { 
-            fitnessMapping.put(fitnesses[i], population.get(i));
-        }
-        Collection<String> values = fitnessMapping.values();
-        population = new ArrayList<String>(values); //ordered the same as the weight now
-
-        for (int i = 0; i < fitnessMapping.size(); i++ ) {
-            double weight = (((2 * i * (c - 1)) / (double) (popSize * (popSize - 1)))); // formula for calulating selection probability using linear selection
+        for (int i = 0; i < population.size(); i++ ) {
+            double weight = (((2 * i * (c - 1)) / (double) (popSize * (popSize - 1)))); // formula for calulating selection probability using linear selection. note: weights will never change. theyre based on ranking and C
             weights.add(weight);
         }
-
         return new Object[] {population, weights};
     }
 
-    private String tournament(String[] candidates, int[] indexes) { //integer is the individuals' position in the fitness array
-        ArrayList<Double> fitnesses = problem.populationFitness;
-        //candidates.values().iterator().next();
-        double max = fitnesses.get(indexes[0]).doubleValue();
-        String best = candidates[0];
-
-        for (int i = 1; i < indexes.length; i++) {
-            double current = fitnesses.get(indexes[i]);
-            if (current > max) {
-                max = current;
-                best = candidates[i];
-            }
-        }
+    private Individual tournament(List<Individual> candidates) {
+        candidates = candidates.stream().sorted(Comparator.comparingDouble(individual -> individual.getFitness())).collect(Collectors.toList());    //sort candidates by fitness
+        
+        Individual best = candidates.get(candidates.size() - 1);
 
         return best;
     }
@@ -183,8 +175,8 @@ public class ParentSelection {
      * @param populationSize
      * @return
      */
-    public ArrayList<String> rouletteWheel(ArrayList<String> population, ArrayList<Double> weights, int n) {
-        ArrayList<String> matingPool = new ArrayList<>();
+    public List<Individual> rouletteWheel(List<Individual> population, List<Double> weights, int n) {
+        List<Individual> matingPool = new ArrayList<>();
 
         while (matingPool.size() < n) {  //Repeat so we select n individuals
             double randomSpin = Math.random();  //This generated a random number from 0-1 (similar to a random spin)
@@ -212,8 +204,8 @@ public class ParentSelection {
      * @param n
      * @return
      */
-    public ArrayList<String> stochasticUniversalSample(ArrayList<String> population, ArrayList<Double> weights, int n) { //n is population size
-        ArrayList<String> matingPool = new ArrayList<>();
+    public List<String> stochasticUniversalSample(List<String> population, List<Double> weights, int n) { //n is population size
+        List<String> matingPool = new ArrayList<>();
         Random rand = new Random();
         double randomSpin = rand.nextDouble(1 / (double) n);
 
