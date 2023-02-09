@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 
 /**
@@ -49,13 +50,22 @@ public class ParentSelection {
         return matingPool;
     }
 
+    /**
+     * 
+     * Without replacement has less vaiance
+     * @param population
+     * @param popSize
+     * @param k
+     * @param withoutReplacement
+     * @return
+     */
     public List<Individual> tournamentSelection(List<Individual> population, int popSize, int k, boolean withoutReplacement) {
         List<Individual> matingPool = new ArrayList<>();
         List<Individual> candidates = new ArrayList<>();
         List<Integer> indexes = new ArrayList<>();
         Random r = new Random();
-        if (withoutReplacement) Math.min(k, popSize); //limit k value
-        
+        if (withoutReplacement) Math.min(k, popSize); //limit k value or we'll get stuck in foreverness
+
         while (matingPool.size() < popSize) {
             while (candidates.size() < k) { //pick k random individuals
                 int index = r.nextInt(population.size());
@@ -199,20 +209,35 @@ public class ParentSelection {
      * the roulette selection algorithm.
      * Represents spinning n equally spaced
      * arms at once, once.
+     * Computationally more efficient
+     * and has less variance than roulette
      * @param population
      * @param weights
      * @param n
      * @return
      */
-    public List<String> stochasticUniversalSample(List<String> population, List<Double> weights, int n) { //n is population size
-        List<String> matingPool = new ArrayList<>();
-        Random rand = new Random();
-        double randomSpin = rand.nextDouble(1 / (double) n);
+    public List<Individual> stochasticUniversalSample(List<Individual> population, List<Double> weights, int n) { //n is population size
+        List<Individual> matingPool = new ArrayList<>();
+        double cumulativeWeight = weights.get(0);   //Represents the starting position of the roulette wheel
+        int index = 0;
 
+        Random rand = new Random();
+        double randomSpin = rand.nextDouble(1 / (double) n); //uniformly random number between 0 and 1/n, once
+        double[] pointers = new double[n];
+        IntStream.range(0, pointers.length).forEach(i -> pointers[i] = (i * 1/n) + randomSpin); //fil array with arrow/pointer positions, and (mini)spin them randomly
 
         while (matingPool.size() < n) {  //Repeat so we select n individuals
+            for (int i = 0; i < pointers.length; i++) {  //Stack up each weight. The space it takes up from 0-1 corresponds to how large it is (i.e. its weight)
+                if (pointers[i] <= cumulativeWeight) matingPool.add(population.get(index));
+
+                else {
+                    index++;
+                    cumulativeWeight += weights.get(index);
+                }
+            }
         }
 
+        return matingPool;
     }
 
 
