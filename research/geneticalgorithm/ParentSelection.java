@@ -176,10 +176,10 @@ public class ParentSelection {
      */
     public List<Double> calculateLinearRankedWeights(List<Individual> population, double c) {
         List<Double> weights = new ArrayList<>();
-        int popSize = population.size();
+        double popSize = (double) population.size();
 
         for (int i = 0; i < population.size(); i++ ) {
-            double weight = ((2 - c) / (double) popSize) + (((2 * i) * (c - 1)) / ((double) popSize * (popSize - 1))); // formula for calulating selection probability using linear selection. note: weights will never change. theyre based on ranking and C
+            double weight = ((2 - c) / popSize) + (((2 * i) * (c - 1)) / (popSize * (popSize - 1))); // formula for calulating selection probability using linear selection. note: weights will never change. theyre based on ranking and C
             weights.add(weight);
         }
         return weights;

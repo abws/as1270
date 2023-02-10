@@ -14,7 +14,7 @@ import java.util.stream.IntStream;
  * Made up of two type of methods.
  * One method simply combines n parents.
  * The other uses these methods to create n offspring.
- * GET RID OF ONE POINT CROSSOVER AS ITS A SPECIAL FORM OF N POINT CROSSOVER
+ * ONE POINT CROSSOVER is A SPECIAL FORM OF N POINT CROSSOVER
  * @author Abdiwahab Salah
  * @version 07/02/23
  */
@@ -44,6 +44,7 @@ public class Recombination {
             if (Math.random() < CROSSOVER_RATE) {
                 offSpring.addAll(onePointCrossover(parent1, parent2));
             }
+            else offSpring.addAll(Arrays.asList(parent1, parent2)); //by adding this line, we make the crossover rate meaningful
         }
         return offSpring;
     }
@@ -62,6 +63,7 @@ public class Recombination {
             if (Math.random() < CROSSOVER_RATE) {
                 offSpring.addAll(nPointCrossover(parent1, parent2, n));
             }
+            else offSpring.addAll(Arrays.asList(parent1, parent2)); //by adding this line, we make the crossover rate meaningful
         }
         return offSpring;
     }

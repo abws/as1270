@@ -1,6 +1,6 @@
 package research.geneticalgorithm;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -9,8 +9,8 @@ public class GeneticAlgorithm {
 
     public static void run(Problem problem, int generations, int popSize) {
         ParentSelection ps = new ParentSelection(problem);
-        Recombination r = new Recombination(problem, 0.7);
-        Mutation m = new Mutation(problem, 0.03);
+        Recombination r = new Recombination(problem, 0.5);
+        Mutation m = new Mutation(problem, 0.05);
         Replacement rp = new Replacement(problem);
 
 
@@ -18,12 +18,15 @@ public class GeneticAlgorithm {
         
         for (int i = 0; i < generations; i++) {
             System.out.println(Collections.max(problem.getFitnessesArrayList(population)));
-            System.out.println(Arrays.toString(problem.getFitnesses(population)));
+            //System.out.println(Arrays.toString(problem.getFitnesses(population)));
+            List<Individual> matingPool = new ArrayList<>();
+            List<Individual> offSpring = new ArrayList<>();
 
-            List<Individual> matingPool = ps.tournamentSelection(population, popSize, 2, true); //parent selection
-            List<Individual> offSpring = r.recombineNPoint(matingPool, popSize, 1); //recombination
+            matingPool = ps.tournamentSelection(population, popSize, 2, false); //parent selection
+            offSpring = r.recombineNPoint(matingPool, popSize, 20); //recombination
             offSpring = problem.legalise(m.mutatePopulation(offSpring)); //mutation
-            population = rp.deleteOldest(population, offSpring); //survival selection
+
+            population = rp.elitism(population, offSpring, 1); //survival selection
         }
     }
 }
