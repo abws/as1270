@@ -3,6 +3,7 @@ package research.geneticalgorithm;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
 //remember, since the lists contains objects, changing their values in a function will change their true values
 public class GeneticAlgorithm {
 
@@ -10,6 +11,7 @@ public class GeneticAlgorithm {
         ParentSelection ps = new ParentSelection(problem);
         Recombination r = new Recombination(problem, 0.7);
         Mutation m = new Mutation(problem, 0.03);
+        Replacement rp = new Replacement(problem);
 
 
         List<Individual> population = problem.getRandomPopulation(popSize, problem.INDIV_LENGTH, problem.N_TURBINES);
@@ -18,12 +20,10 @@ public class GeneticAlgorithm {
             System.out.println(Collections.max(problem.getFitnessesArrayList(population)));
             System.out.println(Arrays.toString(problem.getFitnesses(population)));
 
-            List<Individual> matingPool = ps.linearRankingUniform(population, popSize, 2); //fix when true
-
-            List<Individual> offSpring = r.recombineNPoint(matingPool, popSize, 100);
-
-            population = problem.legalise(m.mutatePopulation(offSpring));
-            problem.updateAllFitnesses(population);
+            List<Individual> matingPool = ps.tournamentSelection(population, popSize, 2, true); //parent selection
+            List<Individual> offSpring = r.recombineNPoint(matingPool, popSize, 1); //recombination
+            offSpring = problem.legalise(m.mutatePopulation(offSpring)); //mutation
+            population = rp.deleteOldest(population, offSpring); //survival selection
         }
     }
 }
