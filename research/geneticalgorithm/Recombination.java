@@ -44,7 +44,12 @@ public class Recombination {
             if (Math.random() < CROSSOVER_RATE) {
                 offSpring.addAll(onePointCrossover(parent1, parent2));
             }
-            else offSpring.addAll(Arrays.asList(parent1, parent2)); //by adding this line, we make the crossover rate meaningful
+            else {
+                Individual child1; Individual child2;
+                child1 = new Individual(parent1.getValue(), problem, false); child2 = new Individual(parent2.getValue(), problem, false); 
+
+                offSpring.addAll(Arrays.asList(child1, child2)); //by adding this line, we make the crossover rate meaningful
+            }        
         }
         return offSpring;
     }
@@ -63,7 +68,12 @@ public class Recombination {
             if (Math.random() < CROSSOVER_RATE) {
                 offSpring.addAll(nPointCrossover(parent1, parent2, n));
             }
-            else offSpring.addAll(Arrays.asList(parent1, parent2)); //by adding this line, we make the crossover rate meaningful
+            else {
+                Individual child1; Individual child2;
+                child1 = new Individual(parent1.getValue(), problem, false); child2 = new Individual(parent2.getValue(), problem, false); 
+
+                offSpring.addAll(Arrays.asList(child1, child2)); //by adding this line, we make the crossover rate meaningful
+            }
         }
         return offSpring;
     }
@@ -81,6 +91,12 @@ public class Recombination {
             //Crossover at rate 0.7
             if (Math.random() < CROSSOVER_RATE) {
                 offSpring.addAll(uniformCrossover(parent1, parent2, p));
+            }
+            else {
+                Individual child1; Individual child2;
+                child1 = new Individual(parent1.getValue(), problem, false); child2 = new Individual(parent2.getValue(), problem, false); 
+
+                offSpring.addAll(Arrays.asList(child1, child2)); //by adding this line, we make the crossover rate meaningful
             }
         }
         return offSpring;

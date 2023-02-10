@@ -29,7 +29,7 @@ public class Replacement {
      * @param popSize The population size of offspring
      * @return
      */
-    public List<Individual> genitor(List<Individual> parents, List<Individual> offSpring, int popSize) {
+    public List<Individual> genitor(List<Individual> parents, List<Individual> offSpring, int popSize) {//??????about this method - not sure it is genitorius
         offSpring = offSpring.stream().sorted(Comparator.comparingDouble(individual -> individual.getFitness())).collect(Collectors.toList());    //sort arraylist by fitness
         List<Individual> newOffSpring = new ArrayList<>();
 
@@ -53,13 +53,16 @@ public class Replacement {
 
         parents = parents.stream().sorted(Comparator.comparingDouble(individual -> individual.getFitness())).collect(Collectors.toList());    //sort arraylist by fitness
         offSpring = offSpring.stream().sorted(Comparator.comparingDouble(individual -> individual.getFitness())).collect(Collectors.toList());    
+        // System.out.println("Before Parents" + Arrays.toString(problem.getFitnesses(parents)));
+        // System.out.println("Before Children" + Arrays.toString(problem.getFitnesses(offSpring)));
         
         int parentIndex = parents.size() - 1;
 
         for (int i = 0; i < n; i++) {
             offSpring.set(i, parents.get(parentIndex));
-            System.out.println(Arrays.toString(problem.getFitnesses(offSpring)));
-            System.out.println(Arrays.toString(problem.getFitnesses(parents)));
+
+            // System.out.println("Best from previous: " + parents.get(parentIndex).getFitness());
+            // System.out.println("After Children " + Arrays.toString(problem.getFitnesses(offSpring)));
 
             parentIndex--;
         }

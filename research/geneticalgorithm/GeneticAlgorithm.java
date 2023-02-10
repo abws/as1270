@@ -9,7 +9,7 @@ public class GeneticAlgorithm {
 
     public static void run(Problem problem, int generations, int popSize) {
         ParentSelection ps = new ParentSelection(problem);
-        Recombination r = new Recombination(problem, 0.5);
+        Recombination r = new Recombination(problem, 0.7);
         Mutation m = new Mutation(problem, 0.05);
         Replacement rp = new Replacement(problem);
 
@@ -22,10 +22,9 @@ public class GeneticAlgorithm {
             List<Individual> matingPool = new ArrayList<>();
             List<Individual> offSpring = new ArrayList<>();
 
-            matingPool = ps.tournamentSelection(population, popSize, 2, false); //parent selection
+            matingPool = ps.tournamentSelection(population, popSize, 10, false); //parent selection
             offSpring = r.recombineNPoint(matingPool, popSize, 20); //recombination
-            offSpring = problem.legalise(m.mutatePopulation(offSpring)); //mutation
-
+            offSpring = problem.legalise(m.mutatePopulation(offSpring)); //mutation and repair
             population = rp.elitism(population, offSpring, 1); //survival selection
         }
     }

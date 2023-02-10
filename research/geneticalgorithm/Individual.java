@@ -42,5 +42,7 @@ public class Individual {
 
     public double getFitness() {
         return this.fitness;
-    }    
+    }   
+    
+    //public static createN()...
 }
