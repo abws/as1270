@@ -18,16 +18,11 @@ public class GeneticAlgorithm {
             System.out.println(Collections.max(problem.getFitnessesArrayList(population)));
             System.out.println(Arrays.toString(problem.getFitnesses(population)));
 
-            List<Individual> matingPool = ps.tournamentSelection(population, popSize, 5, false); //fix when true
-            
-            //problem.updateAllFitnesses(matingPool);
-            //System.out.println(Arrays.toString(problem.getFitnesses(matingPool)));
+            List<Individual> matingPool = ps.linearRankingUniform(population, popSize, 2); //fix when true
 
             List<Individual> offSpring = r.recombineNPoint(matingPool, popSize, 100);
 
             population = problem.legalise(m.mutatePopulation(offSpring));
-            //population = problem.legalise(offSpring);
-
             problem.updateAllFitnesses(population);
         }
     }

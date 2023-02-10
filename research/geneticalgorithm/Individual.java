@@ -16,7 +16,7 @@ public class Individual {
     Individual(String value, Problem problem, boolean wantsFitness) {
         this.value = value;
         this.problem = problem;
-        fitness = (wantsFitness) ? problem.evaluate(value) : 0; //called
+        fitness = (wantsFitness) ? problem.evaluate(value) : 0.0; //called
     }
 
     public String getValue() {
