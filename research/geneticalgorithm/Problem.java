@@ -319,7 +319,9 @@ public class Problem {
      * fitnesses by calling function.
      * Only call this for the offspring
      * list after the last operator and before
-     * survivor selection
+     * survivor selection.
+     * Calls objective function, use only at start and 
+     * in survivor selection
      * @param population
      * @return
      */
