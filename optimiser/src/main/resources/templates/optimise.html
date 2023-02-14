@@ -8,11 +8,11 @@
     <title>Wind Farm Layout Optimiser</title>
 </head>
 <body>
-    <div class="container">
+    <div class="container mt-3">
         <div class="h1">Wind Farm Layout Optimiser</div>
         <!--Form -->
-        <form action="#" th:action="@{/optimise}" method="post" class>
-            <div class="container">
+        <form action="#" th:action="@{/optimise}" method="post">
+            <div class="container mt-3 d-flex flex-column">
 
                 <!--Algorithm Selection-->
                 <fieldset>
@@ -29,9 +29,92 @@
                     </div>
                 </fieldset>
 
-                <!--Genetic Algorithm Global Parameters-->
-                <input type="number" id="populationSize">
-                <button type="submit">Optimise</button>
+                <!--Genetic Algorithm General Parameters-->
+                <div class="row g-2 ms-5 mt-3">
+
+                    <div class="h5">General Parameters</div>
+                    <div class="col-auto">
+                        <div class="form-floating mb-3">
+                            <input class="form-control" type="number" id="populationSize" placeholder="Population Size">
+                            <label for="populationSize">Population Size</label>
+                        </div>
+                    </div>
+
+                    <div class="col-auto">
+                        <div class="form-floating mb-3">
+                            <input class="form-control" type="number" id="generations" placeholder="Generations">
+                            <label for="populationSize">Generations</label>
+                        </div>
+                    </div>
+
+                <!--Genetic Algorithm Parent Selection Mechanism-->
+                <fieldset>
+                    <legend>Parent Selection</legend>
+
+                    <div class="form-check form-check-inline">
+                        <label for="fitnessProportionalSelection">Fitness Proportional Selection</label>
+                        <input type="radio" id="fitnessProportionalSelection" name="parentSelection" value="geneticAlgorithm"/>
+                    </div>
+
+                    <div class="form-check form-check-inline">
+                        <label for="fitnessProportionalSelectionSigma">Fitness Proportional Selection (with Sigma Scaling)</label>
+                        <input type="radio" id="fitnessProportionalSelectionSigma" name="parentSelection" value="fitnessProportionalSelectionSigma"/>
+                    </div>
+
+                    <div class="form-check form-check-inline">
+                        <label for="linearSelection">Linear Ranking Selection</label>
+                        <input type="radio" id="linearSelection" name="parentSelection" value="linearSelection"/>
+                    </div>
+
+                    <div class="form-check form-check-inline">
+                        <label for="exponentialSelection">Exponential Ranking Selection</label>
+                        <input type="radio" id="exponentialSelection" name="parentSelection" value="exponentialSelection"/>
+                    </div>
+
+                    <div class="form-check form-check-inline">
+                        <label for="tournamentSelection">Tournament Selection</label>
+                        <input type="radio" id="tournamentSelection" name="parentSelection" value="tournamentSelection"/>
+                    </div>
+                </fieldset>
+
+                <!--Genetic Algorithm Recombination-->
+                <fieldset>
+                    <legend>Recombination</legend>
+
+                    <div class="form-check form-check-inline">
+                        <label for="onePointCross">1-Point Crossover</label>
+                        <input type="radio" id="onePointCross" name="recombination" value="onePointCross"/>
+                    </div>
+
+                    <div class="form-check form-check-inline">
+                        <label for="nPointCross">N-Point Crossover</label>
+                        <input type="radio" id="nPointCross" name="recombination" value="nPointCross"/>
+                    </div>
+
+                    <div class="form-check form-check-inline">
+                        <label for="uniformCrossover">Uniform Crossover</label>
+                        <input type="radio" id="uniformCrossover" name="recombination" value="uniformCrossover"/>
+                    </div>
+                </fieldset>
+
+                <!--Genetic Algorithm Recombination-->
+                <fieldset>
+                    <legend>Replacement</legend>
+
+                    <div class="form-check form-check-inline">
+                        <label for="generational">Generational</label>
+                        <input type="radio" id="generational" name="replacement" value="generational"/>
+                    </div>
+
+                    <div class="form-check form-check-inline">
+                        <label for="elitism">Elitism</label>
+                        <input type="radio" id="elitism" name="replacement" value="elitism"/>
+                    </div>
+                </fieldset>
+                </div>
+
+
+                <button type="submit" class="btn btn-success mx-auto">Optimise</button>
 
             </div>
         </form>
