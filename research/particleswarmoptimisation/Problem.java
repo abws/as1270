@@ -1,5 +1,9 @@
 package research.particleswarmoptimisation;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
 import research.api.java.*;
 
 /**
@@ -19,7 +23,9 @@ public class Problem {
 
     public int particleDimension;
     public int swarmSize;
-    public int N_TURBINES;
+    public int nTurbines;
+    public double height;
+    public double width;
 
 
     public Problem(KusiakLayoutEvaluator evaluator, WindScenario scenario, int swarmSize) throws Exception {
@@ -27,9 +33,11 @@ public class Problem {
         this.evaluator = evaluator;
 
         //Commonly used
-        this.particleDimension = scenario.nturbines * 2; //All vectors will be this size 
-        this.N_TURBINES = scenario.nturbines;
+        this.particleDimension = scenario.nturbines * 2; //Dimensionality of particles. All vectors will be the same size.
+        this.nTurbines = scenario.nturbines;
         this.swarmSize = swarmSize;
+        this.height = scenario.height;
+        this.width = scenario.width;
     }
 
     /**
@@ -41,30 +49,100 @@ public class Problem {
      * @return
      */
     public double evaluate(double[] particlePosition) {
-        double[][] particleCoordinates = decode(particlePosition);
+        double[][] particleCoordinates = decodeDirect(particlePosition);
         double fitness = evaluator.evaluate_2014(particleCoordinates);
 
         return fitness;
     }
 
     /**
-     * Decodes a given particle 
-     * vector to give a nx2 matrix 
+     * Decodes a particle 
+     * vector assuming the form 
+     * (x1, y1, x2, y2, ..., xn, yn)
+     * to give a nx2 matrix 
      * representing the coordinates
-     * of turbines
+     * of turbines.
      * @param particleVector 
      * @return
      */
-    public double[][] decode(double[] particlePosition) {
-        double[][] decodedParticle = new double[N_TURBINES][2];
+    public double[][] decodeDirect(double[] particlePosition) {
+        double[][] decodedParticle = new double[nTurbines][2];
         int index = 0;
 
-        for (int i = 0; i < N_TURBINES; i++) {
+        for (int i = 0; i < nTurbines; i++) {
             decodedParticle[i][0] = particlePosition[index];
             decodedParticle[i][1] = particlePosition[index + 1];
             index += 2;
         }
 
         return decodedParticle;
+    }
+
+    /**
+     * Decodes a particle 
+     * vector assuming the form 
+     * (x1, x2,..., xn, y1, y2,..., yn)
+     * to give a nx2 matrix 
+     * representing the coordinates
+     * of turbines.
+     * @param particleVector 
+     * @return
+     */
+    public double[][] decodeSeperate(double[] particlePosition) {
+        double[][] decodedParticle = new double[nTurbines][2];
+        int x = 0;
+        int y = nTurbines; /*If theres 400 turbines, the vector will have a dimension of 800. 0- 
+                                                399 will be x coordinates & the last 400 will be y coordinates.*/
+        for (int i = 0; i < nTurbines; i++) {
+            decodedParticle[i][0] = particlePosition[x];
+            decodedParticle[i][1] = particlePosition[y];
+            x++; y++;
+        }
+
+        return decodedParticle;
+    }
+
+    /**
+     * Initialises a swarm of particles
+     * @param swarmSize
+     * @return
+     */
+    public ArrayList<Particle> initialiseSwarm(int swarmSize) {
+        List<Particle> swarm = new ArrayList<Particle>();
+        
+    }
+
+    /**
+     * Initialises a single particle
+     * with a random position, & a 
+     * random initial velocity.
+     * Position will be of the form
+     * (x1, y1, x2, y2, ..., xn, yn)
+     * @return
+     */
+    public Particle createRandomParticle() {
+        Random random = new Random();
+        double[] xCoordinates = new double[nTurbines];
+        double[] yCoordinates = new double[nTurbines];
+        double[] randomPosition = new double[particleDimension];
+        double[] velocity = new double[particleDimension];
+
+        int index = 0;
+
+        for (int i = 0; i < nTurbines; i++) {
+            xCoordinates[i] = random.nextDouble(width); //Maybe useless and a waste of space
+            yCoordinates[i] = random.nextDouble(height);
+
+            randomPosition[index] = xCoordinates[i];    
+            randomPosition[index + 1] = yCoordinates[i];
+
+            velocity[index] = random.nextDouble(width);
+            velocity[index + 1] = random.nextDouble(height);
+
+            index += 2;
+        }
+
+        Particle randomParticle = new Particle(randomPosition, velocity, this);
+        return randomParticle;
     }
 }
