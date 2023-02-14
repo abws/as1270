@@ -7,6 +7,8 @@ package research.particleswarmoptimisation;
  * Only concerned with book-keeping.
  * No operations should be performed
  * here.
+ * @author Abdiwahab Salah
+ * @version 14.02.23
  */
 public class Particle {
     double[] currentPosition;
@@ -15,6 +17,8 @@ public class Particle {
 
     double currentValue;
     double pBestValue;
+
+    Problem problem;
     
 
     //A new particle will be created once
@@ -22,6 +26,8 @@ public class Particle {
         this.currentPosition = initialPosition;
         this.velocity = initialVelocity;
         updateCurrentValue();
+
+        this.problem = problem;
     }
 
    public void updateCurrentPosition(double[] newPosition) {    //PSO class does the calculations
