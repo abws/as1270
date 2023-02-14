@@ -21,11 +21,8 @@ public class Particle {
     Problem problem;
     
 
-    /**
+    /*
      * A new particle will be created once
-     * @param initialPosition
-     * @param initialVelocity
-     * @param problem
      */
     Particle(double[] initialPosition, double[] initialVelocity, Problem problem) { //Problem provides the evaluation function
         this.problem = problem;

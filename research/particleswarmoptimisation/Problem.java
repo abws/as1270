@@ -153,4 +153,14 @@ public class Problem {
         Particle randomParticle = new Particle(randomPosition, velocity, this);
         return randomParticle;
     }
+
+    /**
+     * Calculates the weight difference
+     * for each iteration step.
+     * @return weight step
+     */
+    public double calculateWeightStep(double wMax, double wMin, int maxIterations) {
+        double wStep =  (wMax - wMin) / maxIterations;
+        return wStep;
+    }
 }

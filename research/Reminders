@@ -1,0 +1,2 @@
+* Do not check security constraints for discrete formulationa: It's computationally expensive and there's no need for them since these avoided by definition *
+* Make a report class for generating reports! *

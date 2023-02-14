@@ -18,16 +18,18 @@ public class ParticleSwarmOptimisation {
     int maxIterations;
     double wMin;
     double wMax; 
+    double[] vMin;
     double[] vMax;
     Problem problem;
 
-    ParticleSwarmOptimisation(int swarmSize, double c1, double c2, double wMin, double wMax, double[] vMax, int maxIterations, Problem problem) {
+    ParticleSwarmOptimisation(int swarmSize, double c1, double c2, double wMin, double wMax, double[] vMin, double[] vMax, int maxIterations, Problem problem) {
         this.swarmSize = swarmSize;
         this.c1 = c1;
         this.c2 = c2;
         this.maxIterations = maxIterations;
         this.wMin = wMin;
         this.wMax = wMax;
+        this.vMin = vMin;
         this.vMax = vMax;
         this.problem = problem;
     }
@@ -36,12 +38,12 @@ public class ParticleSwarmOptimisation {
         Random random = new Random();
 
         /* Initialise weight step size for inertia */
-        double wDifference = wMax - wMin;
-        double wStep = wDifference / maxIterations;
         double weight = wMax;
+        double wStep = problem.calculateWeightStep(wMax, wMin, maxIterations);
         int iteration = 0;
 
         List<Particle> swarm = problem.initialiseSwarm(swarmSize);
+
 
         /* Main loop iteratively moving particles along search space 
         * By using the particle class, we avoid having to loop multiple
