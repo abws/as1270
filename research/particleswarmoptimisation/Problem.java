@@ -21,6 +21,9 @@ public class Problem {
     private KusiakLayoutEvaluator evaluator;
     private WindScenario scenario;
 
+    public double[] gBest;
+    public double gBestFitness;
+
     public int particleDimension;
     public int swarmSize;
     public int nTurbines;
@@ -104,12 +107,17 @@ public class Problem {
 
     /**
      * Initialises a swarm of particles
+     * with random positions & velocities
      * @param swarmSize
      * @return
      */
-    public ArrayList<Particle> initialiseSwarm(int swarmSize) {
+    public List<Particle> initialiseSwarm(int swarmSize) {
         List<Particle> swarm = new ArrayList<Particle>();
-        
+        for (int i = 0; i < swarmSize; i++) {
+            swarm.add(createRandomParticle());
+        }
+
+        return swarm;
     }
 
     /**

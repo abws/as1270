@@ -1,5 +1,8 @@
 package research.particleswarmoptimisation;
 
+import java.util.List;
+import java.util.Random;
+
 /**
  * Standard Particle Swarm Optimisation
  * Algorithm for the Wind Farm Layout
@@ -16,29 +19,65 @@ public class ParticleSwarmOptimisation {
     double wMin;
     double wMax; 
     double[] vMax;
+    Problem problem;
 
-    ParticleSwarmOptimisation(int swarmSize, double c1, double c2, int maxIterations, double wMin, double wMax, double[] vMax) {
+    ParticleSwarmOptimisation(int swarmSize, double c1, double c2, double wMin, double wMax, double[] vMax, int maxIterations, Problem problem) {
+        this.swarmSize = swarmSize;
+        this.c1 = c1;
+        this.c2 = c2;
+        this.maxIterations = maxIterations;
+        this.wMin = wMin;
+        this.wMax = wMax;
+        this.vMax = vMax;
+        this.problem = problem;
     }
 
     public void run() {
-        ArrayList<Particle> swarm = problem.initialiseSwarm(swarmSize);
-        
-        do {
+        Random random = new Random();
+
+        /* Initialise weight step size for inertia */
+        double wDifference = wMax - wMin;
+        double wStep = wDifference / maxIterations;
+        double weight = wMax;
+        int iteration = 0;
+
+        List<Particle> swarm = problem.initialiseSwarm(swarmSize);
+
+        /* Main loop iteratively moving particles along search space 
+        * By using the particle class, we avoid having to loop multiple
+        * times over the swarm as seen on most implementations of PSO 
+        */
+        while (iteration < maxIterations) {
             for (Particle p : swarm) {
-                //calculate objective
-                //update pbest
-                //update gbest
+                /* Calculate Inertia */
+                double[] inertia = scalarMultipy(weight, p.getVelocity());
+
+                /* Calculate cognitive component */
+                double[] distanceToPBest = vectorDifference(p.pBest, p.getPosition());
+                double[] randomisedPDistance = vectorMultiply(distanceToPBest, randomiserArray1);
+                double[] cognitive = scalarMultipy(c1, randomisedPDistance);
+                
+                /* Calculate social component */
+                double[] distanceToGBest = vectorDifference(problem.gBest, p.getPosition());
+                double[] randomisedGDistance = vectorMultiply(distanceToPBest, randomiserArray2);
+                double[] social = scalarMultipy(c1, randomisedGDistance);
+
+                /* Update velocity and position */
+                double[] newVelocity = vectorAdd(inertia, cognitive, social);
+                double[] newPosition = vectorAdd(p.getPosition(), newVelocity);
+
+                /* Update Particle */
+                p.setPosition(newPosition);
+                p.setVelocity(newVelocity);
+
+                p.updatePosition(newPosition, true);
+                p.updatePersonalBest();
+                
+                problem.updateGlobalBest(p.getPersonalBest);    //will only update if pBest is better than gBest
             }
-            //update innertia
+        }
 
-            for (Particle p : swarm) {
-                //update velocity
-                //update position
-            }
-        } 
-        while (i < maxIterations);
+        weight -= wStep;
+    }
 
-    } 
-
-    
 }

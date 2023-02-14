@@ -6,7 +6,7 @@ package research.particleswarmoptimisation;
  * through the search space.
  * Only concerned with book-keeping.
  * No operations should be performed
- * here.
+ * here. Only knows about him/her-self.
  * @author Abdiwahab Salah
  * @version 14.02.23
  */
@@ -15,38 +15,59 @@ public class Particle {
     double[] velocity;
     double[] pBest;
 
-    double currentValue;
-    double pBestValue;
+    double fitness;
+    double pBestFitness;
 
     Problem problem;
     
 
-    //A new particle will be created once
+    /**
+     * A new particle will be created once
+     * @param initialPosition
+     * @param initialVelocity
+     * @param problem
+     */
     Particle(double[] initialPosition, double[] initialVelocity, Problem problem) { //Problem provides the evaluation function
+        this.problem = problem;
+
         this.currentPosition = initialPosition;
         this.velocity = initialVelocity;
-        updateCurrentValue();
 
-        this.problem = problem;
+        updateFitness();
+    }
+    
+
+    /* Getters and setters */
+    public double[] getPosition() {
+        return this.currentPosition;
     }
 
-   public void updateCurrentPosition(double[] newPosition) {    //PSO class does the calculations
+    public double[] getVelocity() {
+        return this.velocity;
+    }
+
+   public void setPosition(double[] newPosition, boolean wantsFitnessUpdated) {    //PSO class does the calculations
        this.currentPosition = newPosition;
+       if (wantsFitnessUpdated) {
+           updateFitness();
+       }
    }
 
-   public void updateVelocity(double[] newVelocity) {   //PSO class does the calculations
+   public void setVelocity(double[] newVelocity) {   //PSO class does the calculations
        this.velocity = newVelocity;
    }
 
-   public void updateCurrentValue() {
+   public void updateFitness() {
        double fitness = problem.evaluate(currentPosition);
-       this.currentValue = fitness;
+       this.fitness = fitness;
    }
 
-   public void updatePersonalBest() {
-       if (currentValue > pBestValue) { //assuming maximisation
+   public boolean updatePersonalBest() {
+       if (fitness > pBestFitness) { //assuming maximisation
             pBest = currentPosition;
-           pBestValue = currentValue;
+            pBestFitness = fitness;
+            return true;
        }
+       return false;    //feed back to user in case of necessity
    }
 }
