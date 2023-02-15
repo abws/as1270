@@ -130,23 +130,14 @@ public class Problem {
      */
     public Particle createRandomParticle() {
         Random random = new Random();
-        double[] xCoordinates = new double[nTurbines];
-        double[] yCoordinates = new double[nTurbines];
         double[] randomPosition = new double[particleDimension];
-        double[] velocity = new double[particleDimension];
+        double[] velocity = new double[particleDimension];  //instantiate with all zeros
 
         int index = 0;
 
-        for (int i = 0; i < nTurbines; i++) {
-            xCoordinates[i] = random.nextDouble(width); //Maybe useless and a waste of space
-            yCoordinates[i] = random.nextDouble(height);
-
-            randomPosition[index] = xCoordinates[i];    
-            randomPosition[index + 1] = yCoordinates[i];
-
-            velocity[index] = random.nextDouble(width);
-            velocity[index + 1] = random.nextDouble(height);
-
+        for (int i = 0; i < nTurbines; i+=2) {
+            randomPosition[index] = random.nextDouble(width);    //x coordinate
+            randomPosition[index + 1] = random.nextDouble(height);  //y coordinate
             index += 2;
         }
 
@@ -162,6 +153,26 @@ public class Problem {
     public double calculateWeightStep(double wMax, double wMin, int maxIterations) {
         double wStep =  (wMax - wMin) / maxIterations;
         return wStep;
+    }
+    
+
+    /* Getters and Setters */
+
+    public double[] getGlobalBest() {
+        return gBest;
+    }
+
+    public double getGlobalBestFitness() {
+        return gBestFitness;
+    }
+
+    public boolean updateGlobalBest(double newFitness, double[] newPosition) {
+        if (newFitness > gBestFitness) { //assuming maximisation
+            this.gBest = newPosition;
+            gBestFitness = newFitness;
+            return true;
+        }
+        return false;
     }
 
 }

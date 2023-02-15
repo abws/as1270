@@ -11,14 +11,14 @@ package research.particleswarmoptimisation;
  * @version 14.02.23
  */
 public class Particle {
-    double[] currentPosition;
-    double[] velocity;
-    double[] pBest;
+    private double[] currentPosition;
+    private double[] velocity;
+    private double[] pBest;
 
-    double fitness;
-    double pBestFitness;
+    private double fitness;
+    private double pBestFitness;
 
-    Problem problem;
+    private Problem problem;
     
 
     /*
@@ -41,6 +41,14 @@ public class Particle {
 
     public double[] getVelocity() {
         return this.velocity;
+    }
+
+    public double[] getPersonalBest() {
+        return this.pBest;
+    }
+    
+    public double getPersonalBestFitness() {
+        return this.pBestFitness;
     }
 
    public void setPosition(double[] newPosition, boolean wantsFitnessUpdated) {    //PSO class does the calculations

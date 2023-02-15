@@ -10,28 +10,33 @@ import java.util.Random;
  * Runnable class that optimises 
  * a list of particles based on
  * a variable input
+ * @author Abdiwahab Salah
+ * @version 15/02/23
  */
 public class ParticleSwarmOptimisation {
-    int swarmSize;
-    double c1;
-    double c2; 
-    int maxIterations;
-    double wMin;
-    double wMax; 
-    double[] vMin;
-    double[] vMax;
-    Problem problem;
+    int swarmSize;      //Size of population
+    double c1;          //Acceleration factor for cognitive component  
+    double c2;          //Acceleration factor for cognitive component 
+    int maxIterations;  //Maximum number of iterations
+    double wMin;        //Minimum weight
+    double wMax;        //Maximum weight
+    double[] vMin;      //Minimum velocity
+    double[] vMax;      //Maximum velocity
+    Problem problem;    
 
-    ParticleSwarmOptimisation(int swarmSize, double c1, double c2, double wMin, double wMax, double[] vMin, double[] vMax, int maxIterations, Problem problem) {
+    ParticleSwarmOptimisation(int swarmSize, double c1, double c2, double wMin, double wMax, int maxIterations, double clampConstant, Problem problem) {
         this.swarmSize = swarmSize;
         this.c1 = c1;
         this.c2 = c2;
         this.maxIterations = maxIterations;
         this.wMin = wMin;
         this.wMax = wMax;
-        this.vMin = vMin;
-        this.vMax = vMax;
+
         this.problem = problem;
+
+        /* Velocity Clamping */
+        this.vMin = minVelocityClamp(problem.height, problem.width, clampConstant);
+        this.vMax = maxVelocityClamp(problem.height, problem.width, clampConstant);
     }
 
     public void run() {
@@ -43,6 +48,8 @@ public class ParticleSwarmOptimisation {
         int iteration = 0;
 
         List<Particle> swarm = problem.initialiseSwarm(swarmSize);
+        double[] randomiserArray1 = generateRandomiserVector(problem.particleDimension);
+        double[] randomiserArray2 = generateRandomiserVector(problem.particleDimension);
 
 
         /* Main loop iteratively moving particles along search space 
@@ -55,13 +62,13 @@ public class ParticleSwarmOptimisation {
                 double[] inertia = scalarMultipy(weight, p.getVelocity());
 
                 /* Calculate cognitive component */
-                double[] distanceToPBest = vectorDifference(p.pBest, p.getPosition());
-                double[] randomisedPDistance = vectorMultiply(distanceToPBest, randomiserArray1);
+                double[] distanceToPBest = vectorDifference(p.getPersonalBest(), p.getPosition());
+                double[] randomisedPDistance = hadamardProduct(distanceToPBest, randomiserArray1);
                 double[] cognitive = scalarMultipy(c1, randomisedPDistance);
                 
                 /* Calculate social component */
                 double[] distanceToGBest = vectorDifference(problem.gBest, p.getPosition());
-                double[] randomisedGDistance = vectorMultiply(distanceToPBest, randomiserArray2);
+                double[] randomisedGDistance = hadamardProduct(distanceToGBest, randomiserArray2);
                 double[] social = scalarMultipy(c1, randomisedGDistance);
 
                 /* Update velocity and position */
@@ -69,13 +76,12 @@ public class ParticleSwarmOptimisation {
                 double[] newPosition = vectorAddition(p.getPosition(), newVelocity);
 
                 /* Update Particle */
-                p.setPosition(newPosition);
+                p.setPosition(newPosition, true);
                 p.setVelocity(newVelocity);
 
-                p.updatePosition(newPosition, true);
+                /* Update local and global best */
                 p.updatePersonalBest();
-                
-                problem.updateGlobalBest(p.getPersonalBest);    //will only update if pBest is better than gBest
+                problem.updateGlobalBest(p.getPersonalBestFitness(), p.getPersonalBest());    //will only update if pBest is better than gBest
             }
         }
 
@@ -146,6 +152,57 @@ public class ParticleSwarmOptimisation {
             sum[i] = vectorA[i] + vectorB[i] + vectorC[i];
         }
         return sum;
+    }
+
+    /**
+     * Generates a vector
+     * of random numbers between
+     * 0 and 1
+     */
+    public double[] generateRandomiserVector(int vectorLength) {
+        double[] randomiserVector = new double[vectorLength];
+        for (int i = 0; i < vectorLength; i++) {
+            randomiserVector[i] = Math.random();
+        }
+        return randomiserVector;
+    }
+
+    /**
+     * Puts a lower bound
+     * on each dimension of
+     * the vector
+     * @param maxX
+     * @param maxY
+     * @param clampConstant
+     * @return
+     */
+    public double[] minVelocityClamp(double maxX, double maxY, double clampConstant) {
+        double[] minVelocity = new double[problem.particleDimension];
+        for (int i = 0; i < minVelocity.length; i+=2) {
+            minVelocity[i] = clampConstant * (0 - maxX);
+            minVelocity[i + 1] = clampConstant * (0 - maxY);
+        }
+
+        return minVelocity;
+    }
+
+    /**
+     * Puts an upper bound
+     * on each dimension of
+     * the vector
+     * @param maxX - The maximum for the y coordinates
+     * @param maxY  The maximum for the x coordinates
+     * @param clampConstant
+     * @return
+     */
+    public double[] maxVelocityClamp(double maxX, double maxY, double clampConstant) {
+        double[] maxVelocity = new double[problem.particleDimension];
+        for (int i = 0; i < maxVelocity.length; i+=2) {
+            maxVelocity[i] = clampConstant * (maxX - 0);
+            maxVelocity[i + 1] = clampConstant * (maxY - 0);
+        }
+
+        return maxVelocity;
     }
 
 }
