@@ -163,4 +163,5 @@ public class Problem {
         double wStep =  (wMax - wMin) / maxIterations;
         return wStep;
     }
+
 }

@@ -65,8 +65,8 @@ public class ParticleSwarmOptimisation {
                 double[] social = scalarMultipy(c1, randomisedGDistance);
 
                 /* Update velocity and position */
-                double[] newVelocity = vectorAdd(inertia, cognitive, social);
-                double[] newPosition = vectorAdd(p.getPosition(), newVelocity);
+                double[] newVelocity = vectorAddition(inertia, cognitive, social);
+                double[] newPosition = vectorAddition(p.getPosition(), newVelocity);
 
                 /* Update Particle */
                 p.setPosition(newPosition);
@@ -80,6 +80,72 @@ public class ParticleSwarmOptimisation {
         }
 
         weight -= wStep;
+    }
+
+    /**
+     * Calculates the value of a 
+     * vector after a scalar multiplication
+     * @param scalar
+     * @param vector
+     */
+    public double[] scalarMultipy(double scalar, double[] vector) {
+        double[] scalarised = new double[vector.length];
+        for (int i = 0; i < vector.length; i++) {
+            scalarised[i] = scalar * vector[i];
+        }
+
+        return scalarised;
+    }
+
+    /**
+     * Calculates the difference
+     * between two vectors
+     * @param vectorA
+     * @param vectorB
+     */
+    public double[] vectorDifference(double[] vectorA, double[] vectorB) {
+        double[] difference = new double[vectorA.length];
+        for (int i = 0; i < vectorA.length; i++) {
+            difference[i] = vectorA[i] - vectorB[i];
+        }
+        return difference;
+    }
+
+    /**
+     * Calculates hadamard product
+     * of two vectors (elementwise 
+     * product)
+     */
+    public double[] hadamardProduct(double[] vectorA, double[] vectorB) {
+        double[] productVector = new double[vectorA.length];
+        for (int i = 0; i < vectorA.length; i++) {
+            productVector[i] = vectorA[i] * vectorB[i];
+        }
+        return productVector;
+    }
+    
+    /**
+     * Calculates the sum
+     * of two vectors
+     */
+    public double[] vectorAddition(double[] vectorA, double[] vectorB) {
+        double[] sum = new double[vectorA.length];
+        for (int i = 0; i < vectorA.length; i++) {
+            sum[i] = vectorA[i] + vectorB[i];
+        }
+        return sum;
+    }
+
+    /**
+     * Calculates the sum
+     * of three vectors
+     */
+    public double[] vectorAddition(double[] vectorA, double[] vectorB, double[] vectorC) {
+        double[] sum = new double[vectorA.length];
+        for (int i = 0; i < vectorA.length; i++) {
+            sum[i] = vectorA[i] + vectorB[i] + vectorC[i];
+        }
+        return sum;
     }
 
 }
