@@ -1,7 +1,7 @@
 package research.particleswarmoptimisation;
 
+import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 
 /**
  * Standard Particle Swarm Optimisation
@@ -39,25 +39,26 @@ public class ParticleSwarmOptimisation {
         this.vMax = maxVelocityClamp(problem.height, problem.width, clampConstant);
     }
 
-    public void run() {
-        Random random = new Random();
 
+    /**
+    * Main loop iteratively moving particles along search space 
+    * By using the particle class, we avoid having to loop multiple
+    * times over the swarm as seen on most implementations of PSO 
+    */
+    public void run() {
         /* Initialise weight step size for inertia */
         double weight = wMax;
         double wStep = problem.calculateWeightStep(wMax, wMin, maxIterations);
         int iteration = 0;
 
         List<Particle> swarm = problem.initialiseSwarm(swarmSize);
-        double[] randomiserArray1 = generateRandomiserVector(problem.particleDimension);
-        double[] randomiserArray2 = generateRandomiserVector(problem.particleDimension);
 
-
-        /* Main loop iteratively moving particles along search space 
-        * By using the particle class, we avoid having to loop multiple
-        * times over the swarm as seen on most implementations of PSO 
-        */
         while (iteration < maxIterations) {
+            double[] randomiserArray1 = generateRandomiserVector(problem.particleDimension);
+            double[] randomiserArray2 = generateRandomiserVector(problem.particleDimension);
+
             for (Particle p : swarm) {
+                System.out.println(Arrays.toString(p.getPosition()));
                 /* Calculate Inertia */
                 double[] inertia = scalarMultipy(weight, p.getVelocity());
 

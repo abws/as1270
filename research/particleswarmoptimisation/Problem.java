@@ -27,6 +27,7 @@ public class Problem {
     public int particleDimension;
     public int swarmSize;
     public int nTurbines;
+    public double minDist;
     public double height;
     public double width;
 
@@ -41,6 +42,7 @@ public class Problem {
         this.swarmSize = swarmSize;
         this.height = scenario.height;
         this.width = scenario.width;
+        this.minDist = scenario.R * 8;
     }
 
     /**
@@ -133,13 +135,12 @@ public class Problem {
         double[] randomPosition = new double[particleDimension];
         double[] velocity = new double[particleDimension];  //instantiate with all zeros
 
-        int index = 0;
-
-        for (int i = 0; i < nTurbines; i+=2) {
-            randomPosition[index] = random.nextDouble(width);    //x coordinate
-            randomPosition[index + 1] = random.nextDouble(height);  //y coordinate
-            index += 2;
+        for (int i = 0; i < particleDimension; i+=2) {
+            randomPosition[i] = random.nextDouble(width);    //x coordinate
+            randomPosition[i + 1] = random.nextDouble(height);  //y coordinate
         }
+
+        geometricReformer(decodeDirect(randomPosition));
 
         Particle randomParticle = new Particle(randomPosition, velocity, this);
         return randomParticle;
@@ -156,6 +157,78 @@ public class Problem {
     }
     
 
+    /**
+     * Reforms the points in
+     * a planar euclidian space
+     * so as to ensure the 
+     * solution it presents is 
+     * both feasible and geometrically
+     * most similar to the original
+     * @param layout the layout to potentially modify
+     * @param z the minimum distance between two points
+     * @return a feasible layout
+     */
+    public double[][] geometricReformer(double[][] layout, double z) {
+        for (int m = 0; m < layout.length; m++) {
+            double[] manner = layout[m];
+
+            for (int r = 0; r < layout.length; r++) {
+                if (r != m) {
+                    double[] repulser = layout[r];
+                    double distance = calculate2DEuclideanDistance(repulser, manner);
+                    if (distance <= z) continue;
+                    
+                    manner = spacialShift(repulser, manner, distance, z, 1); 
+                }
+            }
+
+            layout[m] = manner;
+        }
+
+        return layout;
+    }
+
+    /**
+     * Shifts the position
+     * of a single coordinate 
+     * in the realm of another
+     * so that it moves just 
+     * outside of the realm
+     * of infeasiblity
+     * @param repulser the position that has a realm
+     * @param manner the position to be shifted 
+     * @param distance the euclidian distance between manner
+     * @param z the radius of the realm
+     * @param c a constant to ensure we move slightly outside realm (and not on the edge)
+     * @return
+     */
+    public double[] spacialShift(double[] repulser, double[] manner, double distance, double z, double c) {
+        double x1 = repulser[0];
+        double y1 = repulser[1];
+
+        double x2 = manner[0];
+        double y2 = manner[1];
+
+        double shiftedPositionX = ((x1 - x2) * (z + c)) / distance;
+        double shiftedPositionY = ((y1 - y2) * (z + c)) / distance;
+        double[] shiftedPosition = new double[]{shiftedPositionX, shiftedPositionY};
+
+        return shiftedPosition;
+    }
+
+
+    public double calculate2DEuclideanDistance(double[] pointA, double[] pointB) {
+        double x1 = pointA[0];
+        double x2 = pointB[0];
+        double y1 = pointA[1];
+        double y2 = pointB[1];
+
+        double distance = Math.sqrt( Math.pow((x1 - x2), 2) + Math.pow((y1 - y2), 2));
+        return distance;
+    }
+
+
+   
     /* Getters and Setters */
 
     public double[] getGlobalBest() {
@@ -174,5 +247,6 @@ public class Problem {
         }
         return false;
     }
+
 
 }
