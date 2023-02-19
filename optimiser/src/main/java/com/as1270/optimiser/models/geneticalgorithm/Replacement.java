@@ -22,22 +22,22 @@ public class Replacement {
         return offSpring;
     }
 
-    // /**
-    //  * Replace worst n from initial population
-    //  * @param parents
-    //  * @param offSpring
-    //  * @param popSize The population size of offspring
-    //  * @return
-    //  */
-    // public List<Individual> deleteOldestN(List<Individual> parents, List<Individual> offSpring, int popSize) {//??????about this method - not sure it is genitorius
-    //     offSpring = offSpring.stream().sorted(Comparator.comparingDouble(individual -> individual.getFitness())).collect(Collectors.toList());    //sort arraylist by fitness
-    //     List<Individual> newOffSpring = new ArrayList<>();
+    /**
+     * Replace worst n from initial population
+     * @param parents
+     * @param offSpring
+     * @param popSize The population size of offspring
+     * @return
+     */
+    public List<Individual> genitor(List<Individual> parents, List<Individual> offSpring, int popSize) {//??????about this method - not sure it is genitorius
+        offSpring = offSpring.stream().sorted(Comparator.comparingDouble(individual -> individual.getFitness())).collect(Collectors.toList());    //sort arraylist by fitness
+        List<Individual> newOffSpring = new ArrayList<>();
 
-    //     for (int i = popSize; i > 0; i++) {
-    //         newOffSpring.add(offSpring.get(i));
-    //     }
-    //     return newOffSpring;
-    // }
+        for (int i = 0; i < popSize; i++) {
+            newOffSpring.add(offSpring.get(i));
+        }
+        return newOffSpring;
+    }
 
     /**
      * Elitism 

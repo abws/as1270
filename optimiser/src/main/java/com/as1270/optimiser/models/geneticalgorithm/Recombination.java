@@ -40,7 +40,7 @@ public class Recombination {
             Individual parent1; Individual parent2;
             parent1 = matingPool.get(r.nextInt(offspringSize)); parent2 = matingPool.get(r.nextInt(offspringSize));
 
-            //Crossover at rate
+            //Crossover at rate 0.7
             if (Math.random() < CROSSOVER_RATE) {
                 offSpring.addAll(onePointCrossover(parent1, parent2));
             }
@@ -64,7 +64,7 @@ public class Recombination {
             Individual parent1; Individual parent2;
             parent1 = matingPool.get(r.nextInt(offspringSize)); parent2 = matingPool.get(r.nextInt(offspringSize));
 
-            //Crossover at rate
+            //Crossover at rate 0.7
             if (Math.random() < CROSSOVER_RATE) {
                 offSpring.addAll(nPointCrossover(parent1, parent2, n));
             }
@@ -88,7 +88,7 @@ public class Recombination {
             Individual parent1; Individual parent2;
             parent1 = matingPool.get(r.nextInt(offspringSize)); parent2 = matingPool.get(r.nextInt(offspringSize));
 
-            //Crossover at rate
+            //Crossover at rate 0.7
             if (Math.random() < CROSSOVER_RATE) {
                 offSpring.addAll(uniformCrossover(parent1, parent2, p));
             }

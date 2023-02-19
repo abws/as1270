@@ -52,42 +52,42 @@ public class ParticleSwarmOptimisation {
         int iteration = 0;
 
         List<Particle> swarm = problem.initialiseSwarm(swarmSize);
-
-        while (iteration < maxIterations) {
-            double[] randomiserArray1 = generateRandomiserVector(problem.particleDimension);
-            double[] randomiserArray2 = generateRandomiserVector(problem.particleDimension);
-
-            for (Particle p : swarm) {
-                System.out.println(Arrays.toString(p.getPosition()));
-                /* Calculate Inertia */
-                double[] inertia = scalarMultipy(weight, p.getVelocity());
-
-                /* Calculate cognitive component */
-                double[] distanceToPBest = vectorDifference(p.getPersonalBest(), p.getPosition());
-                double[] randomisedPDistance = hadamardProduct(distanceToPBest, randomiserArray1);
-                double[] cognitive = scalarMultipy(c1, randomisedPDistance);
-                
-                /* Calculate social component */
-                double[] distanceToGBest = vectorDifference(problem.gBest, p.getPosition());
-                double[] randomisedGDistance = hadamardProduct(distanceToGBest, randomiserArray2);
-                double[] social = scalarMultipy(c1, randomisedGDistance);
-
-                /* Update velocity and position */
-                double[] newVelocity = vectorAddition(inertia, cognitive, social);
-                double[] newPosition = vectorAddition(p.getPosition(), newVelocity);
-
-                /* Update Particle */
-                p.setPosition(newPosition, true);
-                p.setVelocity(newVelocity);
-
-                /* Update local and global best */
-                p.updatePersonalBest();
-                problem.updateGlobalBest(p.getPersonalBestFitness(), p.getPersonalBest());    //will only update if pBest is better than gBest
-            }
-        }
-
-        weight -= wStep;
     }
+
+    //     while (iteration < maxIterations) {
+    //         double[] randomiserArray1 = generateRandomiserVector(problem.particleDimension);
+    //         double[] randomiserArray2 = generateRandomiserVector(problem.particleDimension);
+
+    //         for (Particle p : swarm) {
+    //             /* Calculate Inertia */
+    //             double[] inertia = scalarMultipy(weight, p.getVelocity());
+
+    //             /* Calculate cognitive component */
+    //             double[] distanceToPBest = vectorDifference(p.getPersonalBest(), p.getPosition());
+    //             double[] randomisedPDistance = hadamardProduct(distanceToPBest, randomiserArray1);
+    //             double[] cognitive = scalarMultipy(c1, randomisedPDistance);
+                
+    //             /* Calculate social component */
+    //             double[] distanceToGBest = vectorDifference(problem.gBest, p.getPosition());
+    //             double[] randomisedGDistance = hadamardProduct(distanceToGBest, randomiserArray2);
+    //             double[] social = scalarMultipy(c1, randomisedGDistance);
+
+    //             /* Update velocity and position */
+    //             double[] newVelocity = vectorAddition(inertia, cognitive, social);
+    //             double[] newPosition = vectorAddition(p.getPosition(), newVelocity);
+
+    //             /* Update Particle */
+    //             p.setPosition(newPosition, true);
+    //             p.setVelocity(newVelocity);
+
+    //             /* Update local and global best */
+    //             p.updatePersonalBest();
+    //             problem.updateGlobalBest(p.getPersonalBestFitness(), p.getPersonalBest());    //will only update if pBest is better than gBest
+    //         }
+    //     }
+
+    //     weight -= wStep;
+    // }
 
     /**
      * Calculates the value of a 

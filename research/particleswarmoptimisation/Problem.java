@@ -1,6 +1,7 @@
 package research.particleswarmoptimisation;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -71,16 +72,16 @@ public class Problem {
      * @return
      */
     public double[][] decodeDirect(double[] particlePosition) {
-        double[][] decodedParticle = new double[nTurbines][2];
+        double[][] layout = new double[nTurbines][2];
         int index = 0;
 
-        for (int i = 0; i < nTurbines; i++) {
-            decodedParticle[i][0] = particlePosition[index];
-            decodedParticle[i][1] = particlePosition[index + 1];
+        for (int i = 0; i < nTurbines; i++) {   //fill row by row
+            layout[i][0] = particlePosition[index];
+            layout[i][1] = particlePosition[index + 1];
             index += 2;
         }
 
-        return decodedParticle;
+        return layout;
     }
 
     /**
@@ -105,6 +106,27 @@ public class Problem {
         }
 
         return decodedParticle;
+    }
+
+    /**
+     * Encodes a layout 
+     * into a vector in the form 
+     * (x1, x2,..., xn, y1, y2,..., yn)
+     * Mainly used after geomtric reformation
+     * @param layout
+     * @return
+     */
+    public double[] encodeDirect(double[][] layout) {
+        double[] particlePosition = new double[particleDimension];
+        int index = 0;
+
+        for (int i = 0; i < nTurbines; i++) {   //fill row by row
+            particlePosition[index] = layout[i][0];
+            particlePosition[index + 1] = layout[i][1];
+            index += 2;
+        }
+
+        return particlePosition;
     }
 
     /**
@@ -134,28 +156,19 @@ public class Problem {
         Random random = new Random();
         double[] randomPosition = new double[particleDimension];
         double[] velocity = new double[particleDimension];  //instantiate with all zeros
+        double[][] layout = new double[nTurbines][2];
 
         for (int i = 0; i < particleDimension; i+=2) {
             randomPosition[i] = random.nextDouble(width);    //x coordinate
             randomPosition[i + 1] = random.nextDouble(height);  //y coordinate
         }
-
-        geometricReformer(decodeDirect(randomPosition));
+        // System.out.println(Arrays.toString(randomPosition));
+        layout = geometricReformer(decodeDirect(randomPosition), minDist);
+        randomPosition = encodeDirect(layout);
 
         Particle randomParticle = new Particle(randomPosition, velocity, this);
         return randomParticle;
     }
-
-    /**
-     * Calculates the weight difference
-     * for each iteration step.
-     * @return weight step
-     */
-    public double calculateWeightStep(double wMax, double wMin, int maxIterations) {
-        double wStep =  (wMax - wMin) / maxIterations;
-        return wStep;
-    }
-    
 
     /**
      * Reforms the points in
@@ -169,16 +182,19 @@ public class Problem {
      * @return a feasible layout
      */
     public double[][] geometricReformer(double[][] layout, double z) {
+        double[] manner;
+        double[] repulser;
+
         for (int m = 0; m < layout.length; m++) {
-            double[] manner = layout[m];
+            manner = layout[m];
 
             for (int r = 0; r < layout.length; r++) {
                 if (r != m) {
-                    double[] repulser = layout[r];
-                    double distance = calculate2DEuclideanDistance(repulser, manner);
-                    if (distance <= z) continue;
-                    
-                    manner = spacialShift(repulser, manner, distance, z, 1); 
+                    repulser = layout[r];
+                    double distance = calculateEuclideanDistance(repulser, manner);
+                    if (distance > z) continue;
+
+                    manner = spacialShiftRight(repulser, manner, distance, z, 1); 
                 }
             }
 
@@ -192,7 +208,7 @@ public class Problem {
      * Shifts the position
      * of a single coordinate 
      * in the realm of another
-     * so that it moves just 
+     * such that it moves just 
      * outside of the realm
      * of infeasiblity
      * @param repulser the position that has a realm
@@ -208,16 +224,46 @@ public class Problem {
 
         double x2 = manner[0];
         double y2 = manner[1];
-
-        double shiftedPositionX = ((x1 - x2) * (z + c)) / distance;
-        double shiftedPositionY = ((y1 - y2) * (z + c)) / distance;
+        
+        
+        double shiftedPositionX = ((x1 - x2) * (z + c) / distance) + x1;    //unit vector terminal points towards the one that comes first (x1) in the subtraction
+        double shiftedPositionY = ((y1 - y2) * (z + c) / distance) + y1;
         double[] shiftedPosition = new double[]{shiftedPositionX, shiftedPositionY};
 
         return shiftedPosition;
     }
 
+    public double[] spacialShiftRight(double[] repulser, double[] manner, double distance, double z, double c) {
+        double x1 = repulser[0];
+        double y1 = repulser[1];
 
-    public double calculate2DEuclideanDistance(double[] pointA, double[] pointB) {
+        double x2 = manner[0];
+        double y2 = manner[1];
+        double sign = (x1 - x2) / Math.abs(x1 - x2); //will be 1 or -1
+        
+        double shiftedPositionX ;
+        double shiftedPositionY;
+        if (sign == 1) {
+         shiftedPositionX = (Math.abs(x1 - x2) * (z + c + (distance * sign)) / distance) + x2; //x1-x2 / distance is the unit vector. Everything in the max function is the scaling. +x1 gives the new position
+         shiftedPositionY = (Math.abs(y1 - y2) * (z + c + (distance * sign)) / distance) + y2;        }
+        else {
+             shiftedPositionX = (Math.abs(x1 - x2) * (z + c + Math.max(0, distance * sign)) / distance) + x1; //x1-x2 / distance is the unit vector. Everything in the max function is the scaling. +x1 gives the new position
+             shiftedPositionY = (Math.abs(y1 - y2) * (z + c + Math.max(0, distance * sign)) / distance) + y1;
+        }
+        double[] shiftedPosition = new double[]{shiftedPositionX, shiftedPositionY};
+        double d = calculateEuclideanDistance(repulser, shiftedPosition);
+        return shiftedPosition;
+    }
+
+
+    /**
+     * Calculates the distance
+     * between two turbines
+     * @param pointA
+     * @param pointB
+     * @return
+     */
+    public double calculateEuclideanDistance(double[] pointA, double[] pointB) {
         double x1 = pointA[0];
         double x2 = pointB[0];
         double y1 = pointA[1];
@@ -228,6 +274,16 @@ public class Problem {
     }
 
 
+    /**
+     * Calculates the weight difference
+     * for each iteration step.
+     * @return weight step
+     */
+    public double calculateWeightStep(double wMax, double wMin, int maxIterations) {
+        double wStep =  (wMax - wMin) / maxIterations;
+        return wStep;
+    }
+    
    
     /* Getters and Setters */
 
