@@ -61,18 +61,18 @@ public class Problem {
         int[][] solution = new int[row][col];
         int x, y;
         Random r = new Random();
-        int count = 0;
-        int step = (int) Math.ceil((row * col) / (double) nTurbines);   //by taking a greater step, we can avoid unnecessarily crowing turbines (will get less than nturbines). By doing this, we can then exploit random position to further benefit the cause
-        //look into actaully taking the decimal point part left and using that every once in a while
+        double count = 0;
+        double step = (row * col) / (double) nTurbines;   //by taking a greater step, we can avoid unnecessarily crowing turbines (will get less than nturbines). By doing this, we can then exploit random position to further benefit the cause
+
         while (count < row * col) {
-            y = (count / col);
-            x = (count % col);
+            y = ((int) count / col);
+            x = ((int) count % col);
             
             solution[y][x] = 1;
             count += step;
         }
 
-        int current = count / step;
+        int current = (int) (count / step); //should be as close to nturbines as possible here
 
         while (current != nTurbines) {    //randomly fill with remaining turbines
             x = r.nextInt(col);
