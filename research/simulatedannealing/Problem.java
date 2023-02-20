@@ -1,4 +1,7 @@
 package research.simulatedannealing;
+import java.util.Arrays;
+import java.util.Random;
+
 import research.api.java.*;
 
 public class Problem {
@@ -11,15 +14,14 @@ public class Problem {
     public double minDist;
 
 
-    public Problem(KusiakLayoutEvaluator evaluator, WindScenario scenario, int populationSize) throws Exception {
+    public Problem(KusiakLayoutEvaluator evaluator, WindScenario scenario) throws Exception {
         this.scenario = scenario;
         this.evaluator = evaluator;
 
         //Commonly used
         nTurbines = scenario.nturbines;
-        popSize = populationSize;
 
-        double minDist = 8 * scenario.R;
+        this.minDist = 8 * scenario.R;
         this.col = (int) (scenario.width / minDist);
         this.row = (int) (scenario.height / minDist);
     }
@@ -50,23 +52,39 @@ public class Problem {
     /**
      * Generates a solution whereby
      * the turbines are evenly spaced
-     * in the farm
+     * in the farm. Got to be careful since
+     * our starting position in the search
+     * space really matters.
      * @return
      */
     public Solution generateInitialSolution() {
         int[][] solution = new int[row][col];
+        int x, y;
+        Random r = new Random();
         int count = 0;
-        int step = (row * col) / nTurbines; 
-
+        int step = (int) Math.ceil((row * col) / (double) nTurbines);   //by taking a greater step, we can avoid unnecessarily crowing turbines (will get less than nturbines). By doing this, we can then exploit random position to further benefit the cause
+        //look into actaully taking the decimal point part left and using that every once in a while
         while (count < row * col) {
-            int x = count / row;
-            int y = count % col;
-
-            solution[x][y] = 1;
+            y = (count / col);
+            x = (count % col);
+            
+            solution[y][x] = 1;
             count += step;
         }
 
-        return solution;
+        int current = count / step;
+
+        while (current != nTurbines) {    //randomly fill with remaining turbines
+            x = r.nextInt(col);
+            y = r.nextInt(row);
+
+            if (solution[y][x] != 1) {
+                solution[y][x] = 1;
+                current++;
+            }
+        }
+
+        return new Solution(solution, this);
     }
 
     /**

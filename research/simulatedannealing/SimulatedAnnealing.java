@@ -17,6 +17,7 @@ public class SimulatedAnnealing {
         this.temperature = temperature;
         this.coolingRate = coolingRate;
         this.iterations = iterations;
+
         this.problem = problem;
     }
 
@@ -25,12 +26,14 @@ public class SimulatedAnnealing {
         int i = 0;
 
         while (i < iterations) {
-            Solution neightbour = pertubate(current);
+            //Solution neighbour = pertubate(current);
+            Solution neighbour = current;
+            System.out.println(current.getFitness());
 
-            double p = maxMetropolisAlgorithm(current.getFitness(), neightbour.getFitness(), temperature);
+            double p = maxMetropolisAlgorithm(current.getFitness(), neighbour.getFitness(), temperature);
 
             if (Math.random() <= p) {
-                current = neightbour;
+                current = neighbour;
             }
             i++;
         }
