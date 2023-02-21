@@ -34,6 +34,7 @@ public class SimulatedAnnealing {
             System.out.println(current.getFitness());
 
             double p = maxMetropolisAlgorithm(current.getFitness(), neighbour.getFitness(), temperature);
+            System.out.println("probs: "+ p);
 
             if (Math.random() <= p) {
                 current = neighbour;
@@ -55,7 +56,7 @@ public class SimulatedAnnealing {
     private double maxMetropolisAlgorithm(double current, double neighbour, double t) {
         if (neighbour > current) return 1;
 
-        double difference = neighbour - current;
+        double difference = (neighbour - current) * 1000;
 
         double p = Math.exp(difference / t);
         return p;
@@ -79,11 +80,11 @@ public class SimulatedAnnealing {
             int y = turbinePos[1];
             neighbours = getNeighbours(grid, x, y, grid[y].length - 1, grid.length - 1);
 
-            double partition = 1 / (double) neighbours.length;
+            double partition = 1 / (double) neighbours.length * 2; //staying still take half of all positions
             int rowIndex = (int) Math.floor(Math.random() / partition);
     
             grid[y][x] = 0;
-            point = neighbours[rowIndex];
+            point = neighbours[Math.min(rowIndex, neighbours.length)]; //for when we want to stay still
             grid[point[1]][point[0]] = 1;
         }
 
