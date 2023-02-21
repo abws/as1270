@@ -74,7 +74,7 @@ public class Problem {
 
         int current = (int) (count / step); //should be as close to nturbines as possible here
 
-        while (current != nTurbines) {    //randomly fill with remaining turbines
+        while (current != nTurbines) {    //randomly fill with remaining turbines||||will no longer need to run this!!
             x = r.nextInt(col);
             y = r.nextInt(row);
 

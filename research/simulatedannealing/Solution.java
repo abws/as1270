@@ -8,21 +8,21 @@ package research.simulatedannealing;
  * @version 20.02.23
  */
 public class Solution {
-    public int[][] layout;
+    public int[][] grid;
     public double fitness;
 
     public Problem problem;
 
 
-    Solution(int[][] layout, Problem problem) {
-        this.layout = layout;
+    Solution(int[][] grid, Problem problem) {
+        this.grid = grid;
         this.problem = problem;
 
-        fitness = problem.evaluate(layout);
+        fitness = problem.evaluate(grid);
     }
 
-    public int[][] getLayout() {
-        return this.layout;
+    public int[][] getGrid() {
+        return this.grid;
     }
 
     public double getFitness() {
