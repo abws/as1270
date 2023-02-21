@@ -17,7 +17,7 @@ Others treat it as a Numerical Optimisation problem where the decision variables
 ### **Discretising the Wind Farm**
 As a combinatorial optimisation problem, the problem can be defined as:
 
-$ f: \{0, 1\}^n \rightarrow \mathbb{R} $ where $n \in \mathbb{Z}$ 
+$ f: \{0, 1\}^n \rightarrow \mathbb{R} $ where $ n \in \mathbb{Z} $ 
 
 Building up the grid, we ...
 

@@ -1,6 +1,7 @@
 package research.simulatedannealing;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -63,16 +64,18 @@ public class SimulatedAnnealing {
     private Solution pertubate(Solution current) {
         int[][] grid = current.getGrid();
         int[][] neighbours;
+        int[] point;
         
         for (int y = 0; y < grid.length; y++) {
             for (int x = 0; x < grid[y].length; x++) {
                 if (grid[y][x] == 1) {
                     neighbours = getNeighbours(grid, x, y, grid[x].length - 1, grid.length - 1);
-                    double partition = 1 / (neighbours.length + 1); //include current position as a possible move
+                    double partition = 1 / (double) neighbours.length;
                     int rowIndex = (int) Math.floor(Math.random() / partition);
 
                     grid[y][x] = 0;
-                    grid[neighbours[rowIndex][0]][neighbours[rowIndex][1]] = 1;
+                    point = neighbours[rowIndex];
+                    grid[point[0]][point[1]] = 1;
                 }
             }
         }
@@ -87,32 +90,52 @@ public class SimulatedAnnealing {
             {x+1, y},
             {x, y+1}
         };
-        
-        neighbours = legalise(grid, neighbours, xMax, yMax);
+
+
+        List<int[]> neighbourList = Arrays.asList(neighbours);
+
+        neighbours = repairNeighbours(grid, neighbours, xMax, yMax);
+        neighbours = addRow(neighbours, new int[]{x, y});
+
         return neighbours;
 
     }
 
-    private int[][] legalise(int[][] grid, int[][] neighbours, int xMax, int yMax) {
+    private int[][] repairNeighbours(int[][] grid, int[][] neighbours, int xMax, int yMax) {
 
         for (int row = 0; row < neighbours.length; row++) {
             int x = neighbours[row][1];
             int y = row;
 
             if (x < 0 || y < 0 || x > xMax || y > yMax || grid[y][x] == 1) 
-                neighbours = removePosition(neighbours, row);
-        } 
+                neighbours = removeRow(neighbours, row);
+        }
+
         return neighbours;
     }
 
-    private int[][] removePosition(int[][] neighbours, int removeIndex) {
+    private int[][] removeRow(int[][] neighbours, int removeIndex) {
         int[][] updatedList = new int[neighbours.length - 1][2];
+        int rowUpdated = 0;
+
         for (int row = 0; row < neighbours.length; row++) {
+
             if (row == removeIndex) continue;
-            updatedList[row] = neighbours[row];
+            updatedList[rowUpdated] = neighbours[row];
+            rowUpdated++;
         }
 
         return updatedList;
     }
- 
+
+    private int[][] addRow(int[][] neighbours, int[] coordinate) {
+        int[][] updatedList = new int[neighbours.length + 1][2];
+        updatedList[0] = coordinate;
+
+        for (int row = 0; row < neighbours.length; row++) {   //updatedList[1:] = neighbours[0:];
+            updatedList[row + 1] = neighbours[row];
+        }
+
+        return updatedList;
+    }
 }
