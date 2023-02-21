@@ -62,80 +62,98 @@ public class SimulatedAnnealing {
     }
 
     private Solution pertubate(Solution current) {
+        List<int[]> turbinePositions = new ArrayList<>();
         int[][] grid = current.getGrid();
         int[][] neighbours;
         int[] point;
         
         for (int y = 0; y < grid.length; y++) {
             for (int x = 0; x < grid[y].length; x++) {
-                if (grid[y][x] == 1) {
-                    neighbours = getNeighbours(grid, x, y, grid[x].length - 1, grid.length - 1);
-                    double partition = 1 / (double) neighbours.length;
-                    int rowIndex = (int) Math.floor(Math.random() / partition);
+                if (grid[y][x] == 1) 
+                    turbinePositions.add(new int[]{x, y});
+            }      
+        }
 
-                    grid[y][x] = 0;
-                    point = neighbours[rowIndex];
-                    grid[point[0]][point[1]] = 1;
-                }
-            }
+        for (int[] turbinePos : turbinePositions) {
+            int x = turbinePos[0];
+            int y = turbinePos[1];
+            neighbours = getNeighbours(grid, x, y, grid[y].length - 1, grid.length - 1);
+
+            double partition = 1 / (double) neighbours.length;
+            int rowIndex = (int) Math.floor(Math.random() / partition);
+    
+            grid[y][x] = 0;
+            point = neighbours[rowIndex];
+            grid[point[1]][point[0]] = 1;
         }
 
         return new Solution(grid, problem);
     }
 
-    private int[][] getNeighbours(int[][] grid, int x, int y, int xMax, int yMax) {
+    private int[][] getNeighbours(int[][] grid, int x1, int y1, int xMax, int yMax) {
+        List<int[]> neighboursList = new ArrayList<>();
+
         int[][] neighbours = new int[][] {
-            {x-1, y},
-            {x, y-1},
-            {x+1, y},
-            {x, y+1}
+            {x1-1, y1},
+            {x1, y1-1},
+            {x1+1, y1},
+            {x1, y1+1}
         };
 
+        for (int[] n : neighbours) {
+            int x = n[0];
+            int y = n[1];
 
-        List<int[]> neighbourList = Arrays.asList(neighbours);
+            if (!(x < 0 || y < 0 || x > xMax || y > yMax || grid[y][x] == 1)) {
+                neighboursList.add(n);
+            }
+        }
+        neighboursList.add(new int[]{x1, y1});
 
-        neighbours = repairNeighbours(grid, neighbours, xMax, yMax);
-        neighbours = addRow(neighbours, new int[]{x, y});
+        neighbours = new int[neighboursList.size()][2];
 
-        return neighbours;
-
-    }
-
-    private int[][] repairNeighbours(int[][] grid, int[][] neighbours, int xMax, int yMax) {
-
-        for (int row = 0; row < neighbours.length; row++) {
-            int x = neighbours[row][1];
-            int y = row;
-
-            if (x < 0 || y < 0 || x > xMax || y > yMax || grid[y][x] == 1) 
-                neighbours = removeRow(neighbours, row);
+        for (int i = 0; i < neighbours.length; i++) {
+            neighbours[i] = neighboursList.get(i);
         }
 
         return neighbours;
     }
 
-    private int[][] removeRow(int[][] neighbours, int removeIndex) {
-        int[][] updatedList = new int[neighbours.length - 1][2];
-        int rowUpdated = 0;
+    // private int[][] repairNeighbours(int[][] grid, int[][] neighbours, int xMax, int yMax) {
+        
+    //     for (int row = 0; row < neighbours.length; row++) {
+    //         int x = neighbours[row][1];
+    //         int y = row;
 
-        for (int row = 0; row < neighbours.length; row++) {
+    //         if (x < 0 || y < 0 || x > xMax || y > yMax || grid[y][x] == 1) 
+    //             neighbours = removeRow(neighbours, row);
+    //     }
 
-            if (row == removeIndex) continue;
-            updatedList[rowUpdated] = neighbours[row];
-            rowUpdated++;
-        }
+    //     return neighbours;
+    // }
 
-        return updatedList;
-    }
+    // private int[][] removeRow(int[][] neighbours, int removeIndex) {
+    //     int[][] updatedList = new int[neighbours.length - 1][2];
+    //     int rowUpdated = 0;
 
-    private int[][] addRow(int[][] neighbours, int[] coordinate) {
-        int[][] updatedList = new int[neighbours.length + 1][2];
-        updatedList[0] = coordinate;
+    //     for (int row = 0; row < neighbours.length; row++) {
 
-        for (int row = 0; row < neighbours.length; row++) {   //updatedList[1:] = neighbours[0:];
-            updatedList[row + 1] = neighbours[row];
-        }
+    //         if (row == removeIndex) continue;
+    //         updatedList[rowUpdated] = neighbours[row];
+    //         rowUpdated++;
+    //     }
 
-        return updatedList;
-    }
+    //     return updatedList;
+    // }
+
+    // private int[][] addRow(int[][] neighbours, int[] coordinate) {
+    //     int[][] updatedList = new int[neighbours.length + 1][2];
+    //     updatedList[0] = coordinate;
+
+    //     for (int row = 0; row < neighbours.length; row++) {   //updatedList[1:] = neighbours[0:];
+    //         updatedList[row + 1] = neighbours[row];
+    //     }
+
+    //     return updatedList;
+    // }
 }
