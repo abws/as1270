@@ -18,7 +18,6 @@ public class GeneticAlgorithm {
         
         for (int i = 0; i < generations; i++) {
             System.out.println(Collections.max(problem.getFitnessesArrayList(population)));
-            //System.out.println(Arrays.toString(problem.getFitnesses(population)));
             List<Individual> matingPool = new ArrayList<>();
             List<Individual> offSpring = new ArrayList<>();
 

@@ -33,6 +33,7 @@ public class Problem {
 
     public double evaluate(String individual) {
         double[][] phenotype = decode(individual);
+        System.out.println(Arrays.deepToString(phenotype));
         double fitness = evaluator.evaluate_2014(phenotype);
 
         return fitness;
@@ -60,7 +61,7 @@ public class Problem {
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
                 if (gridIndividual[i][j] == 1) {
-                    layout[count] = getCoordinates(i, j, minDist);
+                    layout[count] = getMeshCoordinates(i, j, minDist);
                     count++;
                 }
             }
