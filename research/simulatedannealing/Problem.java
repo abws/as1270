@@ -40,7 +40,7 @@ public class Problem {
         for (int i = 0; i < row; i++) {
             for (int j = 0; j < col; j++) {
                 if (solution[i][j] == 1) {
-                    layout[count] = getCoordinates(i, j, minDist);
+                    layout[count] = getMeshCoordinates(i, j, minDist);
                     count++;
                 }
             }
@@ -101,6 +101,18 @@ public class Problem {
         double [] coordinates = new double[2];
         coordinates[0] = ((x * minDist) + (minDist / 2));
         coordinates[1] = ((y * minDist) + (minDist / 2));
+
+        return coordinates;
+    }
+
+    private double[] getMeshCoordinates(int y, int x, double minDist) {
+        int maxX = (int) (scenario.width / minDist);
+        int maxY = (int) (scenario.height / minDist);
+
+        double [] coordinates = new double[2];
+        coordinates[0] = (x * minDist) + (y * (minDist / maxY));
+
+        coordinates[1] = ((maxY - y) * minDist) - (x * (minDist / maxX));
 
         return coordinates;
     }
