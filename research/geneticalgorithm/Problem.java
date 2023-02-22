@@ -60,7 +60,7 @@ public class Problem {
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
                 if (gridIndividual[i][j] == 1) {
-                    layout[count] = getCoordinates(i, j, minDist);
+                    layout[count] = getMeshCoordinates(i, j, minDist);
                     count++;
                 }
             }
@@ -76,12 +76,23 @@ public class Problem {
      * @param x
      * @param minDist
      * @return Coordinates (x, y)
-     * Tested
+     * @tested
      */
     private double[] getCoordinates(int y, int x, double minDist) {
         double [] coordinates = new double[2];
         coordinates[0] = ((x * minDist) + (minDist / 2));
         coordinates[1] = ((y * minDist) + (minDist / 2));
+
+        return coordinates;
+    }
+
+    private double[] getMeshCoordinates(int y, int x, double minDist) {
+        int maxX = (int) (scenario.width / minDist);
+        int maxY = (int) (scenario.height / minDist);
+
+        double [] coordinates = new double[2];
+        coordinates[0] = (x * minDist) + (x * (minDist / maxX));
+        coordinates[1] = (y * minDist) + (y * (minDist / maxY));
 
         return coordinates;
     }
@@ -92,7 +103,7 @@ public class Problem {
      * @param x The width of the grid
      * @param y The height of the grid
      * @return A two-dimensional array representing the grid
-     * Tested
+     * @tested
      */
     public int[][] gridify(String ind, int x, int y) {
         int[][] grid = new int[y][x]; //[rows][columns] since rows are 'bigger' and classified by first
@@ -176,7 +187,7 @@ public class Problem {
      * @param popSize
      * @param bits
      * @return Random population
-     * Tested
+     * @tested
      */
     public List<Individual> getRandomPopulation(int popSize, int bits, int turbines) {
         Random rand = new Random();

@@ -28,17 +28,21 @@ public class SimulatedAnnealing {
     public void run() {
         Solution current = problem.generateInitialSolution();
         int i = 0;
+        double initial = temperature;
 
         while (i < iterations) {
             Solution neighbour = pertubate(current);
             System.out.println(current.getFitness());
 
             double p = maxMetropolisAlgorithm(current.getFitness(), neighbour.getFitness(), temperature);
-            System.out.println("probs: "+ p);
+            // System.out.println("probs: "+ p);
 
             if (Math.random() <= p) {
                 current = neighbour;
             }
+            // temperature *= coolingRate;
+            temperature = initial / i;
+            // System.out.println("temp: " + temperature);
             i++;
         }
     
@@ -56,7 +60,7 @@ public class SimulatedAnnealing {
     private double maxMetropolisAlgorithm(double current, double neighbour, double t) {
         if (neighbour > current) return 1;
 
-        double difference = (neighbour - current) * 1000;
+        double difference = (neighbour - current) * 100;
 
         double p = Math.exp(difference / t);
         return p;
@@ -80,11 +84,13 @@ public class SimulatedAnnealing {
             int y = turbinePos[1];
             neighbours = getNeighbours(grid, x, y, grid[y].length - 1, grid.length - 1);
 
-            double partition = 1 / (double) neighbours.length * 2; //staying still take half of all positions
+            double partition = 1 / ((double) neighbours.length * 2); //staying still take half of all positions
+            // double partition = 1 / (double) neighbours.length; //staying still take half of all positions
+
             int rowIndex = (int) Math.floor(Math.random() / partition);
-    
+            // System.out.println(neighbours.length+"--"+rowIndex);
             grid[y][x] = 0;
-            point = neighbours[Math.min(rowIndex, neighbours.length)]; //for when we want to stay still
+            point = neighbours[Math.min(rowIndex, neighbours.length - 1)]; //for when we want to stay still
             grid[point[1]][point[0]] = 1;
         }
 
@@ -119,42 +125,4 @@ public class SimulatedAnnealing {
 
         return neighbours;
     }
-
-    // private int[][] repairNeighbours(int[][] grid, int[][] neighbours, int xMax, int yMax) {
-        
-    //     for (int row = 0; row < neighbours.length; row++) {
-    //         int x = neighbours[row][1];
-    //         int y = row;
-
-    //         if (x < 0 || y < 0 || x > xMax || y > yMax || grid[y][x] == 1) 
-    //             neighbours = removeRow(neighbours, row);
-    //     }
-
-    //     return neighbours;
-    // }
-
-    // private int[][] removeRow(int[][] neighbours, int removeIndex) {
-    //     int[][] updatedList = new int[neighbours.length - 1][2];
-    //     int rowUpdated = 0;
-
-    //     for (int row = 0; row < neighbours.length; row++) {
-
-    //         if (row == removeIndex) continue;
-    //         updatedList[rowUpdated] = neighbours[row];
-    //         rowUpdated++;
-    //     }
-
-    //     return updatedList;
-    // }
-
-    // private int[][] addRow(int[][] neighbours, int[] coordinate) {
-    //     int[][] updatedList = new int[neighbours.length + 1][2];
-    //     updatedList[0] = coordinate;
-
-    //     for (int row = 0; row < neighbours.length; row++) {   //updatedList[1:] = neighbours[0:];
-    //         updatedList[row + 1] = neighbours[row];
-    //     }
-
-    //     return updatedList;
-    // }
 }
