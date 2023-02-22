@@ -91,8 +91,9 @@ public class Problem {
         int maxY = (int) (scenario.height / minDist);
 
         double [] coordinates = new double[2];
-        coordinates[0] = (x * minDist) + (x * (minDist / maxX));
-        coordinates[1] = (y * minDist) + (y * (minDist / maxY));
+        coordinates[0] = (x * minDist) + (y * (minDist / maxY));
+
+        coordinates[1] = ((maxY - y) * minDist) - (x * (minDist / maxX));
 
         return coordinates;
     }
