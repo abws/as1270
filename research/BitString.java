@@ -27,7 +27,7 @@ public class BitString {
     }
 
     public BitString xor(BitString other) {
-        int length = other.getLength();
+        int length = Math.max(this.length, other.getLength());
 
         int result = this.value ^ other.getValue();
         String binaryResult = String.format("%" + length + "s", Integer.toBinaryString(result)).replace(' ', '0');
@@ -37,7 +37,7 @@ public class BitString {
 
  
     public BitString and(BitString other) {
-        int length = other.getLength();
+        int length = Math.max(this.length, other.getLength());
 
         int result = this.value & other.getValue();
         String binaryResult = String.format("%" + length + "s", Integer.toBinaryString(result)).replace(' ', '0');
@@ -47,7 +47,7 @@ public class BitString {
 
 
     public BitString or(BitString other) {
-        int length = other.getLength();
+        int length = Math.max(this.length, other.getLength());
 
         int result = this.value | other.getValue();
         String binaryResult = zeroExtend(result, length);
@@ -56,10 +56,10 @@ public class BitString {
     }
 
 
-    public BitString negate(BitString other) {
-        int length = other.getLength();
+    public BitString negate() {
+       int negated = ~this.value;
 
-        int result = ~this.value;
+        int result = Math.max(negated, -1*negated);
         String binaryResult = oneExtend(result, length);
 
         return new BitString(binaryResult);

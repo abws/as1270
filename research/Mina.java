@@ -34,10 +34,12 @@ public class Mina {
         // System.out.println(lol);
         //System.out.println(Integer.bitCount(a));
 
-        BitString a = new BitString("10001010");
-        BitString b = new BitString("1111");
+        BitString a = new BitString("0110001010");
 
-        System.out.println(a.or(b));
+        //BitString b = new BitString("11");
+        //System.out.println(b.getValue());
+
+        System.out.println(a.negate());
     }
     
 }
