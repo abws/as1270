@@ -34,12 +34,21 @@ public class Mina {
         // System.out.println(lol);
         //System.out.println(Integer.bitCount(a));
 
-        BitString a = new BitString("0110001010");
+        //BitString a = new BitString("0110001010");
 
         //BitString b = new BitString("11");
         //System.out.println(b.getValue());
 
-        System.out.println(a.negate());
+        //System.out.println(a.negate());
+        // String a = "0110001010";
+        // String b = "1111111111";
+        // String c = BitStringOperators.xor(a, b); //negation
+        // System.out.println(c);
+        String ind = "10101011";
+        problem
+        // int pos = 0;
+        // int x = Character.getNumericValue(ind.charAt(pos));
+        // System.out.println(x);
     }
     
 }

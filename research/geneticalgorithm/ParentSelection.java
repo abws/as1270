@@ -1,7 +1,6 @@
 package research.geneticalgorithm;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
@@ -24,6 +23,9 @@ public class ParentSelection {
     ParentSelection(Problem problem) { //add so user can change using input
         this.problem = problem;
     }
+
+    
+    /* Main callable classes  */
 
     public List<Individual> fitnessProportionalSelection(List<Individual> population, int populationSize) {
         List<Double> weights = calculateWeights(population);
@@ -68,6 +70,17 @@ public class ParentSelection {
         
         return matingPool;
     }
+
+
+
+
+
+
+
+
+
+
+
 
     /**
      * 
@@ -240,16 +253,17 @@ public class ParentSelection {
     public List<Individual> stochasticUniversalSample(List<Individual> population, List<Double> weights, int n) { //n is population size
         List<Individual> matingPool = new ArrayList<>();
         double cumulativeWeight = 0;   //Represents the starting position of the roulette wheel
-        int index = 0; int p = 0; 
+        int index = 0; int p = 0;
+        double pointerDistance = 1 / (double) n; //Distance between each arrow
 
 
         Random rand = new Random();
-        double randomSpin = rand.nextDouble(1 / (double) n); //uniformly random number between 0 and 1/n, once
+        double randomSpin = rand.nextDouble(pointerDistance); //uniformly random number between 0 and 1/n, once
         double[] pointers = new double[n];
-        IntStream.range(0, pointers.length).forEach(i -> pointers[i] = (i * 1/ (double) n) + randomSpin); //fil array with arrow/pointer positions, and (mini)spin them randomly
-        
-        while (index < weights.size()) {  //we've exhausted all the weights
-            cumulativeWeight += weights.get(index);
+        IntStream.range(0, pointers.length).forEach(i -> 
+                                                    pointers[i] = (i * pointerDistance) + randomSpin); //fil array with arrow/pointer positions, and (mini)spin them randomly
+        while (index < weights.size()) {  //we've exhausted all the partitions
+            cumulativeWeight += weights.get(index); //thickness of current partition
 
             while ((p < pointers.length) && (pointers[p] <= cumulativeWeight)) {
                 matingPool.add(population.get(index));

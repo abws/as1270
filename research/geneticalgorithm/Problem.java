@@ -140,23 +140,21 @@ public class Problem {
         int pos = 0;
 
         for (int i = 0; i < y; i ++) {
-
-            switch (i % 2) {
-                case 0:
+            if (i % 2 == 0) 
                     for (int j = 0; j < x; j++) { //this part must go down for i % 2 == 0
                         grid[i][j] = Character.getNumericValue(ind.charAt(pos));
                         pos++;
                     }
-                case 1:
-                    for (int j = x; j > 0; j--) { 
-                        grid[i][j] = Character.getNumericValue(ind.charAt(pos)); //we start from the right and fill in from the left now
-                        pos++;
-                    }
-            }
+            else
+                for (int j = (x - 1); j >= 0; j--) { 
+                    grid[i][j] = Character.getNumericValue(ind.charAt(pos)); //we start from the right and fill in from the left now
+                    pos++;
+                }
         }
-
+        
         return grid;
     }
+
 
     /**
      * Generates a random string population
