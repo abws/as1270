@@ -21,9 +21,9 @@ public class GeneticAlgorithm {
             List<Individual> matingPool = new ArrayList<>();
             List<Individual> offSpring = new ArrayList<>();
 
-            matingPool = ps.tournamentSelection(population, popSize, 3, false); //parent selection
+            matingPool = ps.tournamentSelection(population, popSize, 11, true); //parent selection
             offSpring = r.recombineNPoint(matingPool, popSize, 100); //recombination
-            offSpring = problem.legalise(m.mutatePopulation(offSpring)); //mutation and repair
+            offSpring = problem.repairRandom(m.mutatePopulationRandom(offSpring)); //mutation and repair
             population = rp.elitism(population, offSpring, 1); //survival selection
         }
     }

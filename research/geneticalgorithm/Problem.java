@@ -20,6 +20,9 @@ public class Problem {
     public int N_TURBINES;
     public int POP_SIZE;
 
+    public double minDist;
+    public int columns;
+    public int rows;
 
     public Problem(KusiakLayoutEvaluator evaluator, WindScenario scenario, int populationSize) throws Exception {
         this.scenario = scenario;
@@ -29,11 +32,14 @@ public class Problem {
         INDIV_LENGTH = this.getStringLength();
         N_TURBINES = scenario.nturbines;
         POP_SIZE = populationSize;
+
+        minDist = 8 * scenario.R;
+        columns = (int) (scenario.width / minDist);     //one to n
+        rows = (int) (scenario.height / minDist);
     }
 
     public double evaluate(String individual) {
         double[][] phenotype = decode(individual);
-        System.out.println(Arrays.deepToString(phenotype));
         double fitness = evaluator.evaluate_2014(phenotype);
 
         return fitness;
@@ -48,10 +54,6 @@ public class Problem {
      * Tested
      */
     public double[][] decode(String individual) {
-        double minDist = 8 * scenario.R;
-
-        int columns = (int) (scenario.width / minDist);
-        int rows = (int) (scenario.height / minDist);
 
         int[][] gridIndividual = gridify(individual, columns, rows);
 
@@ -88,8 +90,8 @@ public class Problem {
     }
 
     private double[] getMeshCoordinates(int y, int x, double minDist) {
-        int maxX = (int) (scenario.width / minDist);
-        int maxY = (int) (scenario.height / minDist);
+        int maxX = columns;
+        int maxY = rows;
 
         double [] coordinates = new double[2];
         coordinates[0] = (x * minDist) + (y * (minDist / maxY));
@@ -223,10 +225,6 @@ public class Problem {
      * @return
      */
     public int getStringLength() {
-        double minDist = 8 * scenario.R;
-
-        int columns = (int) (scenario.width / minDist);
-        int rows = (int) (scenario.height / minDist);
         return columns * rows;
     }
 
@@ -275,7 +273,7 @@ public class Problem {
      * @param pop
      * @return
      */
-    public List<Individual> legalise(List<Individual> pop) {
+    public List<Individual> repairRandom(List<Individual> pop) {
         Random r = new Random();
         List<Individual> cleanPop = new ArrayList<>();
 
@@ -393,32 +391,4 @@ public class Problem {
 
         return fitnesses;
     }
-
-    /**
-     * Calculautes the maximum fitness of
-     * a population. Becareful! It should only
-     * be used at the end of the algorithm, and even
-     * then we can calulate, soon make use of ATTRIBUTE LAST FITNESS AFTER WE MAKE INDIV CLASS
-     * @param population
-     * @return
-     */
-    public double maxFitness(List<String> population) {
-        double maxFitness = 0.0;
-        for (String n : population) {
-            double fitness = evaluate(n);
-            if (fitness > maxFitness) maxFitness = fitness;
-        }
-
-        return maxFitness;
-    }
-
-    public double avgFitness(List<String> population) {
-        double sum = 0.0;
-        for (String n : population) {
-            double fitness = evaluate(n);
-            sum += fitness;
-        }
-        return sum / population.size();
-    }
-
 }

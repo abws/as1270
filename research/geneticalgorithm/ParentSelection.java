@@ -96,7 +96,7 @@ public class ParentSelection {
         List<Integer> indexes;
         List<Individual> candidates;
         Random r = new Random();
-        if (withoutReplacement) Math.min(k, popSize); //limit k value or we'll get stuck in foreverness
+        if (withoutReplacement) k = Math.min(k, popSize); //limit k value or we'll get stuck in foreverness
 
         while (matingPool.size() < popSize) {
             candidates = new ArrayList<>(); //thanks for garbage collection mr Jaavapius
