@@ -59,6 +59,11 @@ public class Mutation {
     }
 
 
+    /**
+     * Overview method
+     * @param offSpring
+     * @return
+     */
     public List<Individual> mutatePopulationSlidingBox(List<Individual> offSpring) {
         //mutation
         for (int i = 0; i < offSpring.size(); i++) {
@@ -75,13 +80,12 @@ public class Mutation {
     public double[] slidingBoxProb(String ind) {
         double[] boxes = new double[(rows - 1) * (columns - 1)];    //number of sliding boxes
         int count = 0;
-        
-        for (int y = 0; y < rows - 1; y++) {
-            for (int x = 0; x < columns - 1; x++) {
-                int a = ind.charAt(x);                  //the 4 coordinates of a box
-                int b = ind.charAt(x + 1);
-                int c = ind.charAt((y * (rows-1)) + x);
-                int d = ind.charAt((y * (rows-1)) + x + 1);
+        for (int y = 0; y < rows - 1; y+=2) {
+            for (int x = 0; x < columns - 1; x+=2) {
+                int a = Character.getNumericValue(ind.charAt(((y) * (columns-1)) + x));                  //the 4 coordinates of a box
+                int b = Character.getNumericValue(ind.charAt(((y) * (columns-1)) + x + 1));
+                int c = Character.getNumericValue(ind.charAt(((y+1) * (columns-1)) + x));
+                int d = Character.getNumericValue(ind.charAt(((y+1) * (columns-1)) + x + 1));
                 
                 boxes[count] = (a + b + c + d) / 4.0;
                 count++;
@@ -92,7 +96,10 @@ public class Mutation {
     }
 
     public Individual bitInformedMutation(Individual ind, double[] boxes) { //boxes rows are 0 -> (col - 2)
+        StringBuilder indivArray = new StringBuilder(ind.getValue());
+
         for (int i = 0; i < INDIV_LENGTH; i++) {
+            double classis;
             int y = i / columns;
             int x = i % columns;
 
@@ -102,23 +109,38 @@ public class Mutation {
             int bx1 = x, bx2 = x-1;
             int by1 = y, by2 = y-1;
 
-            int[] bValues = new int[4];
+            int[][] bValues = {
+                {bx1, by1},
+                {bx1, by2},
+                {bx2, by1},
+                {bx2, by2}
+            };
 
-            for (int )
-            for (int b = 0; b < bValues.length; b++) {
-                bValues = boxes[]
+            double counter, sum, prob;
+            counter = 1; sum = prob = 0 ;
 
+            for (int[] c : bValues) {
+                if ((c[0] < 0) || (c[0] > boxCol) || (c[1] < 0) || (c[1] > boxRow)) continue;   //skip infeasible box positions
+                
+                int a = c[0];
+                int b = c[1];
 
-
+                sum += boxes[(b * boxCol) + a];
+                prob = sum / counter;
+                counter++;
+            
+            }
+            classis = this.MUT_RATE * (1/prob);
+            if (Math.random() < classis) {     //greater p corresponds to more turbine density
+                char newChar = indivArray.charAt(i) == '1' ? '0' : '0'; //flips the one
+                indivArray.setCharAt(i, newChar);
             }
 
-
-
-            
-            
-
         }
-
+        // System.out.println("Befow: "+problem.countTurbines(ind.getValue()));
+        // System.out.println("After: "+problem.countTurbines(indivArray.toString()));
+        ind.setValue(indivArray.toString());
+        return ind; 
     }
 
 

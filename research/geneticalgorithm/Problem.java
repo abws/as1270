@@ -29,13 +29,12 @@ public class Problem {
         this.evaluator = evaluator;
 
         //Commonly used
-        INDIV_LENGTH = this.getStringLength();
         N_TURBINES = scenario.nturbines;
         POP_SIZE = populationSize;
-
         minDist = 8 * scenario.R;
         columns = (int) (scenario.width / minDist);     //one to n
         rows = (int) (scenario.height / minDist);
+        INDIV_LENGTH = this.getStringLength();
     }
 
     public double evaluate(String individual) {
