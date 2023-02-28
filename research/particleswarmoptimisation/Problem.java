@@ -164,7 +164,11 @@ public class Problem {
         }
         // System.out.println(Arrays.toString(randomPosition));
         layout = geometricReformer(decodeDirect(randomPosition), minDist);
+        System.out.println(Arrays.deepToString(layout));
+        System.out.println(Arrays.deepToString(decodeDirect(randomPosition)));
         randomPosition = encodeDirect(layout);
+        //randomPosition = encodeDirect(decodeDirect(randomPosition));
+
 
         Particle randomParticle = new Particle(randomPosition, velocity, this);
         return randomParticle;
@@ -194,7 +198,7 @@ public class Problem {
                     double distance = calculateEuclideanDistance(repulser, manner);
                     if (distance > z) continue;
 
-                    manner = spacialShiftRight(repulser, manner, distance, z, 1); 
+                    manner = spacialShift(repulser, manner, distance, z, 1); 
                 }
             }
 
@@ -240,16 +244,21 @@ public class Problem {
         double x2 = manner[0];
         double y2 = manner[1];
         double sign = (x1 - x2) / Math.abs(x1 - x2); //will be 1 or -1
+        // sign *= (y1 - y2) / Math.abs(y1 - y2);
         
-        double shiftedPositionX ;
-        double shiftedPositionY;
-        if (sign == 1) {
-         shiftedPositionX = (Math.abs(x1 - x2) * (z + c + (distance * sign)) / distance) + x2; //x1-x2 / distance is the unit vector. Everything in the max function is the scaling. +x1 gives the new position
-         shiftedPositionY = (Math.abs(y1 - y2) * (z + c + (distance * sign)) / distance) + y2;        }
-        else {
-             shiftedPositionX = (Math.abs(x1 - x2) * (z + c + Math.max(0, distance * sign)) / distance) + x1; //x1-x2 / distance is the unit vector. Everything in the max function is the scaling. +x1 gives the new position
-             shiftedPositionY = (Math.abs(y1 - y2) * (z + c + Math.max(0, distance * sign)) / distance) + y1;
-        }
+        
+        double shiftedPositionX = (sign*(x1 - x2) * (z + c) / distance) + x1;    //unit vector terminal points towards the one that comes first (x1) in the subtraction
+        double shiftedPositionY = (sign*(y1 - y2) * (z + c) / distance) + y1;
+    
+
+
+        // if (sign == 1) {
+        //  shiftedPositionX = (Math.abs(x1 - x2) * (z + c + (distance * sign)) / distance) + x2; //x1-x2 / distance is the unit vector. Everything in the max function is the scaling. +x1 gives the new position
+        //  shiftedPositionY = (Math.abs(y1 - y2) * (z + c + (distance * sign)) / distance) + y2;        }
+        // else {
+        //      shiftedPositionX = (Math.abs(x1 - x2) * (z + c + Math.max(0, distance * sign)) / distance) + x1; //x1-x2 / distance is the unit vector. Everything in the max function is the scaling. +x1 gives the new position
+        //      shiftedPositionY = (Math.abs(y1 - y2) * (z + c + Math.max(0, distance * sign)) / distance) + y1;
+        // }
         double[] shiftedPosition = new double[]{shiftedPositionX, shiftedPositionY};
         double d = calculateEuclideanDistance(repulser, shiftedPosition);
         return shiftedPosition;

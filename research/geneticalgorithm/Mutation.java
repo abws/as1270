@@ -99,8 +99,8 @@ public class Mutation {
         StringBuilder indivArray = new StringBuilder(ind.getValue());
 
         for (int i = 0; i < INDIV_LENGTH; i++) {
-            double classis;
-            int y = i / columns;
+            double classis;     
+            int y = i / columns;    //3rd and 4th arrows
             int x = i % columns;
 
             int boxRow = rows-2;
@@ -109,7 +109,7 @@ public class Mutation {
             int bx1 = x, bx2 = x-1;
             int by1 = y, by2 = y-1;
 
-            int[][] bValues = {
+            int[][] bValues = {     //4 boxes and their (starting) positions in the grid
                 {bx1, by1},
                 {bx1, by2},
                 {bx2, by1},
@@ -128,8 +128,8 @@ public class Mutation {
                 sum += boxes[(b * boxCol) + a];
                 prob = sum / counter;
                 counter++;
-            
             }
+
             classis = this.MUT_RATE * (1/prob);
             if (Math.random() < classis) {     //greater p corresponds to more turbine density
                 char newChar = indivArray.charAt(i) == '1' ? '0' : '0'; //flips the one

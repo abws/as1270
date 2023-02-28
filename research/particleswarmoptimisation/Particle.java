@@ -31,6 +31,7 @@ public class Particle {
         this.velocity = initialVelocity;
 
         updateFitness();
+        System.out.println(this.fitness);
     }
     
 
