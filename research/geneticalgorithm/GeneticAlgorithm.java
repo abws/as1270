@@ -23,7 +23,7 @@ public class GeneticAlgorithm {
             List<Individual> offSpring = new ArrayList<>();
 
             matingPool = ps.tournamentSelection(population, popSize, 5, false); //parent selection
-            offSpring = r.recombineNPoint(matingPool, popSize, 20); //recombination
+            offSpring = r.recombineNPoint(matingPool, popSize, 35); //recombination
             offSpring = re.repairSlidingBox(m.mutatePopulationRandom(offSpring)); //mutation and repair
             population = rp.elitism(population, offSpring, 1); //survival selection
         }

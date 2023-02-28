@@ -73,7 +73,6 @@ public class Repair {
         //mutation
         for (int i = 0; i < pop.size(); i++) {
             Individual ind = pop.get(i);
-            // int[][] grid = problem.gridify(o.getValue(), problem.columns, problem.rows);
             double[] boxes = slidingBoxProb(ind.getValue());
 
             pop.set(i, slidingBox(ind, boxes));    //mutate each individual in the offspring array
@@ -100,12 +99,11 @@ public class Repair {
     }
 
     public Individual slidingBox(Individual ind, double[] boxes) { //boxes rows are 0 -> (col - 2)
-        Random r = new Random();
         StringBuilder indivArray = new StringBuilder(ind.getValue());
         double[] probs = new double[ind.getValue().length()];
 
         for (int i = 0; i < INDIV_LENGTH; i++) {
-            int y = i / columns;    //3rd and 4th arrows
+            int y = i / columns;    //grid position of current farm position
             int x = i % columns;
 
             int boxRow = rows-2;
@@ -144,17 +142,20 @@ public class Repair {
         while (difference > 0) {    //we have too many turbines
             int position = mostDense(probs); //position to remove turbine from
             Character c = indivArray.charAt(position);
-            //System.out.println(probs[position]);
+            // System.out.println(c);
+            probs[position] = 1;
 
-            if (c == '1' && probs[position] > 0.4) {   //maybe limit how many times we do this since we could get stuck
+            if (c == '1') {   //maybe limit how many times we do this since we could get stuck
                 indivArray.setCharAt(position, '0');
                 difference--;
             }
         }
         while (difference < 0) {    //we have too few turbines
-            int position = r.nextInt(INDIV_LENGTH); //position to add turbine to
+            int position = leastDense(probs); //position to add turbine to
             Character c = indivArray.charAt(position);
-            if (c == '0' && probs[position] == 0) {
+
+            probs[position] = 0;
+            if (c == '0') {
                 indivArray.setCharAt(position, '1');
                 difference++;
             }
@@ -165,6 +166,24 @@ public class Repair {
         return ind; 
     }
 
+    private int mostDense(double[] probs) {
+        int maxIndex = 0;
+        for (int i = 0; i < probs.length; i++ ) {
+            if (probs[i] <= probs[maxIndex]) maxIndex = i;
+        }
+
+        return maxIndex;
+    }
+
+    private int leastDense(double[] probs) {
+        int minIndex = 0;
+        for (int i = 0; i < probs.length; i++ ) {
+            if (probs[i] >= probs[minIndex]) minIndex = i;
+            if (probs[minIndex] == 0) break; //since we cannot get any lower anyway
+        }
+
+        return minIndex;
+    }
     
 
     

@@ -39,6 +39,7 @@ public class Problem {
 
     public double evaluate(String individual) {
         double[][] phenotype = decode(individual);
+        // System.out.println(Arrays.deepToString(phenotype));
         double fitness = evaluator.evaluate_2014(phenotype);
 
         return fitness;
