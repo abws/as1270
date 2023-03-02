@@ -1,6 +1,5 @@
 package research.particleswarmoptimisation;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -73,8 +72,9 @@ public class ParticleSwarmOptimisation {
                 double[] social = scalarMultipy(c1, randomisedGDistance);
 
                 /* Update velocity and position */
-                double[] newVelocity = vectorAddition(inertia, cognitive, social);
+                double[] newVelocity = velocityClamp(vectorAddition(inertia, cognitive, social));
                 double[] newPosition = vectorAddition(p.getPosition(), newVelocity);
+                newPosition = absorbBoundHandle(newPosition);
 
                 /* Update Particle */
                 p.setPosition(newPosition, true);
@@ -83,6 +83,7 @@ public class ParticleSwarmOptimisation {
                 /* Update local and global best */
                 p.updatePersonalBest();
                 problem.updateGlobalBest(p.getPersonalBestFitness(), p.getPersonalBest());    //will only update if pBest is better than gBest
+                System.out.println(problem.gBestFitness);
             }
         }
 
@@ -168,6 +169,16 @@ public class ParticleSwarmOptimisation {
         return randomiserVector;
     }
 
+    public double[] velocityClamp(double[] currentVector) {        
+
+        for (int i = 0; i < currentVector.length; i++) {
+            currentVector[i] = Math.min(currentVector[i], this.vMax[i]);
+            currentVector[i] = Math.max(currentVector[i], this.vMin[i]);
+        }
+
+        return currentVector;
+    }
+
     /**
      * Puts a lower bound
      * on each dimension of
@@ -205,5 +216,18 @@ public class ParticleSwarmOptimisation {
 
         return maxVelocity;
     }
+
+    public double[] absorbBoundHandle(double[] particlePosition) {
+        for (int i = 0; i < particlePosition.length; i+=2) {
+            particlePosition[i] = Math.max(0, particlePosition[i]);
+            particlePosition[i+1] = Math.max(0, particlePosition[i+1]);
+
+            particlePosition[i] = Math.min(particlePosition[i], problem.width);
+            particlePosition[i+1] = Math.min(particlePosition[i+1], problem.height);
+        }
+
+        return particlePosition;
+    }
+
 
 }

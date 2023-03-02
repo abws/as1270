@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import java.util.Scanner;
 
 import research.api.java.*;
 
@@ -31,9 +32,10 @@ public class Problem {
     public double minDist;
     public double height;
     public double width;
+    double penaltyCoefficient;
 
 
-    public Problem(KusiakLayoutEvaluator evaluator, WindScenario scenario, int swarmSize) throws Exception {
+    public Problem(KusiakLayoutEvaluator evaluator, WindScenario scenario, int swarmSize, double penaltyCoefficient) throws Exception {
         this.scenario = scenario;
         this.evaluator = evaluator;
 
@@ -44,6 +46,7 @@ public class Problem {
         this.height = scenario.height;
         this.width = scenario.width;
         this.minDist = scenario.R * 8;
+        this.penaltyCoefficient = penaltyCoefficient;
     }
 
     /**
@@ -68,14 +71,16 @@ public class Problem {
      * applying a penalty function.
      * Only takes in vectors.
      * @param particle
+     * @param c penalty coefficient
      * @return
      */
-    public double evaluate(double[] particlePosition, double c) {
+    public double evaluatePenalty(double[] particlePosition) {
         double[][] particleCoordinates = decodeDirect(particlePosition);
 
         /* Calculate total energy production */
-        evaluator.evaluate_2014(particleCoordinates);   //calculates the AEP
+        evaluator.evaluate_2014(particleCoordinates);   //calculates the AEP and sets it in the evaluator
         double energyProduction = evaluator.getEnergyOutput();
+        //System.out.println(energyProduction);
 
         double violationSum = 0;
 
@@ -84,9 +89,9 @@ public class Problem {
                 violationSum += proximityConstraintViolation(particleCoordinates[i], particleCoordinates[j], minDist);
             }
         }
-        double penalty = violationSum * c;
-        double fitness = (energyProduction - penalty) / scenario.wakeFreeEnergy;
-
+        double penalty = this.penaltyCoefficient * (Math.sqrt(violationSum));
+        double fitness = (energyProduction - penalty) / (scenario.wakeFreeEnergy * nTurbines);
+     
 
         return fitness;
     }
@@ -194,7 +199,7 @@ public class Problem {
         Random random = new Random();
         double[] randomPosition = new double[particleDimension];
         double[] velocity = new double[particleDimension];  //instantiate with all zeros
-        double[][] layout = new double[nTurbines][2];
+        //double[][] layout = new double[nTurbines][2];
 
         for (int i = 0; i < particleDimension; i+=2) {
             randomPosition[i] = random.nextDouble(width);    //x coordinate
@@ -308,7 +313,7 @@ public class Problem {
     }
 
     /**
-     * Calculated the violation value
+     * Calculates the violation value
      * for a proximity constraint violation
      * Calculates the squared 
      * distance between two 

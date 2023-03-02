@@ -10,7 +10,7 @@ public class Main {
 
         KusiakLayoutEvaluator evaluator = new KusiakLayoutEvaluator();
         evaluator.initialize(ws);
-        Problem problem = new Problem(evaluator, ws, 5);
+        Problem problem = new Problem(evaluator, ws, 5, 700);
         ParticleSwarmOptimisation pso = new ParticleSwarmOptimisation(problem.swarmSize, 2, 2, 0.4, 0.9, 10, 0.1, problem);
 
         pso.run();
