@@ -62,6 +62,36 @@ public class Problem {
     }
 
     /**
+     * Evaluates a given particle 
+     * position using the Wake Free
+     * Ratio evaluation function and 
+     * applying a penalty function.
+     * Only takes in vectors.
+     * @param particle
+     * @return
+     */
+    public double evaluate(double[] particlePosition, double c) {
+        double[][] particleCoordinates = decodeDirect(particlePosition);
+
+        /* Calculate total energy production */
+        evaluator.evaluate_2014(particleCoordinates);   //calculates the AEP
+        double energyProduction = evaluator.getEnergyOutput();
+
+        double violationSum = 0;
+
+        for (int i = 0; i < particleCoordinates.length; i++) {     //loop through each edge only once (n(n+1)/n) - ~doubles speed
+            for (int j = i+1; j < particleCoordinates.length; j++) {
+                violationSum += proximityConstraintViolation(particleCoordinates[i], particleCoordinates[j], minDist);
+            }
+        }
+        double penalty = violationSum * c;
+        double fitness = (energyProduction - penalty) / scenario.wakeFreeEnergy;
+
+
+        return fitness;
+    }
+
+    /**
      * Decodes a particle 
      * vector assuming the form 
      * (x1, y1, x2, y2, ..., xn, yn)
@@ -137,9 +167,15 @@ public class Problem {
      */
     public List<Particle> initialiseSwarm(int swarmSize) {
         List<Particle> swarm = new ArrayList<Particle>();
+        int maxIndex = 0;
+
         for (int i = 0; i < swarmSize; i++) {
             swarm.add(createRandomParticle());
+            if (swarm.get(i).getPersonalBestFitness() >= swarm.get(maxIndex).getPersonalBestFitness()) maxIndex = i;
         }
+
+        this.gBest = swarm.get(maxIndex).getPosition();
+        this.gBestFitness = swarm.get(maxIndex).getPersonalBestFitness();
 
         return swarm;
     }
@@ -149,7 +185,9 @@ public class Problem {
      * with a random position, & a 
      * random initial velocity.
      * Position will be of the form
-     * (x1, y1, x2, y2, ..., xn, yn)
+     * (x1, y1, x2, y2, ..., xn, yn).
+     * All particles will be uniformly
+     * distributed accross the search space
      * @return
      */
     public Particle createRandomParticle() {
@@ -162,13 +200,11 @@ public class Problem {
             randomPosition[i] = random.nextDouble(width);    //x coordinate
             randomPosition[i + 1] = random.nextDouble(height);  //y coordinate
         }
-        // System.out.println(Arrays.toString(randomPosition));
-        layout = geometricReformer(decodeDirect(randomPosition), minDist);
-        System.out.println(Arrays.deepToString(layout));
-        System.out.println(Arrays.deepToString(decodeDirect(randomPosition)));
-        randomPosition = encodeDirect(layout);
-        //randomPosition = encodeDirect(decodeDirect(randomPosition));
 
+        // layout = geometricReformer(decodeDirect(randomPosition), minDist);
+        // randomPosition = encodeDirect(layout);
+
+        randomPosition = encodeDirect(decodeDirect(randomPosition));
 
         Particle randomParticle = new Particle(randomPosition, velocity, this);
         return randomParticle;
@@ -269,6 +305,30 @@ public class Problem {
 
         double distance = Math.sqrt( Math.pow((x1 - x2), 2) + Math.pow((y1 - y2), 2));
         return distance;
+    }
+
+    /**
+     * Calculated the violation value
+     * for a proximity constraint violation
+     * Calculates the squared 
+     * distance between two 
+     * turbines, subtracted by 
+     * the minimum distance squared
+     * @param pointA
+     * @param pointB
+     * @return
+     */
+    public double proximityConstraintViolation(double[] pointA, double[] pointB, double minDist) {
+        double x1 = pointA[0];
+        double x2 = pointB[0];
+        double y1 = pointA[1];
+        double y2 = pointB[1];
+
+        double distanceSquared = Math.pow((x1 - x2), 2) + Math.pow((y1 - y2), 2);
+        double constraint = distanceSquared - Math.pow(minDist, 2);     //If violated, distance squared will be less than minDist squared and we'll get a negative value
+        constraint = Math.abs(Math.min(0, constraint));    //Get the magnitude of the negative number, or 0 otherwise
+
+        return constraint;
     }
 
 

@@ -29,9 +29,9 @@ public class Particle {
 
         this.currentPosition = initialPosition;
         this.velocity = initialVelocity;
+        this.pBestFitness = 0;
 
         updateFitness();
-        System.out.println(this.fitness);
     }
     
 
@@ -66,6 +66,8 @@ public class Particle {
    public void updateFitness() {
        double fitness = problem.evaluate(currentPosition);
        this.fitness = fitness;
+       updatePersonalBest();
+       System.out.println(this.fitness);
    }
 
    public boolean updatePersonalBest() {
