@@ -361,7 +361,7 @@ public class Problem {
 
     public boolean updateGlobalBest(double newFitness, double[] newPosition) {
         if (newFitness > gBestFitness) { //assuming maximisation
-            System.out.println(countViolations(decodeDirect(newPosition)));
+            // System.out.println(countViolations(decodeDirect(newPosition)));
             this.gBest = newPosition;
             this.gBestFitness = newFitness;
             return true;

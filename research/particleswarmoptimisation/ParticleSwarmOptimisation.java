@@ -10,7 +10,7 @@ import java.util.List;
  * a list of particles based on
  * a variable input
  * @author Abdiwahab Salah
- * @version 15/02/23
+ * @version 03/03/23
  */
 public class ParticleSwarmOptimisation {
     int swarmSize;      //Size of population
@@ -73,7 +73,7 @@ public class ParticleSwarmOptimisation {
 
                 /* Update velocity and position */
                 // double[] newVelocity = velocityClamp(vectorAddition(inertia, cognitive, social));
-                double[] newVelocity = constrictionFactor(vectorAddition(inertia, cognitive, social), 4.1);
+                double[] newVelocity = constrictionFactor(vectorAddition(inertia, cognitive, social), c1+c2);
                 double[] newPosition = vectorAddition(p.getPosition(), newVelocity);    //combine with bottom for efficiency
                 double[][] layout = problem.geometricReformer(problem.decodeDirect(newPosition), problem.minDist);
                 newPosition = problem.encodeDirect(layout);
@@ -86,7 +86,6 @@ public class ParticleSwarmOptimisation {
                 /* Update local and global best */
                 p.updatePersonalBest();
                 problem.updateGlobalBest(p.getPersonalBestFitness(), p.getPersonalBest());    //will only update if pBest is better than gBest
-                // System.out.println(p.getPersonalBestFitness());
             }
             weight -= wStep;
             iteration++;
@@ -221,6 +220,14 @@ public class ParticleSwarmOptimisation {
         return maxVelocity;
     }
 
+    /**
+     * Boundary handling mechanism.
+     * Moves particles that fly out
+     * of boundary to the closest feasible
+     * position.
+     * @param particlePosition
+     * @return
+     */
     public double[] absorbBoundHandle(double[] particlePosition) {
         for (int i = 0; i < particlePosition.length; i+=2) {
             particlePosition[i] = Math.max(0, particlePosition[i]);
@@ -233,6 +240,15 @@ public class ParticleSwarmOptimisation {
         return particlePosition;
     }
 
+    /**
+     * Constriction factor to 
+     * added to velocity update
+     * rule to iteratively reduce 
+     * velocity
+     * @param velocity
+     * @param c - Constant, set at c1+c2
+     * @return
+     */
     public double[] constrictionFactor(double[] velocity, double c) {
         double k = 2.0 / Math.abs(2 - c - Math.sqrt(Math.pow(c, 2) - (4*c)));
         velocity = scalarMultipy(k, velocity);
