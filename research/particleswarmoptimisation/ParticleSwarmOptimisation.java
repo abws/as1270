@@ -2,6 +2,8 @@ package research.particleswarmoptimisation;
 
 import java.util.List;
 
+import javax.swing.plaf.basic.BasicSliderUI.ScrollListener;
+
 /**
  * Standard Particle Swarm Optimisation
  * Algorithm for the Wind Farm Layout
@@ -34,8 +36,8 @@ public class ParticleSwarmOptimisation {
         this.problem = problem;
 
         /* Velocity Clamping */
-        this.vMin = minVelocityClamp(problem.height, problem.width, clampConstant);
-        this.vMax = maxVelocityClamp(problem.height, problem.width, clampConstant);
+        this.vMin = minVelocityClamp(problem.width, problem.height, clampConstant);
+        this.vMax = maxVelocityClamp(problem.width, problem.height, clampConstant);
     }
 
 
@@ -69,11 +71,12 @@ public class ParticleSwarmOptimisation {
                 /* Calculate social component */
                 double[] distanceToGBest = vectorDifference(problem.gBest, p.getPosition());
                 double[] randomisedGDistance = hadamardProduct(distanceToGBest, randomiserArray2);
-                double[] social = scalarMultipy(c1, randomisedGDistance);
+                double[] social = scalarMultipy(c2, randomisedGDistance);
 
                 /* Update velocity and position */
-                double[] newVelocity = velocityClamp(vectorAddition(inertia, cognitive, social));
-                double[] newPosition = vectorAddition(p.getPosition(), newVelocity);
+                // double[] newVelocity = velocityClamp(vectorAddition(inertia, cognitive, social));
+                double[] newVelocity = constrictionFactor(vectorAddition(inertia, cognitive, social), 4.1);
+                double[] newPosition = vectorAddition(p.getPosition(), newVelocity);    //combine with bottom for efficiency
                 newPosition = absorbBoundHandle(newPosition);
 
                 /* Update Particle */
@@ -83,11 +86,12 @@ public class ParticleSwarmOptimisation {
                 /* Update local and global best */
                 p.updatePersonalBest();
                 problem.updateGlobalBest(p.getPersonalBestFitness(), p.getPersonalBest());    //will only update if pBest is better than gBest
-                System.out.println(problem.gBestFitness);
+                // System.out.println(p.getPersonalBestFitness());
             }
+            weight -= wStep;
+            iteration++;
+            System.out.println(problem.gBestFitness);
         }
-
-        weight -= wStep;
     }
 
     /**
@@ -108,8 +112,8 @@ public class ParticleSwarmOptimisation {
     /**
      * Calculates the difference
      * between two vectors
-     * @param vectorA
-     * @param vectorB
+     * @param vectorA the vector to point towards
+     * @param vectorB from this vector
      */
     public double[] vectorDifference(double[] vectorA, double[] vectorB) {
         double[] difference = new double[vectorA.length];
@@ -227,6 +231,12 @@ public class ParticleSwarmOptimisation {
         }
 
         return particlePosition;
+    }
+
+    public double[] constrictionFactor(double[] velocity, double c) {
+        double k = 2.0 / Math.abs(2 - c - Math.sqrt(Math.pow(c, 2) - (4*c)));
+        velocity = scalarMultipy(k, velocity);
+        return velocity;
     }
 
 

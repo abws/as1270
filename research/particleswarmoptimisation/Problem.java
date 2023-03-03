@@ -199,7 +199,7 @@ public class Problem {
         Random random = new Random();
         double[] randomPosition = new double[particleDimension];
         double[] velocity = new double[particleDimension];  //instantiate with all zeros
-        //double[][] layout = new double[nTurbines][2];
+        double[][] layout = new double[nTurbines][2];
 
         for (int i = 0; i < particleDimension; i+=2) {
             randomPosition[i] = random.nextDouble(width);    //x coordinate
@@ -208,6 +208,7 @@ public class Problem {
 
         // layout = geometricReformer(decodeDirect(randomPosition), minDist);
         // randomPosition = encodeDirect(layout);
+        // randomPosition = absorbBoundHandle(randomPosition);
 
         randomPosition = encodeDirect(decodeDirect(randomPosition));
 
@@ -361,11 +362,22 @@ public class Problem {
     public boolean updateGlobalBest(double newFitness, double[] newPosition) {
         if (newFitness > gBestFitness) { //assuming maximisation
             this.gBest = newPosition;
-            gBestFitness = newFitness;
+            this.gBestFitness = newFitness;
             return true;
         }
         return false;
     }
 
+    public double[] absorbBoundHandle(double[] particlePosition) {
+        for (int i = 0; i < particlePosition.length; i+=2) {
+            particlePosition[i] = Math.max(0, particlePosition[i]);
+            particlePosition[i+1] = Math.max(0, particlePosition[i+1]);
+
+            particlePosition[i] = Math.min(particlePosition[i], this.width);
+            particlePosition[i+1] = Math.min(particlePosition[i+1], this.height);
+        }
+
+        return particlePosition;
+    }
 
 }
