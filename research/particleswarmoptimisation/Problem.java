@@ -206,11 +206,11 @@ public class Problem {
             randomPosition[i + 1] = random.nextDouble(height);  //y coordinate
         }
 
-        // layout = geometricReformer(decodeDirect(randomPosition), minDist);
-        // randomPosition = encodeDirect(layout);
-        // randomPosition = absorbBoundHandle(randomPosition);
+        layout = geometricReformer(decodeDirect(randomPosition), minDist);
+        randomPosition = encodeDirect(layout);
+        randomPosition = absorbBoundHandle(randomPosition);
 
-        randomPosition = encodeDirect(decodeDirect(randomPosition));
+        // randomPosition = encodeDirect(decodeDirect(randomPosition));
 
         Particle randomParticle = new Particle(randomPosition, velocity, this);
         return randomParticle;
@@ -361,6 +361,7 @@ public class Problem {
 
     public boolean updateGlobalBest(double newFitness, double[] newPosition) {
         if (newFitness > gBestFitness) { //assuming maximisation
+            System.out.println(countViolations(decodeDirect(newPosition)));
             this.gBest = newPosition;
             this.gBestFitness = newFitness;
             return true;
@@ -378,6 +379,17 @@ public class Problem {
         }
 
         return particlePosition;
+    }
+
+    public int countViolations(double[][] layout) {
+        int count = 0;
+        for (int i = 0; i < layout.length; i++) {     //loop through each edge only once (n(n+1)/n) - ~doubles speed
+            for (int j = i+1; j < layout.length; j++) {
+                if (calculateEuclideanDistance(layout[i], layout[j]) < 308 ) count++;
+            }
+        }
+        return count;
+
     }
 
 }

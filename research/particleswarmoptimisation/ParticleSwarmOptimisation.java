@@ -2,8 +2,6 @@ package research.particleswarmoptimisation;
 
 import java.util.List;
 
-import javax.swing.plaf.basic.BasicSliderUI.ScrollListener;
-
 /**
  * Standard Particle Swarm Optimisation
  * Algorithm for the Wind Farm Layout
@@ -77,6 +75,8 @@ public class ParticleSwarmOptimisation {
                 // double[] newVelocity = velocityClamp(vectorAddition(inertia, cognitive, social));
                 double[] newVelocity = constrictionFactor(vectorAddition(inertia, cognitive, social), 4.1);
                 double[] newPosition = vectorAddition(p.getPosition(), newVelocity);    //combine with bottom for efficiency
+                double[][] layout = problem.geometricReformer(problem.decodeDirect(newPosition), problem.minDist);
+                newPosition = problem.encodeDirect(layout);
                 newPosition = absorbBoundHandle(newPosition);
 
                 /* Update Particle */
