@@ -1,5 +1,5 @@
-body {
-    background-color: #FAFAFA;
+:root {
+    /* background: #FAFAFA; */
     color: #494848!important;
     height: 100vh;
 }
@@ -44,7 +44,6 @@ body {
     justify-content: space-between;
     margin: 1em 1.8em 0em 1.8em;
     flex: 1;
-    height: 100%;
 }
 
 
@@ -67,24 +66,22 @@ body {
     justify-content: flex-start;
     font-family: 'Space Mono', monospace;
     font-size: 0.8rem;
-    border: 0.01em solid #36363697;
+    /* border: 0.01em solid #36363697; */
     border-radius: 2em;
     max-width: 15em;
     min-width: 15em;
-    min-height: auto;
+    height: fit-content;
     overflow-wrap: break-word;
     text-align: center;
     margin: 1.2em;
-
-    
-
 }
 
 .algorithm div {
     margin: 0.5em 0 1.2em 0 ;
 
     width: 90%;
-    height: 50%;
+    height: 10em;
+
     overflow: hidden;
 }
 
@@ -93,4 +90,34 @@ body {
     border-radius: 2em;
     height: 100%;
     width: 100%;
+}
+
+.algorithm.active {
+    border: 0.3em solid transparent;
+    border-radius: 2em;
+    background: linear-gradient(white, white) padding-box, linear-gradient(to right, #0098EE, #3BEADF) border-box;
+}
+.algorithm:hover {
+    border: 0.3em solid transparent;
+    border-radius: 2em;
+    background: linear-gradient(white, white) padding-box, linear-gradient(to right, #0098EE, #3BEADF) border-box;
+}
+.algorithm-input {
+    border: 0.01em solid #36363697;
+    margin-bottom: 1em;
+    width: 70%;
+    border-radius: 0.6em;
+}
+
+.algorithm-input::placeholder {
+    font-size: 0.5rem;
+    color: #36363697;
+    position: relative;
+    top: -0.8em;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }

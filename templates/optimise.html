@@ -59,17 +59,27 @@
             <div class="title">Algorithm</div>
 
             <div class="algorithms">
-                <div class="algorithm" id="geneticAlgorithm"> 
+                <div class="algorithm active" id="geneticAlgorithm"> 
                     <div><img src="images/dna-image.jpeg" alt="dna-image"></div>
                     <p>Genetic Algorithm</p>
+                    <input class="algorithm-input" id="popSize" type="number" placeholder="Population Size" />
+                    <input class="algorithm-input" id="generations" type="number" placeholder="Generations" />
                 </div>
                 <div class="algorithm" id="particeSwarmOptimisation"> 
                     <div><img src="images/birds-flocking.jpeg" alt="birds-flocking"></div>
                     <p>Particle Swarm Optimisation</p>
+                    <input class="algorithm-input" id="swarmSize" type="number" placeholder="Swarm Size" />
+                    <input class="algorithm-input" id="inertiaWeight" type="number" placeholder="Inertia Weight" />
+                    <input class="algorithm-input" id="c1" type="number" placeholder="c1" />
+                    <input class="algorithm-input" id="c2" type="number" placeholder="c2" />
+                    <input class="algorithm-input" id="maxWeight" type="number" placeholder="Maximum Weight" />
+                    <input class="algorithm-input" id="minWeight" type="number" placeholder="Minimum Weight" />
+
                 </div>
                 <div class="algorithm" id="simulatedAnnealing"> 
                     <div><img src="images/explosion.png" alt="explosion-annealing-in-nebula"></div>
                     <p>Simulated Annealing</p>
+                    <input class="algorithm-input" id="initialTemperature" type="number" placeholder="Initial Temperature" />
                 </div>
             </div>
 
