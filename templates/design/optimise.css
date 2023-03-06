@@ -1,9 +1,11 @@
 :root {
-    /* background: #FAFAFA; */
+    background-color: #FAFAFA!important;
     color: #494848!important;
-    height: 100vh;
+    /* height: 100vh; */
 }
-
+* {
+    background-color: inherit!important;
+}
 .title {
     font-family: 'Inter', sans-serif;
     font-weight: 200;
@@ -35,7 +37,7 @@
 .active {
     border: 1px solid transparent;
     border-radius: 0.7em;
-    background: linear-gradient(white, white) padding-box, linear-gradient(to right, #0098EE, #3BEADF) border-box;
+    background: linear-gradient(#FAFAFA, #FAFAFA) padding-box, linear-gradient(to right, #0098EE, #3BEADF) border-box;
 }
 /* Main section */
 .main {
@@ -66,6 +68,9 @@
     justify-content: flex-start;
     font-family: 'Space Mono', monospace;
     font-size: 0.8rem;
+    background-color: white!important;
+    box-shadow: 5px 5px 20px #c2c1c1;
+
     /* border: 0.01em solid #36363697; */
     border-radius: 2em;
     max-width: 15em;
@@ -92,21 +97,19 @@
     width: 100%;
 }
 
-.algorithm.active {
+.algorithm.active, .algorithm:hover {
     border: 0.3em solid transparent;
     border-radius: 2em;
     background: linear-gradient(white, white) padding-box, linear-gradient(to right, #0098EE, #3BEADF) border-box;
 }
-.algorithm:hover {
-    border: 0.3em solid transparent;
-    border-radius: 2em;
-    background: linear-gradient(white, white) padding-box, linear-gradient(to right, #0098EE, #3BEADF) border-box;
-}
+
 .algorithm-input {
-    border: 0.01em solid #36363697;
+    border: 0.01em solid #3636363e;
     margin-bottom: 1em;
     width: 70%;
     border-radius: 0.6em;
+    font-size: 0.7rem;
+    color: #363636;
 }
 
 .algorithm-input::placeholder {
@@ -120,4 +123,24 @@ input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
+}
+
+.algorithm-input:focus {
+    outline: none;
+}
+
+.algorithm-input:cursor {
+    cursor: pointer;
+}
+
+.optimise-button {
+    font-family: 'Space Mono', monospace;
+    color: #363636;
+    font-size: 1.2em;
+    border: 0.15em solid transparent;
+    border-radius: 0.4em;
+    padding: 0.8em 0.5em;
+    background: linear-gradient(white, white) padding-box, linear-gradient(to right, #0098EE, #3BEADF) border-box;
+    box-shadow: 5px 5px 5px #c2c1c1;
+
 }
