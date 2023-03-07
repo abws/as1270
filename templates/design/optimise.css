@@ -49,6 +49,40 @@
 }
 
 
+/*RHS Control*/
+.control {
+    font-family: 'Inter', sans-serif;
+    font-size: 1.2rem;
+    margin-top: 2.4em;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6em;
+    
+}
+
+.evaluation-functions {
+    display: flex;
+    flex-direction: row;
+    margin: 1.5em 1.8em 3em 3.8em;
+    gap: 2em;
+}
+
+.function-input {
+    /* box-shadow: 5px 5px 20px #c2c1c1; */
+    border-radius: 0.5em;
+    padding: 0.2em 0.5em;
+    background-color: #FAFAFA!important;
+    border: 1px solid #1274d69d;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.9rem;
+
+
+
+
+
+}
+
+
 
 
 /* Optimise Section */
@@ -70,8 +104,6 @@
     font-size: 0.8rem;
     background-color: white!important;
     box-shadow: 5px 5px 20px #c2c1c1;
-
-    /* border: 0.01em solid #36363697; */
     border-radius: 2em;
     max-width: 15em;
     min-width: 15em;
@@ -142,5 +174,7 @@ input::-webkit-inner-spin-button {
     padding: 0.8em 0.5em;
     background: linear-gradient(white, white) padding-box, linear-gradient(to right, #0098EE, #3BEADF) border-box;
     box-shadow: 5px 5px 5px #c2c1c1;
-
+    margin-left: 20%;
+    margin: 2em 0 2em 20%;
 }
+

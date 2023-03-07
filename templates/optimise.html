@@ -53,11 +53,24 @@
     <!--Main Content below header-->
     <div class="main">
         <div class="control">
+            <div>1 Input</div>
+            <div>2 Problem Formulation</div>
+            <div>3 Wake Model</div>
+            <div>4 Algorithm</div>
+            <div>5 Optimise</div>
 
         </div>
-        <form class="optimise"> 
-            <div class="title">Algorithm</div>
+        
+        
+        <form class="optimise" action="#" th:action="@{/optimise}" method="post"> 
+            <div class="title">Evaluation Function</div>
+            <div class="evaluation-functions">
+                <input class="function-input" id="energyProduction" type="button" value="Energy Production">
+                <input class="function-input" id="economical" type="button" value="Economical">
+                <input class="function-input" id="wakeFreeRatio" type="button" value="Wake Free Ratio">
+            </div>
 
+            <div class="title">Algorithm</div>
             <div class="algorithms">
                 <div class="algorithm" id="geneticAlgorithm"> 
                     <div><img src="images/dna-image.jpeg" alt="dna-image"></div>
@@ -84,7 +97,6 @@
             </div>
 
                 <input class="optimise-button" type="submit" id="optimise" value="OPTIMISE" />
-            
         </form>
 
        
