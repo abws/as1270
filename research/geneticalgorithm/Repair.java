@@ -169,7 +169,7 @@ public class Repair {
     private int mostDense(double[] probs) {
         int maxIndex = 0;
         for (int i = 0; i < probs.length; i++ ) {
-            if (probs[i] <= probs[maxIndex]) maxIndex = i;
+            if (probs[i] >= probs[maxIndex]) maxIndex = i;
         }
 
         return maxIndex;
@@ -178,7 +178,7 @@ public class Repair {
     private int leastDense(double[] probs) {
         int minIndex = 0;
         for (int i = 0; i < probs.length; i++ ) {
-            if (probs[i] >= probs[minIndex]) minIndex = i;
+            if (probs[i] <= probs[minIndex]) minIndex = i;
             if (probs[minIndex] == 0) break; //since we cannot get any lower anyway
         }
 
@@ -186,5 +186,82 @@ public class Repair {
     }
     
 
+    /**
+     * Overview method
+     * @param offSpring
+     * @return
+     */
+    public List<Individual> repairSimpleWindow(List<Individual> pop) {
+        //mutation
+        for (int i = 0; i < pop.size(); i++) {
+            Individual ind = pop.get(i);
+            double[] windows = simpleWindows(ind.getValue());
+
+            pop.set(i, window(ind, windows));    //mutate each individual in the offspring array
+        }
+        return pop;
+    }
+
+    public double[] simpleWindows(String ind) {
+        double[] windows = new double[(rows-2) * (columns-2)];
+        int count = 0;
+
+        for (int y = 0; y < rows - 2; y++ ) {
+            for (int x = 0; x < columns - 2; x++) {
+                int sum = 
+                Character.getNumericValue(ind.charAt(y * (x))) +
+                Character.getNumericValue(ind.charAt(y * (x+1))) +
+                Character.getNumericValue(ind.charAt(y * (x+2))) +
+                Character.getNumericValue(ind.charAt(y+1 * (x))) +
+                Character.getNumericValue(ind.charAt(y+1 * (x+1))) +
+                Character.getNumericValue(ind.charAt(y+1 * (x+2))) +
+                Character.getNumericValue(ind.charAt(y+2 * (x))) +
+                Character.getNumericValue(ind.charAt(y+2 * (x+1))) +
+                Character.getNumericValue(ind.charAt(y+2 * (x+2)));
+                windows[count] = sum / 9.0;
+                count++;
+            }
+        }
+        return windows;
+    }
+
+    public Individual window(Individual ind, double[] windows) {
+        StringBuilder indivArray = new StringBuilder(ind.getValue());
+        Random r = new Random();
+
+        int turbineCount = problem.countTurbines(ind.getValue());
+        int difference = turbineCount - problem.N_TURBINES;
+        while (difference > 0) {    //we have too many turbines
+
+            int position = mostDense(windows); 
+            int y = (position / (columns - 2));
+            int x = (position % (columns - 2)); //position to remove turbine from
+            int indivPosition = (y + r.nextInt(3)) * (x + r.nextInt(3));
+            Character c = indivArray.charAt(indivPosition); //get one of the turbines in the window
+
+            if (c == '1') {   //maybe limit how many times we do this since we could get stuck
+                windows[position] = ((windows[position] * 9) - 1) / 9;
+                indivArray.setCharAt(indivPosition, '0');
+                difference--;
+            }
+        }
+
+        while (difference < 0) {    //we have too few turbines
+            int position = leastDense(windows); //position to add turbine to
+            int y = (position / (columns - 2));
+            int x = (position % (columns - 2)); //position to remove turbine from
+            int indivPosition = (y + r.nextInt(3)) * (x + r.nextInt(3));
+            Character c = indivArray.charAt(indivPosition); //get one of the turbines in the window
+
+            if (c == '0') {
+                windows[position] = ((windows[position] * 9) + 1) / 9;
+
+                indivArray.setCharAt(indivPosition, '1');
+                difference++;
+            }
+        }
+        ind.setValue(indivArray.toString());
+        return ind;
+    }
     
 }
