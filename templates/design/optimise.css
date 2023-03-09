@@ -178,3 +178,9 @@ input::-webkit-inner-spin-button {
     margin: 2em 0 2em 20%;
 }
 
+.wind-farm {
+    border-radius: 2em;
+    max-width: 80%!important;
+    min-width: 60em!important;
+
+}

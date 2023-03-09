@@ -1,5 +1,9 @@
 import * as THREE from 'three';
-import { OrbitControls } from 'three/addons/OrbitControls.js';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
+const canvas = document.querySelector(".wind-farm");
+
 const scene = new THREE.Scene();
 const geometry = new THREE.SphereGeometry(3, 64, 64);
 const material = new THREE.MeshStandardMaterial({
@@ -8,10 +12,9 @@ const material = new THREE.MeshStandardMaterial({
 const shape = new THREE.Mesh(geometry, material);
 scene.add(shape);
 
-//sizes
 const sizes = {
-    width: window.innerWidth,
-    height: window.innerHeight
+    width: canvas.clientWidth,
+    height: canvas.clientHeight
 }
 
 //lighting
@@ -26,12 +29,23 @@ camera.position.z = 10;
 scene.add(camera);
 
 //render
-const canvas = document.querySelector(".wind-farm");
 const renderer = new THREE.WebGLRenderer({ canvas });
 
 renderer.setSize(sizes.width, sizes.height);
 
 renderer.render(scene, camera);
+
+const loader = new GLTFLoader();
+
+loader.load( 'models/turbine.gltf', function ( gltf ) {
+    gltf.scene.scale.set(0.1, 0.1, 0.1)
+	scene.add( gltf.scene );
+
+}, undefined, function ( error ) {
+
+	console.error( error );
+
+} );
 
 //orbit control
 const controls = new OrbitControls(camera, canvas);
@@ -42,12 +56,12 @@ controls.autoRotate = true;
 controls.autoRotateSpeed = 5
 
 //resize
-window.addEventListener("resize", () => {
+// window.addEventListener("resize", () => {
 
-    camera.aspect = 800, 600;
-    camera.updateProjectionMatrix()
-    renderer.setSize(800, 600);
-})
+//     camera.aspect = 800, 600;
+//     camera.updateProjectionMatrix()
+//     renderer.setSize(800, 600);
+// })
 
 const loop = () => {
     controls.update();
