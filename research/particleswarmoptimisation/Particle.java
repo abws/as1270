@@ -6,7 +6,7 @@ package research.particleswarmoptimisation;
  * through the search space.
  * Only concerned with book-keeping.
  * No operations should be performed
- * here. Only knows about him/her-self.
+ * here. Only knows about himself.
  * @author Abdiwahab Salah
  * @version 14.02.23
  */

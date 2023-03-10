@@ -26,6 +26,9 @@ public class Problem {
     public double[] gBest;
     public double gBestFitness;
 
+    public double[][] lBest;
+    public double[] lBestFitnesses;
+
     public int particleDimension;
     public int swarmSize;
     public int nTurbines;
@@ -33,9 +36,10 @@ public class Problem {
     public double height;
     public double width;
     double penaltyCoefficient;
+    public int neighbourhoodSize;
 
 
-    public Problem(KusiakLayoutEvaluator evaluator, WindScenario scenario, int swarmSize, double penaltyCoefficient) throws Exception {
+    public Problem(KusiakLayoutEvaluator evaluator, WindScenario scenario, int swarmSize, double penaltyCoefficient, int neighbourhoodSize) throws Exception {
         this.scenario = scenario;
         this.evaluator = evaluator;
 
@@ -47,6 +51,8 @@ public class Problem {
         this.width = scenario.width;
         this.minDist = scenario.R * 8;
         this.penaltyCoefficient = penaltyCoefficient;
+        this.neighbourhoodSize =  neighbourhoodSize;
+
     }
 
     /**
@@ -80,7 +86,6 @@ public class Problem {
         /* Calculate total energy production */
         evaluator.evaluate_2014(particleCoordinates);   //calculates the AEP and sets it in the evaluator
         double energyProduction = evaluator.getEnergyOutput();
-        //System.out.println(energyProduction);
 
         double violationSum = 0;
 
@@ -360,6 +365,25 @@ public class Problem {
     }
 
     public boolean updateGlobalBest(double newFitness, double[] newPosition) {
+        if (newFitness > gBestFitness) { //assuming maximisation
+            // System.out.println(countViolations(decodeDirect(newPosition)));
+            this.gBest = newPosition;
+            this.gBestFitness = newFitness;
+            return true;
+        }
+        return false;
+    }
+
+    public double[] getLocalBest(int index) {
+
+        return gBest;
+    }
+
+    public double getLocalBestFitness(int index) {
+        return gBestFitness;
+    }
+
+    public boolean updateLocalBest(double newFitness, double[] newPosition, int index) {
         if (newFitness > gBestFitness) { //assuming maximisation
             // System.out.println(countViolations(decodeDirect(newPosition)));
             this.gBest = newPosition;
