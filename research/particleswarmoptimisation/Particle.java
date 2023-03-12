@@ -11,11 +11,12 @@ package research.particleswarmoptimisation;
  * @version 14.02.23
  */
 public class Particle {
+    private static int globalcounter=0;
     private double[] currentPosition;
     private double[] velocity;
     private double[] pBest;
 
-    private double fitness;
+    public double fitness;
     private double pBestFitness;
 
     private Problem problem;
@@ -67,6 +68,8 @@ public class Particle {
    public void updateFitness() {
        double fitness = problem.evaluatePenalty(currentPosition);
        this.fitness = fitness;
+    //    System.out.println(globalcounter++%10 +": "+ fitness);
+
        updatePersonalBest();
    }
 

@@ -112,38 +112,38 @@ public class KusiakLayoutEvaluator extends WindFarmLayoutEvaluator {
 
 	public boolean checkConstraint(double layout[][]) {
 		
-	    for (int i=0; i<layout.length; i++) {
-		if (layout[i][0]!=layout[i][0] || layout[i][1]!=layout[i][1] || layout[i][0]<0.0 || layout[i][1]<0.0 || layout[i][0]>getFarmWidth() || layout[i][1]>getFarmHeight()) {
-			System.out.println("Turbine "+i+"("+layout[i][0]+", "+layout[i][1]+") is invalid.");
-			//return false;
-		}
+	    // for (int i=0; i<layout.length; i++) {
+		// if (layout[i][0]!=layout[i][0] || layout[i][1]!=layout[i][1] || layout[i][0]<0.0 || layout[i][1]<0.0 || layout[i][0]>getFarmWidth() || layout[i][1]>getFarmHeight()) {
+		// 	System.out.println("Turbine "+i+"("+layout[i][0]+", "+layout[i][1]+") is invalid.");
+		// 	//return false;
+		// }
 
-		// checking obstacle constraints
-		for (int j=0; j<scenario.obstacles.length; j++) {
-		    if (layout[i][0] > scenario.obstacles[j][0] &&
-			layout[i][0] < scenario.obstacles[j][2] &&
-			layout[i][1] > scenario.obstacles[j][1] &&
-			layout[i][1] < scenario.obstacles[j][3]) {
-			System.out.println("Turbine "+i+"("+layout[i][0]+", "+layout[i][1]+") is in the obstacle "+j+" ["+scenario.obstacles[j][0]+", "+scenario.obstacles[j][1]+", "+scenario.obstacles[j][2]+", "+scenario.obstacles[j][3]+"].");
-			return false;
-		    }
-		}
+		// // checking obstacle constraints
+		// for (int j=0; j<scenario.obstacles.length; j++) {
+		//     if (layout[i][0] > scenario.obstacles[j][0] &&
+		// 	layout[i][0] < scenario.obstacles[j][2] &&
+		// 	layout[i][1] > scenario.obstacles[j][1] &&
+		// 	layout[i][1] < scenario.obstacles[j][3]) {
+		// 	System.out.println("Turbine "+i+"("+layout[i][0]+", "+layout[i][1]+") is in the obstacle "+j+" ["+scenario.obstacles[j][0]+", "+scenario.obstacles[j][1]+", "+scenario.obstacles[j][2]+", "+scenario.obstacles[j][3]+"].");
+		// 	return false;
+		//     }
+		// }
 		
-		// checking the security constraints
-	        for (int j=0; j<layout.length; j++) {
-	            if (i!=j) {
-	                // calculate the sqared distance between both turb
-	                double dist=(layout[i][0]-layout[j][0])*(layout[i][0]-layout[j][0])+
-	                (layout[i][1]-layout[j][1])*(layout[i][1]-layout[j][1]);
-	                if (dist<scenario.minDist) {
-			    		//System.out.println("Security distance contraint violated between turbines "+i+" ("+layout[i][0]+", "+layout[i][1]+") and "+j+" ("+layout[j][0]+", "+layout[j][1]+"): "+Math.sqrt(dist)+" > "+Math.sqrt(scenario.minDist));
-	                    //return false;
-	                }
+		// // checking the security constraints
+	    //     for (int j=0; j<layout.length; j++) {
+	    //         if (i!=j) {
+	    //             // calculate the sqared distance between both turb
+	    //             double dist=(layout[i][0]-layout[j][0])*(layout[i][0]-layout[j][0])+
+	    //             (layout[i][1]-layout[j][1])*(layout[i][1]-layout[j][1]);
+	    //             if (dist<scenario.minDist) {
+		// 	    		// System.out.println("Security distance contraint violated between turbines "+i+" ("+layout[i][0]+", "+layout[i][1]+") and "+j+" ("+layout[j][0]+", "+layout[j][1]+"): "+Math.sqrt(dist)+" > "+Math.sqrt(scenario.minDist));
+	    //                 //return false;
+	    //             }
 
-	            }
-	        }
+	    //         }
+	    //     }
 			
-	    }
+	    // }
 		
 	    return true;
 	}

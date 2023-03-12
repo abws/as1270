@@ -204,15 +204,15 @@ public class Problem {
         Random random = new Random();
         double[] randomPosition = new double[particleDimension];
         double[] velocity = new double[particleDimension];  //instantiate with all zeros
-        double[][] layout = new double[nTurbines][2];
+        // double[][] layout = new double[nTurbines][2];
 
         for (int i = 0; i < particleDimension; i+=2) {
             randomPosition[i] = random.nextDouble(width);    //x coordinate
             randomPosition[i + 1] = random.nextDouble(height);  //y coordinate
         }
 
-        layout = geometricReformer(decodeDirect(randomPosition), minDist);
-        randomPosition = encodeDirect(layout);
+        // layout = geometricReformer(decodeDirect(randomPosition), minDist);
+        // randomPosition = encodeDirect(layout);
         randomPosition = absorbBoundHandle(randomPosition);
 
         // randomPosition = encodeDirect(decodeDirect(randomPosition));
