@@ -51,30 +51,37 @@ public class ParticleSwarmOptimisation {
         double wStep = problem.calculateWeightStep(wMax, wMin, maxIterations);
         int iteration = 0;
 
-        List<Particle> swarm = problem.initialiseSwarm(swarmSize);
+        List<Particle> swarm = problem.initialiseSwarmRing(swarmSize);
     
         double[] randomiserArray1 = generateRandomiserVector(problem.particleDimension);
         double[] randomiserArray2 = generateRandomiserVector(problem.particleDimension);
 
         while (iteration < maxIterations) {
             System.out.println(problem.gBestFitness);
+            System.out.println(Arrays.toString(problem.lBestFitnesses));
+
             for (Particle p : swarm) {
                 /* Calculate Inertia */
                 double[] inertia = scalarMultipy(1, p.getVelocity()); 
 
                 /* Calculate cognitive component */
                 double[] distanceToPBest = vectorDifference(p.getPersonalBest(), p.getPosition());
-                // double[] randomisedPDistance = hadamardProduct(distanceToPBest, randomiserArray1);
-                double[] randomisedPDistance = scalarMultipy(Math.random(), distanceToPBest);
+                double[] randomisedPDistance = hadamardProduct(distanceToPBest, randomiserArray1);
+                // double[] randomisedPDistance = scalarMultipy(Math.random(), distanceToPBest);
 
                 double[] cognitive = scalarMultipy(c1, randomisedPDistance);
                 
-                /* Calculate social component */
-                double[] distanceToGBest = vectorDifference(problem.gBest, p.getPosition());
+                // /* Calculate social component */
+                // double[] distanceToGBest = vectorDifference(problem.gBest, p.getPosition());
                 // double[] randomisedGDistance = hadamardProduct(distanceToGBest, randomiserArray2);
-                double[] randomisedGDistance = scalarMultipy(Math.random(), distanceToGBest);
+                // // double[] randomisedGDistance = scalarMultipy(Math.random(), distanceToGBest);
 
-                double[] social = scalarMultipy(c2, randomisedGDistance);
+                // double[] social = scalarMultipy(c2, randomisedGDistance);
+
+                /* Calculate social component */
+                double[] distanceToLBest = vectorDifference(problem.lBest[swarm.indexOf(p)], p.getPosition());
+                double[] randomisedLDistance = hadamardProduct(distanceToLBest, randomiserArray2);
+                double[] social = scalarMultipy(c2, randomisedLDistance);
 
                 /* Update velocity and position */
                 // double[] newVelocity = vectorAddition(inertia, cognitive, social);
@@ -96,7 +103,9 @@ public class ParticleSwarmOptimisation {
 
                 /* Update local and global best */
                 p.updatePersonalBest();
-                problem.updateGlobalBest(p.getPersonalBestFitness(), p.getPersonalBest());    //will only update if pBest is better than gBest
+                // problem.updateGlobalBest(p.getPersonalBestFitness(), p.getPersonalBest());    //will only update if pBest is better than gBest
+                problem.updateLocalBest(swarm, swarm.indexOf(p));    //will only update if pBest is better than lBest
+
             }
             weight -= wStep;
             iteration++;
