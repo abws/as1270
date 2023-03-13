@@ -1,4 +1,4 @@
-package research.particleswarmoptimisation;
+package research.debugginglab;
 
 import java.util.Arrays;
 import java.util.List;
@@ -52,16 +52,16 @@ public class ParticleSwarmOptimisation {
         int iteration = 0;
 
         List<Particle> swarm = problem.initialiseSwarm(swarmSize);
-    
-        double[] randomiserArray1 = generateRandomiserVector(problem.particleDimension);
-        double[] randomiserArray2 = generateRandomiserVector(problem.particleDimension);
+
 
         while (iteration < maxIterations) {
             System.out.println(problem.gBestFitness);
 
             for (Particle p : swarm) {
+                double[] randomiserArray1 = generateRandomiserVector(problem.particleDimension);
+            double[] randomiserArray2 = generateRandomiserVector(problem.particleDimension);
                 /* Calculate Inertia */
-                double[] inertia = scalarMultipy(weight, p.getVelocity()); 
+                double[] inertia = scalarMultipy(1, p.getVelocity()); 
 
                 /* Calculate cognitive component */
                 double[] distanceToPBest = vectorDifference(p.getPersonalBest(), p.getPosition());
@@ -77,6 +77,11 @@ public class ParticleSwarmOptimisation {
 
                 double[] social = scalarMultipy(c2, randomisedGDistance);
 
+                /* Calculate social component */
+                // double[] distanceToLBest = vectorDifference(problem.lBest[swarm.indexOf(p)], p.getPosition());
+                // double[] randomisedLDistance = hadamardProduct(distanceToLBest, randomiserArray2);
+                // double[] social = scalarMultipy(c2, randomisedLDistance);
+
                 /* Update velocity and position */
                 // double[] newVelocity = vectorAddition(inertia, cognitive, social);
                 // double[] newVelocity = velocityClamp(vectorAddition(inertia, cognitive, social));
@@ -84,16 +89,22 @@ public class ParticleSwarmOptimisation {
                 double[] newVelocity = constrictionFactor(vectorAddition(inertia, cognitive, social), c1+c2);
 
                 double[] newPosition = vectorAddition(p.getPosition(), newVelocity);    //combine with bottom for efficiency
+                double[][] layout = problem.geometricReformer(problem.decodeDirect(newPosition), problem.minDist);
+                newPosition = problem.encodeDirect(layout);
 
-                // newPosition = absorbBoundHandle(newPosition);
+                newPosition = absorbBoundHandle(newPosition);
 
                 /* Update Particle */
                 p.setPosition(newPosition, true);
+                // System.out.println(Arrays.toString(newPosition));
+                // System.out.println("HiL "+problem.evaluate(newPosition));
                 p.setVelocity(newVelocity);
 
                 /* Update local and global best */
                 p.updatePersonalBest();
                 problem.updateGlobalBest(p.getPersonalBestFitness(), p.getPersonalBest());    //will only update if pBest is better than gBest
+                // problem.updateLocalBest(swarm, swarm.indexOf(p));    //will only update if pBest is better than lBest
+
             }
             weight -= wStep;
             iteration++;

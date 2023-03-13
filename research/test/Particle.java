@@ -1,4 +1,4 @@
-package research.particleswarmoptimisation;
+package research.test;
 
 /**
  * Class representing 
@@ -6,17 +6,17 @@ package research.particleswarmoptimisation;
  * through the search space.
  * Only concerned with book-keeping.
  * No operations should be performed
- * here. Only knows about himself.
+ * here. Only knows about him/her-self.
  * @author Abdiwahab Salah
  * @version 14.02.23
  */
 public class Particle {
-    private static int globalcounter=0;
     private double[] currentPosition;
     private double[] velocity;
     private double[] pBest;
+    private static int globalcounter = 0;
 
-    public double fitness;
+    private double fitness;
     private double pBestFitness;
 
     private Problem problem;
@@ -66,12 +66,12 @@ public class Particle {
    }
 
    public void updateFitness() {
-       double fitness = problem.evaluatePenalty(currentPosition);
-       this.fitness = fitness;
-       System.out.println(globalcounter++%10 +": "+ fitness+": "+problem.countViolations(problem.decodeDirect(this.currentPosition)));
+    double fitness = problem.evaluatePenalty(currentPosition);
+    this.fitness = fitness;
+    // System.out.println(globalcounter++%problem.swarmSize +": "+ fitness+": "+problem.countViolations(problem.decodeDirect(this.currentPosition)));
 
-       updatePersonalBest();
-   }
+    updatePersonalBest();
+}
 
    public boolean updatePersonalBest() {
        if (fitness > pBestFitness) { //assuming maximisation

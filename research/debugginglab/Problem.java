@@ -1,4 +1,4 @@
-package research.particleswarmoptimisation;
+package research.debugginglab;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -391,20 +391,6 @@ public class Problem {
             particlePosition[i+1] = Math.min(particlePosition[i+1], this.height);
         }
 
-        return particlePosition;
-    }
-
-    public double[] randomBoundHandle(double[] particlePosition) {
-        Random r = new Random();
-
-        for (int i = 0; i < particlePosition.length; i+=2) {
-            if (particlePosition[i] < 0 || particlePosition[i] > this.width) {
-                particlePosition[i] = r.nextDouble(this.width);
-            }
-            if (particlePosition[i+1] < 0 || particlePosition[i+1] > this.height) {
-                particlePosition[i+1] = r.nextDouble(this.height);
-            }
-        }
         return particlePosition;
     }
 

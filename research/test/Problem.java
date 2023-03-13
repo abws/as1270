@@ -1,8 +1,10 @@
-package research.particleswarmoptimisation;
+package research.test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import java.util.Scanner;
 
 import research.api.java.*;
 
@@ -24,9 +26,6 @@ public class Problem {
     public double[] gBest;
     public double gBestFitness;
 
-    public double[][] lBest;
-    public double[] lBestFitnesses;
-
     public int particleDimension;
     public int swarmSize;
     public int nTurbines;
@@ -34,10 +33,9 @@ public class Problem {
     public double height;
     public double width;
     double penaltyCoefficient;
-    public int neighbourhoodSize;
 
 
-    public Problem(KusiakLayoutEvaluator evaluator, WindScenario scenario, int swarmSize, double penaltyCoefficient, int neighbourhoodSize) throws Exception {
+    public Problem(KusiakLayoutEvaluator evaluator, WindScenario scenario, int swarmSize, double penaltyCoefficient) throws Exception {
         this.scenario = scenario;
         this.evaluator = evaluator;
 
@@ -49,10 +47,6 @@ public class Problem {
         this.width = scenario.width;
         this.minDist = scenario.R * 8;
         this.penaltyCoefficient = penaltyCoefficient;
-        this.neighbourhoodSize =  neighbourhoodSize;
-        this.lBest = new double[swarmSize][particleDimension];
-        this.lBestFitnesses = new double[swarmSize];
-
     }
 
     /**
@@ -86,6 +80,7 @@ public class Problem {
         /* Calculate total energy production */
         evaluator.evaluate_2014(particleCoordinates);   //calculates the AEP and sets it in the evaluator
         double energyProduction = evaluator.getEnergyOutput();
+        //System.out.println(energyProduction);
 
         double violationSum = 0;
 
@@ -191,27 +186,6 @@ public class Problem {
     }
 
     /**
-     * Initialises a swarm of particles
-     * with random positions & velocities
-     * and uses a neighbourhood based on
-     * the ring topology 
-     * @param swarmSize
-     * @return
-     */
-    public List<Particle> initialiseSwarmRing(int swarmSize) {
-        List<Particle> swarm = new ArrayList<Particle>();
-
-        for (int i = 0; i < swarmSize; i++) {
-            swarm.add(createRandomParticle());
-        }
-        for (int i = 0; i < swarmSize; i++) {
-            updateLocalBest(swarm, i);
-        }
-        return swarm;
-    }
-
-
-    /**
      * Initialises a single particle
      * with a random position, & a 
      * random initial velocity.
@@ -225,7 +199,7 @@ public class Problem {
         Random random = new Random();
         double[] randomPosition = new double[particleDimension];
         double[] velocity = new double[particleDimension];  //instantiate with all zeros
-        // double[][] layout = new double[nTurbines][2];
+        double[][] layout = new double[nTurbines][2];
 
         for (int i = 0; i < particleDimension; i+=2) {
             randomPosition[i] = random.nextDouble(width);    //x coordinate
@@ -234,7 +208,7 @@ public class Problem {
 
         // layout = geometricReformer(decodeDirect(randomPosition), minDist);
         // randomPosition = encodeDirect(layout);
-        randomPosition = absorbBoundHandle(randomPosition);
+        // randomPosition = absorbBoundHandle(randomPosition);
 
         // randomPosition = encodeDirect(decodeDirect(randomPosition));
 
@@ -374,14 +348,27 @@ public class Problem {
         return wStep;
     }
     
-    /**
-     * Boundary handling mechanism.
-     * Moves particles that fly out
-     * of boundary to the closest feasible
-     * position.
-     * @param particlePosition
-     * @return
-     */
+   
+    /* Getters and Setters */
+
+    public double[] getGlobalBest() {
+        return gBest;
+    }
+
+    public double getGlobalBestFitness() {
+        return gBestFitness;
+    }
+
+    public boolean updateGlobalBest(double newFitness, double[] newPosition) {
+        if (newFitness > gBestFitness) { //assuming maximisation
+            // System.out.println(countViolations(decodeDirect(newPosition)));
+            this.gBest = newPosition;
+            this.gBestFitness = newFitness;
+            return true;
+        }
+        return false;
+    }
+
     public double[] absorbBoundHandle(double[] particlePosition) {
         for (int i = 0; i < particlePosition.length; i+=2) {
             particlePosition[i] = Math.max(0, particlePosition[i]);
@@ -394,28 +381,6 @@ public class Problem {
         return particlePosition;
     }
 
-    public double[] randomBoundHandle(double[] particlePosition) {
-        Random r = new Random();
-
-        for (int i = 0; i < particlePosition.length; i+=2) {
-            if (particlePosition[i] < 0 || particlePosition[i] > this.width) {
-                particlePosition[i] = r.nextDouble(this.width);
-            }
-            if (particlePosition[i+1] < 0 || particlePosition[i+1] > this.height) {
-                particlePosition[i+1] = r.nextDouble(this.height);
-            }
-        }
-        return particlePosition;
-    }
-
-    /**
-     * Counts the number
-     * of turbines breaking 
-     * the minimum distance 
-     * constraint.
-     * @param layout
-     * @return
-     */
     public int countViolations(double[][] layout) {
         int count = 0;
         for (int i = 0; i < layout.length; i++) {     //loop through each edge only once (n(n+1)/n) - ~doubles speed
@@ -427,69 +392,4 @@ public class Problem {
 
     }
 
-    /* Getters and Setters */
-
-    public double[] getGlobalBest() {
-        return gBest;
-    }
-
-    public double getGlobalBestFitness() {
-        return gBestFitness;
-    }
-
-    public boolean updateGlobalBest(double newFitness, double[] newPosition) {
-        if (newFitness >= gBestFitness) { //assuming maximisation
-            // System.out.println(countViolations(decodeDirect(newPosition)));
-            this.gBest = newPosition;
-            this.gBestFitness = newFitness;
-            return true;
-        }
-        return false;
-    }
-
-    public double[] getLocalBest(int index) {
-        return lBest[index];
-    }
-
-    public double getLocalBestFitness(int index) {
-        return lBestFitnesses[index];
-    }
-
-    public boolean updateLocalBest(List<Particle> swarm, int index) {
-        Particle p = swarm.get(index);
-        double newFitness = p.getPersonalBestFitness();
-        double[] newPosition =  p.getPersonalBest();
-
-        int indexB = Math.floorMod(index + 1, swarmSize);   //indexes wrap around the ends, such that we build a ring topology
-        int indexC = Math.floorMod(index - 1, swarmSize);
-        lBestFitnesses[index] = getBestNeighbourFitness(swarm, index, indexB, indexC);
-
-        if (newFitness >= lBestFitnesses[index]) { //assuming maximisation
-            this.lBest[index] = newPosition;
-            this.gBestFitness = maxFitness(lBestFitnesses);
-            return true;
-        }
-        return false;
-    }
-
-    public double getBestNeighbourFitness(List<Particle> swarm, int indexA, int indexB, int indexC) {
-        double maxFitness = swarm.get(indexA).getPersonalBestFitness();
-        double fitnessB = swarm.get(indexB).getPersonalBestFitness();
-        double fitnessC = swarm.get(indexC).getPersonalBestFitness();
-
-        if (fitnessB >= maxFitness) maxFitness = fitnessB;
-        if (fitnessC >= maxFitness) maxFitness = fitnessC;
-
-        return maxFitness;
-    }
-
-    public double maxFitness(double[] fitness) {
-        double maxFitness = fitness[0];
-        for (int i = 1; i < swarmSize; i++) {
-            if (fitness[i] > maxFitness) maxFitness = fitness[i];
-        }
-        return maxFitness; 
-
-    }
-    
 }
