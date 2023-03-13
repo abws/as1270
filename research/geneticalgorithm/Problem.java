@@ -14,8 +14,8 @@ import research.api.java.*;
  * @version 08.02.23
  */
 public class Problem {
-    private KusiakLayoutEvaluator evaluator;
-    private WindScenario scenario;
+    public KusiakLayoutEvaluator evaluator;
+    public WindScenario scenario;
     public int INDIV_LENGTH;
     public int N_TURBINES;
     public int POP_SIZE;
@@ -57,7 +57,7 @@ public class Problem {
 
         int[][] gridIndividual = gridify(individual, columns, rows);
 
-        double[][] layout = new double [scenario.nturbines][2];
+        double[][] layout = new double [countTurbines(individual)][2];
         int count = 0;
 
         for (int i = 0; i < rows; i++) {

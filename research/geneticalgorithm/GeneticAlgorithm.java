@@ -24,7 +24,7 @@ public class GeneticAlgorithm {
 
             matingPool = ps.tournamentSelection(population, popSize, 5, false); //parent selection
             offSpring = r.recombineNPoint(matingPool, popSize, 35); //recombination
-            offSpring = re.repairSimpleWindow(m.mutatePopulationRandom(offSpring)); //mutation and repair
+            offSpring = re.repairRandom(m.mutatePopulationRandom(offSpring)); //mutation and repair
             population = rp.elitism(population, offSpring, 1); //survival selection
         }
     }

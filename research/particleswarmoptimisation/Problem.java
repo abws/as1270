@@ -20,6 +20,7 @@ import research.api.java.*;
 public class Problem {
     private KusiakLayoutEvaluator evaluator;
     private WindScenario scenario;
+    private static int bound = 0;
 
     public double[] gBest;
     public double gBestFitness;
@@ -33,11 +34,10 @@ public class Problem {
     public double minDist;
     public double height;
     public double width;
-    double penaltyCoefficient;
-    public int neighbourhoodSize;
+    double penaltyCoefficient1;
+    double penaltyCoefficient2;
 
-
-    public Problem(KusiakLayoutEvaluator evaluator, WindScenario scenario, int swarmSize, double penaltyCoefficient, int neighbourhoodSize) throws Exception {
+    public Problem(KusiakLayoutEvaluator evaluator, WindScenario scenario, int swarmSize, double penaltyCoefficient1, double penaltyCoefficient2) throws Exception {
         this.scenario = scenario;
         this.evaluator = evaluator;
 
@@ -48,8 +48,8 @@ public class Problem {
         this.height = scenario.height;
         this.width = scenario.width;
         this.minDist = scenario.R * 8;
-        this.penaltyCoefficient = penaltyCoefficient;
-        this.neighbourhoodSize =  neighbourhoodSize;
+        this.penaltyCoefficient1 = penaltyCoefficient1;
+        this.penaltyCoefficient2 = penaltyCoefficient2;
         this.lBest = new double[swarmSize][particleDimension];
         this.lBestFitnesses = new double[swarmSize];
 
@@ -87,15 +87,29 @@ public class Problem {
         evaluator.evaluate_2014(particleCoordinates);   //calculates the AEP and sets it in the evaluator
         double energyProduction = evaluator.getEnergyOutput();
 
-        double violationSum = 0;
+        double violationSum1 = 0;
+        double violationSum2 = 0;
+
 
         for (int i = 0; i < particleCoordinates.length; i++) {     //loop through each edge only once (n(n+1)/n) - ~doubles speed
             for (int j = i+1; j < particleCoordinates.length; j++) {
-                violationSum += proximityConstraintViolation(particleCoordinates[i], particleCoordinates[j], minDist);
+                violationSum1 += proximityConstraintViolation(particleCoordinates[i], particleCoordinates[j], minDist);
             }
+            violationSum2 += boundConstraintViolation(particleCoordinates[i]);
         }
-        double penalty = this.penaltyCoefficient * (Math.sqrt(violationSum));
-        double fitness = (energyProduction - penalty) / (scenario.wakeFreeEnergy * nTurbines);
+        // System.out.printf(" :%d: ",bound/2);
+        // System.out.println("Vio;0000 "+violationSum2);
+
+        bound =0;
+        
+        double penalty1 = this.penaltyCoefficient1 * (Math.sqrt(violationSum1));
+        // System.out.println("Vio;1111 "+penalty1);
+
+        double penalty2 = (this.penaltyCoefficient2 * (Math.sqrt(violationSum2)));
+        // System.out.println("Vio;2222 "+penalty2);
+
+
+        double fitness = (energyProduction - penalty1-penalty2) / (scenario.wakeFreeEnergy * nTurbines);
      
 
         return fitness;
@@ -363,6 +377,20 @@ public class Problem {
         return constraint;
     }
 
+    public double boundConstraintViolation(double[] coordinate) {
+        double xDistance, yDistance, distanceSquared;
+        xDistance = yDistance = distanceSquared = 0;
+
+        if (coordinate[0] < 0) {xDistance+=(coordinate[0]*-1);bound++;}
+        if (coordinate[1] < 0) {yDistance+=(coordinate[1]*-1); bound++;}
+        if (coordinate[0] > this.width) {xDistance+=(coordinate[0]-this.width); bound++;}
+        if (coordinate[1] > this.height) {yDistance+=(coordinate[1]-this.height); bound++;}
+
+        distanceSquared = Math.pow((xDistance), 2) + Math.pow((yDistance), 2);
+        // System.out.println("Vio; "+ distanceSquared);
+        return distanceSquared;
+    }
+
 
     /**
      * Calculates the weight difference
@@ -424,7 +452,6 @@ public class Problem {
             }
         }
         return count;
-
     }
 
     /* Getters and Setters */

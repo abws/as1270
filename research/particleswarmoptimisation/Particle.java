@@ -68,7 +68,7 @@ public class Particle {
    public void updateFitness() {
        double fitness = problem.evaluatePenalty(currentPosition);
        this.fitness = fitness;
-       System.out.println(globalcounter++%10 +": "+ fitness+": "+problem.countViolations(problem.decodeDirect(this.currentPosition)));
+    //    System.out.println(globalcounter++%10 +": "+ fitness+": "+problem.countViolations(problem.decodeDirect(this.currentPosition)));
 
        updatePersonalBest();
    }

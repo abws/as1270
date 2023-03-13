@@ -263,5 +263,66 @@ public class Repair {
         ind.setValue(indivArray.toString());
         return ind;
     }
+
+    public List<Individual> repairInformed(List<Individual> pop) {
+            for (int i = 0; i < pop.size(); i++) {
+                Individual ind = pop.get(i);
+                ind = removeWorst(ind);
+                pop.set(i, ind);    //mutate each individual in the offspring array
+            }
+        return pop;
+    }
+
+    public Individual removeWorst(Individual ind) {
+        Random r = new Random();
+        String value = ind.getValue();
+        StringBuilder indivArray = new StringBuilder(value);
+
+        problem.evaluate(ind.getValue());
+        double[] turbineIndexes = problem.evaluator.getTurbineFitnesses();
+
+        int turbineCount = problem.countTurbines(value);
+        int difference = turbineCount - problem.N_TURBINES;
+
+        while (difference > 0) {    //we have too many turbines
+            int position = lowestIndex(turbineIndexes);
+            Character c = indivArray.charAt(position);
+            if (c == '1') {
+                indivArray.setCharAt(position, '0');
+                difference--;
+            }
+        }
+
+        while (difference < 0) {    //we have too few turbines
+            int position = r.nextInt(INDIV_LENGTH); //position to add turbine to
+            Character c = indivArray.charAt(position);
+            if (c == '0') {
+                indivArray.setCharAt(position, '1');
+                difference++;
+            }
+        }
+        ind.setValue(indivArray.toString());
+        return ind; 
+    }
+    
+    public int lowestIndex(double[] array) {
+        int lowest = 0;
+        for (int i = 1; i < array.length; i++) {
+            if (array[i] <= array[lowest]) lowest = i;
+        }
+        array[lowest] = 1;
+        return lowest;
+    }
+
+    public int highestIndex(double[] array) {
+        int highest = 0;
+        for (int i = 1; i < array.length; i++) {
+            if (array[i] >= array[highest]) highest = i;
+        }
+        array[highest] = 0;
+        return highest;
+    }
+
+
     
 }

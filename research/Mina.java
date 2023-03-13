@@ -44,11 +44,12 @@ public class Mina {
         // String b = "1111111111";
         // String c = BitStringOperators.xor(a, b); //negation
         // System.out.println(c);
-        String ind = "10101011";
-        problem
+        // String ind = "10101011";
+        // problem
         // int pos = 0;
         // int x = Character.getNumericValue(ind.charAt(pos));
         // System.out.println(x);
+        System.out.println(Math.sqrt(2.6508620440928917E9));
     }
     
 }
