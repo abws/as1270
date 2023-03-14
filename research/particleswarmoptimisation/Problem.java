@@ -97,7 +97,7 @@ public class Problem {
             }
             violationSum2 += boundConstraintViolation(particleCoordinates[i]);
         }
-        // System.out.printf(" :%d: ",bound/2);
+        System.out.printf(" :%d: ",bound/2);
         // System.out.println("Vio;0000 "+violationSum2);
 
         bound =0;
@@ -105,11 +105,14 @@ public class Problem {
         double penalty1 = this.penaltyCoefficient1 * (Math.sqrt(violationSum1));
         // System.out.println("Vio;1111 "+penalty1);
 
-        double penalty2 = (this.penaltyCoefficient2 * (Math.sqrt(violationSum2)));
+        // double penalty2 = this.penaltyCoefficient2 * (Math.sqrt(violationSum2));
         // System.out.println("Vio;2222 "+penalty2);
 
 
-        double fitness = (energyProduction - penalty1-penalty2) / (scenario.wakeFreeEnergy * nTurbines);
+        // double fitness = (energyProduction - (penalty1 + penalty2)) / (scenario.wakeFreeEnergy * nTurbines);
+        double fitness = (energyProduction - (penalty1 )) / (scenario.wakeFreeEnergy * nTurbines);
+        
+
      
 
         return fitness;
@@ -248,7 +251,7 @@ public class Problem {
 
         // layout = geometricReformer(decodeDirect(randomPosition), minDist);
         // randomPosition = encodeDirect(layout);
-        randomPosition = absorbBoundHandle(randomPosition);
+        // randomPosition = absorbBoundHandle(randomPosition);
 
         // randomPosition = encodeDirect(decodeDirect(randomPosition));
 
@@ -454,6 +457,15 @@ public class Problem {
         return count;
     }
 
+    public boolean boundaryViolated(double[] position) {
+        double[][] layout = decodeDirect(position);
+        for (double[] l: layout) {     //loop through each edge only once (n(n+1)/n) - ~doubles speed
+            if ((l[0] < 0) || (l[1] < 0) || (l[0] > this.width) || (l[1] > this.height)) return true;
+        }
+
+        return false;
+    }
+
     /* Getters and Setters */
 
     public double[] getGlobalBest() {
@@ -465,7 +477,7 @@ public class Problem {
     }
 
     public boolean updateGlobalBest(double newFitness, double[] newPosition) {
-        if (newFitness >= gBestFitness) { //assuming maximisation
+        if ((newFitness >= gBestFitness) && !(boundaryViolated(newPosition))) { //assuming maximisation
             // System.out.println(countViolations(decodeDirect(newPosition)));
             this.gBest = newPosition;
             this.gBestFitness = newFitness;
@@ -482,32 +494,32 @@ public class Problem {
         return lBestFitnesses[index];
     }
 
-    public boolean updateLocalBest(List<Particle> swarm, int index) {
-        Particle p = swarm.get(index);
-        double newFitness = p.getPersonalBestFitness();
-        double[] newPosition =  p.getPersonalBest();
-
+    public void updateLocalBest(List<Particle> swarm, int index) {
         int indexB = Math.floorMod(index + 1, swarmSize);   //indexes wrap around the ends, such that we build a ring topology
         int indexC = Math.floorMod(index - 1, swarmSize);
-        lBestFitnesses[index] = getBestNeighbourFitness(swarm, index, indexB, indexC);
+        int maxIndex = getBestNeighbour(swarm, index, indexB, indexC);
+        Particle best = swarm.get(maxIndex);
+        this.lBestFitnesses[index] = best.fitness; 
+        this.lBest[index] = best.getPosition();
 
-        if (newFitness >= lBestFitnesses[index]) { //assuming maximisation
-            this.lBest[index] = newPosition;
-            this.gBestFitness = maxFitness(lBestFitnesses);
-            return true;
-        }
-        return false;
+        double gBestTemp = maxFitness(lBestFitnesses);
+        if (this.gBestFitness < gBestTemp)this.gBestFitness = maxFitness(lBestFitnesses); //debugging purposes
     }
 
-    public double getBestNeighbourFitness(List<Particle> swarm, int indexA, int indexB, int indexC) {
-        double maxFitness = swarm.get(indexA).getPersonalBestFitness();
-        double fitnessB = swarm.get(indexB).getPersonalBestFitness();
-        double fitnessC = swarm.get(indexC).getPersonalBestFitness();
+    public int getBestNeighbour(List<Particle> swarm, int indexA, int indexB, int indexC) {
+        int maxIndex = indexA;
+        double maxFitness = swarm.get(indexA).fitness;
 
-        if (fitnessB >= maxFitness) maxFitness = fitnessB;
-        if (fitnessC >= maxFitness) maxFitness = fitnessC;
 
-        return maxFitness;
+        for (int i: new int[]{indexA, indexB, indexC}) {
+            double fitness = swarm.get(i).fitness;
+            if (fitness >= maxFitness) {
+                maxFitness = fitness;
+                maxIndex = i;
+            }
+        }
+
+        return maxIndex;
     }
 
     public double maxFitness(double[] fitness) {

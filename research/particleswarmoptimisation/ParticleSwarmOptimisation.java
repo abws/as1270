@@ -88,14 +88,17 @@ public class ParticleSwarmOptimisation {
 
                 double[] newPosition = vectorAddition(p.getPosition(), newVelocity);    //combine with bottom for efficiency
 
-                // newPosition = absorbBoundHandle(newPosition);
+
+                newPosition = absorbBoundHandle(newPosition);
+                double[][] layout = problem.geometricReformer(problem.decodeDirect(newPosition), problem.minDist);
+                newPosition = problem.encodeDirect(layout);
 
                 /* Update Particle */
-                p.setPosition(newPosition, true);
+                p.setPosition(newPosition, true); //updates pBest
                 p.setVelocity(newVelocity);
 
                 /* Update local and global best */
-                p.updatePersonalBest();
+                // p.updatePersonalBest();
                 problem.updateGlobalBest(p.getPersonalBestFitness(), p.getPersonalBest());    //will only update if pBest is better than gBest
                 // problem.updateLocalBest(swarm, swarm.indexOf(p));    //will only update if pBest is better than lBest
 

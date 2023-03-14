@@ -30,7 +30,7 @@ public class Particle {
 
         this.currentPosition = initialPosition;
         this.velocity = initialVelocity;
-        this.pBestFitness = 0;
+        this.pBestFitness = Double.MIN_EXPONENT;
         this.pBest = initialPosition;
 
         updateFitness();
@@ -68,13 +68,13 @@ public class Particle {
    public void updateFitness() {
        double fitness = problem.evaluatePenalty(currentPosition);
        this.fitness = fitness;
-    //    System.out.println(globalcounter++%10 +": "+ fitness+": "+problem.countViolations(problem.decodeDirect(this.currentPosition)));
+       System.out.println(globalcounter++%10 +": "+ fitness+": "+problem.countViolations(problem.decodeDirect(this.currentPosition)));
 
        updatePersonalBest();
    }
 
    public boolean updatePersonalBest() {
-       if (fitness > pBestFitness) { //assuming maximisation
+       if ((fitness > pBestFitness) && !(problem.boundaryViolated(currentPosition))) { //assuming maximisation
             pBest = currentPosition;
             pBestFitness = fitness;
             return true;
