@@ -285,7 +285,9 @@ public class Repair {
         int difference = turbineCount - problem.N_TURBINES;
 
         while (difference > 0) {    //we have too many turbines
-            int position = lowestIndex(turbineIndexes);
+            int coordinatePosition = lowestIndex(turbineIndexes); //position of turbine in list of turbines
+            int position = getPosition(ind.getValue(), coordinatePosition); //position of turbine in grid
+            
             Character c = indivArray.charAt(position);
             if (c == '1') {
                 indivArray.setCharAt(position, '0');
@@ -321,6 +323,19 @@ public class Repair {
         }
         array[highest] = 0;
         return highest;
+    }
+
+    public int getPosition(String ind, int coordinatePosition) {
+        int count, i;
+        count = i = 0;
+        
+        while(i < ind.length() && count!=coordinatePosition ) {
+            if (ind.charAt(i) == '1') {
+                count++;
+            } 
+            i++;
+        }
+        return i;
     }
 
 

@@ -9,8 +9,8 @@ public class GeneticAlgorithm {
 
     public static void run(Problem problem, int generations, int popSize) {
         ParentSelection ps = new ParentSelection(problem);
-        Recombination r = new Recombination(problem, 0.8);
-        Mutation m = new Mutation(problem, 0.03);
+        Recombination r = new Recombination(problem, 0.5);
+        Mutation m = new Mutation(problem, 0.04);
         Replacement rp = new Replacement(problem);
         Repair re = new Repair(problem);
 
