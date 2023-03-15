@@ -65,7 +65,7 @@
         </div>
         
         <div class="optimise">
-            <form action="#" th:action="@{/optimise}" method="post"> 
+            <form action="#" th:action="@{/optimise}" method="post" id="form"> 
                 <div class="title">Evaluation Function</div>
                 <div class="evaluation-functions">
                     <input class="function-input" id="energyProduction" type="button" value="Energy Production">
@@ -78,30 +78,36 @@
                     <div class="algorithm" id="geneticAlgorithm"> 
                         <div><img src="images/dna-image.jpeg" alt="dna-image"></div>
                         <p>Genetic Algorithm</p>
-                        <input class="algorithm-input" id="popSize" type="number" placeholder="Population Size" />
-                        <input class="algorithm-input" id="generations" type="number" placeholder="Generations" />
+                        <input type="hidden" name="algorithm" value="geneticAlgorithm">
+                        <input class="algorithm-input" name="popSize" id="popSize" type="number" placeholder="Population Size" />
+                        <input class="algorithm-input" name="generations" id="generations" type="number" placeholder="Generations" />
                     </div>
                     <div class="algorithm" id="particeSwarmOptimisation"> 
                         <div><img src="images/birds-flocking.jpeg" alt="birds-flocking"></div>
                         <p>Particle Swarm Optimisation</p>
-                        <input class="algorithm-input" id="swarmSize" type="number" placeholder="Swarm Size" />
-                        <input class="algorithm-input" id="inertiaWeight" type="number" placeholder="Inertia Weight" />
-                        <input class="algorithm-input" id="c1" type="number" placeholder="c1" />
-                        <input class="algorithm-input" id="c2" type="number" placeholder="c2" />
-                        <input class="algorithm-input" id="maxWeight" type="number" placeholder="Maximum Weight" />
-                        <input class="algorithm-input" id="minWeight" type="number" placeholder="Minimum Weight" />
+                        <input type="hidden" name="algorithm" value="particeSwarmOptimisation">
+
+                        <input class="algorithm-input" name="swarmSize" id="swarmSize" type="number" placeholder="Swarm Size" />
+                        <input class="algorithm-input" name="inertiaWeight" id="inertiaWeight" type="number" placeholder="Inertia Weight" />
+                        <input class="algorithm-input" name="c1" id="c1" type="number" placeholder="c1" />
+                        <input class="algorithm-input" name="c2" id="c2" type="number" placeholder="c2" />
+                        <input class="algorithm-input" name="maxWeight" id="maxWeight" type="number" placeholder="Maximum Weight" />
+                        <input class="algorithm-input" name="minWeight" id="minWeight" type="number" placeholder="Minimum Weight" />
 
                     </div>
                     <div class="algorithm" id="simulatedAnnealing"> 
                         <div><img src="images/explosion.png" alt="explosion-annealing-in-nebula"></div>
                         <p>Simulated Annealing</p>
-                        <input class="algorithm-input" id="initialTemperature" type="number" placeholder="Initial Temperature" />
+                        <input type="hidden" name="algorithm" value="simulatedAnnealing">
+
+                        <input class="algorithm-input" name="initialTemperature" id="initialTemperature" type="number" placeholder="Initial Temperature" />
                     </div>
                 </div>
 
                     <input class="optimise-button" type="submit" id="optimise" value="OPTIMISE" />
                 
             </form>
+            <!-- <canvas class="wind-farm"></canvas> -->
         </div>
 
 
@@ -110,7 +116,7 @@
 
 
     </div>
-
+<!-- 
     <script async src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>
 
     <script type="importmap">
@@ -124,7 +130,8 @@
         }
     </script>
 
-    <script type="module" src="scripts/wind-farm.js"> </script>
+    <script type="module" src="scripts/wind-farm.js"> </script> -->
+    <script type="text/javascript" src="scripts/optimise.js"> </script>
     
 </body>
 </html>

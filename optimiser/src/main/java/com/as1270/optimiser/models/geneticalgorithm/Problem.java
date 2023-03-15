@@ -1,8 +1,8 @@
-package research.geneticalgorithm;
+package com.as1270.optimiser.models.geneticalgorithm;
 
 import java.util.*;
 
-import research.api.java.*;
+import com.as1270.optimiser.models.api.java.*;
 
 /**
  * Problem formulation for optimizing a wind farm
@@ -383,31 +383,20 @@ public class Problem {
         return fitnesses;
     }
 
-    /**
-     * Calculautes the maximum fitness of
-     * a population. Becareful! It should only
-     * be used at the end of the algorithm, and even
-     * then we can calulate, soon make use of ATTRIBUTE LAST FITNESS AFTER WE MAKE INDIV CLASS
-     * @param population
-     * @return
-     */
-    public double maxFitness(List<String> population) {
-        double maxFitness = 0.0;
-        for (String n : population) {
-            double fitness = evaluate(n);
-            if (fitness > maxFitness) maxFitness = fitness;
+    public double[][] getFittest(List<Individual> population) {
+        double max = 0;
+        Individual fittest = null;
+        for (int i = 0; i < population.size(); i++) {
+            Individual individual = population.get(i);
+            double fitness = individual.getFitness();
+            if (fitness > max) {
+                max = fitness;
+                fittest = individual;
+            }
         }
+        return decode(fittest.getValue());
 
-        return maxFitness;
     }
 
-    public double avgFitness(List<String> population) {
-        double sum = 0.0;
-        for (String n : population) {
-            double fitness = evaluate(n);
-            sum += fitness;
-        }
-        return sum / population.size();
-    }
 
 }

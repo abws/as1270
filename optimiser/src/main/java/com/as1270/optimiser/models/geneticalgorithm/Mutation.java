@@ -1,4 +1,4 @@
-package research.geneticalgorithm;
+package com.as1270.optimiser.models.geneticalgorithm;
 
 import java.util.ArrayList;
 import java.util.List;

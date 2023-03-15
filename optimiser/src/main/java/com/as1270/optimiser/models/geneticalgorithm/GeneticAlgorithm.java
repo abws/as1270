@@ -1,4 +1,4 @@
-package research.geneticalgorithm;
+package com.as1270.optimiser.models.geneticalgorithm;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -7,7 +7,7 @@ import java.util.List;
 //remember, since the lists contains objects, changing their values in a function will change their true values
 public class GeneticAlgorithm {
 
-    public static void run(Problem problem, int generations, int popSize) {
+    public static double[][] run(Problem problem, int generations, int popSize) {
         ParentSelection ps = new ParentSelection(problem);
         Recombination r = new Recombination(problem, 0.7);
         Mutation m = new Mutation(problem, 0.1);
@@ -18,7 +18,6 @@ public class GeneticAlgorithm {
         
         for (int i = 0; i < generations; i++) {
             System.out.println(Collections.max(problem.getFitnessesArrayList(population)));
-            //System.out.println(Arrays.toString(problem.getFitnesses(population)));
             List<Individual> matingPool = new ArrayList<>();
             List<Individual> offSpring = new ArrayList<>();
 
@@ -27,5 +26,8 @@ public class GeneticAlgorithm {
             offSpring = problem.legalise(m.mutatePopulation(offSpring)); //mutation and repair
             population = rp.elitism(population, offSpring, 1); //survival selection
         }
+
+        return problem.getFittest(population);
+
     }
 }

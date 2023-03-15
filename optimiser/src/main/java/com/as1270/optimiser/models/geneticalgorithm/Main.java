@@ -1,7 +1,6 @@
-package research.geneticalgorithm;
+package com.as1270.optimiser.models.geneticalgorithm;
+import com.as1270.optimiser.models.api.java.*;
 
-import research.api.java.KusiakLayoutEvaluator;
-import research.api.java.WindScenario;
 
 public class Main {
     public static void main(String[] args) throws Exception {
@@ -11,7 +10,6 @@ public class Main {
         KusiakLayoutEvaluator evaluator = new KusiakLayoutEvaluator();
         evaluator.initialize(ws);
         Problem problem = new Problem(evaluator, ws, 10);
-
         //List<String> values = output.stream().map(Individual::getValue).collect(Collectors.toList());
     
 

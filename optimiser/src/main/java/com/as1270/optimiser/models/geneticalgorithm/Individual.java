@@ -1,4 +1,4 @@
-package research.geneticalgorithm;
+package com.as1270.optimiser.models.geneticalgorithm;
 
 /**
  * Class for representing binary individuals
