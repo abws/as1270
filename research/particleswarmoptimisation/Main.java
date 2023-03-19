@@ -16,16 +16,4 @@ public class Main {
         pso.run();
     }
 
-    private static void t(String t) {
-        System.out.println(t);
-    }
-    private static void t(double t) {
-        System.out.println(t);
-    }
-    private static void t(double[][] t) {
-        System.out.println(Arrays.deepToString(t));
-    }
-    private static void t(double[] t) {
-        System.out.println(Arrays.toString(t));
-    }
 }
