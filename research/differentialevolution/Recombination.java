@@ -25,7 +25,6 @@ public class Recombination {
 
     public Vector uniform(double[] parent, double[] mutant) {
         double[] trial = new double[parent.length];
-
         for (int i = 0; i < parent.length; i++) {
             if (Math.random() < crossoverRate) trial[i] = mutant[i];
             else trial[i] = parent[i]; 

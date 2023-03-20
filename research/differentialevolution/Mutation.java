@@ -14,7 +14,7 @@ public class Mutation {
     }
 
     public List<Vector> differentialMutation(List<Vector> population) {
-        List<Vector> mutantVector = new ArrayList<Vector>();
+        List<Vector> mutants = new ArrayList<Vector>();
 
         for (int i = 0; i < population.size(); i++) {
             List<double[]> randomMembers = getRandomMembers(i, population);
@@ -22,11 +22,11 @@ public class Mutation {
             double[] x = randomMembers.get(0);
             double[] y = randomMembers.get(1);
 
-            Vector mutant = scale(scalingFactor, vectorDifferential(x, y));
-            mutantVector.add(mutant);
+            Vector m = scale(scalingFactor, vectorDifferential(x, y));
+            mutants.add(m);
         }
 
-        return mutantVector;
+        return mutants;
     }
 
 
@@ -87,11 +87,4 @@ public class Mutation {
         return vectorC;
     }
 
-
-    
-
-
-
-    
-    
 }
