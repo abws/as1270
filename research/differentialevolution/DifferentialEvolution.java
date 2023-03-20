@@ -21,12 +21,14 @@ public class DifferentialEvolution {
 
     public void run() {
         int iteration = 0;
-        Mutation mutation = new Mutation(scalingFactor);
+        Mutation mutation = new Mutation(scalingFactor, problem);
+        Recombination recombination = new Recombination(crossoverRate, problem);
+
         List<Vector> population = problem.initialisePopulation(popSize);
         
         while (iteration < maxIterations) {
-            List<Vector> mutationVector = mutation.differentialMutation(population);
-            List<Vector> trial = crossover.binomialCrossover(population, mutationVector, crossoverRate);
+            List<Vector> mutantVector = mutation.differentialMutation(population);
+            List<Vector> trial = recombination.binomialCrossover(population, mutantVector);
 
             population = replacement.selectBest(population, trial); //offspring
         }
@@ -37,19 +39,5 @@ public class DifferentialEvolution {
 
 
 
-
-    /**
-     * Calculates the difference
-     * between two vectors
-     * @param vectorA the vector to point towards
-     * @param vectorB from this vector
-     */
-    public double[] vectorDifferential(double[] vectorA, double[] vectorB) {
-        double[] difference = new double[vectorA.length];
-        for (int i = 0; i < vectorA.length; i++) {
-            difference[i] = vectorA[i] - vectorB[i];
-        }
-        return difference;
-    }
     
 }
