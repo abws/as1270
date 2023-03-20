@@ -1,4 +1,4 @@
-package research.differentialevolution;
+package research.testty;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +22,7 @@ public class Problem {
     private WindScenario scenario;
 
     private static int bound = 0;
+    public static double max;
 
     public int nDimension;
     public int popSize;
@@ -89,7 +90,7 @@ public class Problem {
             violationSum2 += lol(coordinates[i]);
         }
         // System.out.printf("boundary :%d\n",bound/2);
-        System.out.println("mindist: " + countViolations(coordinates));
+        // System.out.println("mindist: " + countViolations(coordinates));
 
         bound = 0;
 
@@ -181,8 +182,8 @@ public class Problem {
      * @param swarmSize
      * @return
      */
-    public List<Vector> initialisePopulation(int popSize) {
-        List<Vector> pop = new ArrayList<Vector>();
+    public List<double[]> initialisePopulation(int popSize) {
+        List<double[]> pop = new ArrayList<double[]>();
         for (int i = 0; i < popSize; i++) {
             pop.add(createRandomVector());
         }
@@ -200,7 +201,7 @@ public class Problem {
      * distributed accross the search space
      * @return
      */
-    public Vector createRandomVector() {
+    public double[] createRandomVector() {
         Random random = new Random();
         double[] randomPosition = new double[nDimension];
         // double[][] layout = new double[nTurbines][2];
@@ -215,8 +216,7 @@ public class Problem {
         // randomPosition = absorbBoundHandle(randomPosition);
         // randomPosition = encodeDirect(decodeDirect(randomPosition));
 
-        Vector randomvector = new Vector(randomPosition, true, this);
-        return randomvector;
+        return randomPosition;
     }
 
     /**
@@ -421,19 +421,9 @@ public class Problem {
 
         for (int i = 1; i < pop.size(); i++) {
             double current = pop.get(i).fitness;
-            if (current >= maxFitness) {maxFitness = current;}
+            if (current >= maxFitness) maxFitness = current;
         }
         return maxFitness; 
-    }
-
-    public double avgFitness(List<Vector> pop) {
-        double sum = 0;
-
-        for (int i = 1; i < pop.size(); i++) {
-            double current = pop.get(i).fitness;
-            sum+=current;
-        }
-        return sum/pop.size(); 
     }
 
 

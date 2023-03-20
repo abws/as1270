@@ -11,8 +11,8 @@ public class Replacement {
             Vector p = parents.get(i);
             Vector t = trials.get(i);
 
-            if (p.fitness > t.fitness) offSpring.add(p);
-            else offSpring.add(t);
+            if (p.fitness > t.fitness) {offSpring.add(p);}
+            else {offSpring.add(t);}
         }
 
         return offSpring;

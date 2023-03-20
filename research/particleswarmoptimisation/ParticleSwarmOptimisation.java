@@ -55,11 +55,13 @@ public class ParticleSwarmOptimisation {
     
 
         while (iteration < maxIterations) {
-            System.out.println(problem.gBestFitness);
+            // System.out.println(problem.gBestFitness);
+            System.out.println(problem.avgFitness(swarm));
+            double[] randomiserArray1 = generateRandomiserVector(problem.particleDimension);
+            double[] randomiserArray2 = generateRandomiserVector(problem.particleDimension);
 
             for (Particle p : swarm) {
-                double[] randomiserArray1 = generateRandomiserVector(problem.particleDimension);
-                double[] randomiserArray2 = generateRandomiserVector(problem.particleDimension);
+
                 /* Calculate Inertia */
                 double[] inertia = scalarMultipy(1, p.getVelocity()); 
 
@@ -89,9 +91,9 @@ public class ParticleSwarmOptimisation {
                 double[] newPosition = vectorAddition(p.getPosition(), newVelocity);    //combine with bottom for efficiency
 
 
-                newPosition = absorbBoundHandle(newPosition);
-                double[][] layout = problem.geometricReformer(problem.decodeDirect(newPosition), problem.minDist);
-                newPosition = problem.encodeDirect(layout);
+                newPosition = problem.randomBoundHandle(newPosition);
+                // double[][] layout = problem.geometricReformer(problem.decodeDirect(newPosition), problem.minDist);
+                // newPosition = problem.encodeDirect(layout);
 
                 /* Update Particle */
                 p.setPosition(newPosition, true); //updates pBest

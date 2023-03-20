@@ -18,6 +18,7 @@ public class Recombination {
             double[] parent = pop.get(i).getVector();
             double[] mutant = mutantVector.get(i).getVector();
             Vector trial = uniform(parent, mutant);
+
             trialVector.add(trial);
         }
         return trialVector;
@@ -29,6 +30,21 @@ public class Recombination {
             if (Math.random() < crossoverRate) trial[i] = mutant[i];
             else trial[i] = parent[i]; 
         }
+        double[][] layout = new double[problem.nTurbines][2];
+        layout = problem.geometricReformer(problem.decodeDirect(trial), problem.minDist);
+        trial = problem.encodeDirect(layout);
+        layout = problem.geometricReformer(problem.decodeDirect(trial), problem.minDist);
+        trial = problem.encodeDirect(layout);
+        trial = problem.randomBoundHandle(trial);
+        layout = problem.geometricReformer(problem.decodeDirect(trial), problem.minDist);
+        trial = problem.encodeDirect(layout);
+        trial = problem.randomBoundHandle(trial);
+        layout = problem.geometricReformer(problem.decodeDirect(trial), problem.minDist);
+        trial = problem.encodeDirect(layout);
+        trial = problem.randomBoundHandle(trial);
+        layout = problem.geometricReformer(problem.decodeDirect(trial), problem.minDist);
+        trial = problem.encodeDirect(layout);
+        trial = problem.randomBoundHandle(trial);
 
         return new Vector(trial, true, problem);
     }

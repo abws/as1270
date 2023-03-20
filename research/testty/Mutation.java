@@ -1,4 +1,4 @@
-package research.differentialevolution;
+package research.testty;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,17 +13,16 @@ public class Mutation {
         this.problem = problem;
     }
 
-    public List<Vector> differentialMutation(List<Vector> population) {
-        List<Vector> mutants = new ArrayList<Vector>();
+    public List<double[]> differentialMutation(List<double[]> population) {
+        List<double[]> mutants = new ArrayList<double[]>();
 
         for (int i = 0; i < population.size(); i++) {
             List<double[]> randomMembers = getRandomMembers(i, population);
 
-            double[] z = randomMembers.get(0);
-            double[] x = randomMembers.get(1);
-            double[] y = randomMembers.get(2);
+            double[] x = randomMembers.get(0);
+            double[] y = randomMembers.get(1);
 
-            Vector m = vectorAddition(z, scale(scalingFactor, vectorDifferential(x, y)));
+            double[] m = scale(scalingFactor, vectorDifferential(x, y));
             mutants.add(m);
         }
 
@@ -34,22 +33,24 @@ public class Mutation {
     /**
      * Gets two random individuals
      * from the population
+     * @param a
      * @param pop
      * @return
      */
-    public List<double[]> getRandomMembers(int d, List<Vector> pop) {
+    public List<double[]> getRandomMembers(int a, List<double[]> pop) {
         Random r = new Random();
         List<Integer> indexes = new ArrayList<>();
         List<double[]> randomMembers = new ArrayList<>();
-        indexes.add(d);
-        while (indexes.size() != 4) {
+
+        indexes.add(a);
+        while (indexes.size() != 3) {
             int randomIndex = r.nextInt(pop.size());    //add elements such that [0] != [1] != [2]
             if (indexes.contains(randomIndex)) continue;
             indexes.add(randomIndex);
         }
 
-        double[] a = pop.get(indexes.get(0)).getVector(); double[] b = pop.get(indexes.get(1)).getVector(); double[] c = pop.get(indexes.get(2)).getVector(); //get the random individuals (their index is given in indexes)
-        randomMembers.add(a); randomMembers.add(b); randomMembers.add(c);
+        double[] b = pop.get(indexes.get(1)); double[] c = pop.get(indexes.get(2)); //get the random individuals (their index is given in indexes)
+        randomMembers.add(b); randomMembers.add(c);
         //I CANNOT WAIT FOR THE SUMMER. I REALLY DO WONDER WHERE LIFE WILL TAKE ME!!!
         return randomMembers;
     }
@@ -83,18 +84,6 @@ public class Mutation {
         }
 
         return scalarised;
-    }
-
-    /**
-     * Calculates the sum
-     * of two vectors
-     */
-    public Vector vectorAddition(double[] vectorA, double[] vectorB) {
-        double[] sum = new double[vectorA.length];
-        for (int i = 0; i < vectorA.length; i++) {
-            sum[i] = vectorA[i] + vectorB[i];
-        }
-        return new Vector(sum, false, problem);
     }
 
 }

@@ -1,7 +1,4 @@
-package research.particleswarmoptimisation;
-
-import java.util.Arrays;
-
+package research.testty;
 import research.api.java.*;
 
 public class Main {
@@ -10,10 +7,10 @@ public class Main {
 
         KusiakLayoutEvaluator evaluator = new KusiakLayoutEvaluator();
         evaluator.initialize(ws);
-        Problem problem = new Problem(evaluator, ws, 15, 150, 0);
-        ParticleSwarmOptimisation pso = new ParticleSwarmOptimisation(problem.swarmSize, 1.3, 2.8, 0.4, 0.9, 20, 0.35, problem);
+        Problem problem = new Problem(evaluator, ws, 20, 50);
+        DifferentialEvolution de = new DifferentialEvolution(10, 0.7, 10, 0.5, problem);
 
-        pso.run();
+        de.run();
     }
 
 }

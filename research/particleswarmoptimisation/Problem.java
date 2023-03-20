@@ -97,7 +97,7 @@ public class Problem {
             }
             violationSum2 += boundConstraintViolation(particleCoordinates[i]);
         }
-        System.out.printf(" :%d: ",bound/2);
+        // System.out.printf(" :%d: ",bound/2);
         // System.out.println("Vio;0000 "+violationSum2);
 
         bound =0;
@@ -529,6 +529,16 @@ public class Problem {
         }
         return maxFitness; 
 
+    }
+
+    public double avgFitness(List<Particle> swarm) {
+        double sum = 0;
+
+        for (int i = 1; i < swarm.size(); i++) {
+            double current = swarm.get(i).fitness;
+            sum+=current;
+        }
+        return sum/swarm.size(); 
     }
     
 }

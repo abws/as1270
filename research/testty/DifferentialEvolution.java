@@ -1,4 +1,4 @@
-package research.differentialevolution;
+package research.testty;
 
 import java.util.List;
 
@@ -23,16 +23,17 @@ public class DifferentialEvolution {
         int iteration = 0;
         Mutation mutation = new Mutation(scalingFactor, problem);
         Recombination recombination = new Recombination(crossoverRate, problem);
+        Replacement replacement = new Replacement(problem);
 
 
-        List<Vector> population = problem.initialisePopulation(popSize);
+        List<double[]> population = problem.initialisePopulation(popSize);
         
         while (iteration < maxIterations) {
-            System.out.println(problem.avgFitness(population));
-            List<Vector> mutants= mutation.differentialMutation(population);
-            List<Vector> trials = recombination.binomialCrossover(population, mutants);
+            System.out.println(Problem.max);
+            List<double[]> mutants= mutation.differentialMutation(population);
+            List<double[]> trials = recombination.binomialCrossover(population, mutants);
 
-            population = Replacement.selectBest(population, trials); //offspring
+            population = replacement.selectBest(population, trials); //offspring
         }
 
     }
