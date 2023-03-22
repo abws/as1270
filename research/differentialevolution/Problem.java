@@ -1,5 +1,5 @@
 package research.differentialevolution;
-
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -56,6 +56,8 @@ public class Problem {
     public double evaluate(double[] position) {
         double[][] vectorCoordinates = decodeDirect(position);
         double fitness = evaluator.evaluate_2014(vectorCoordinates);
+        System.out.println("mindist: " + countViolations(vectorCoordinates));
+
 
         return fitness;
     }
@@ -82,20 +84,24 @@ public class Problem {
 
 
 
-        for (int i = 0; i < coordinates.length; i++) {     //loop through each edge only once (n(n+1)/n) - ~doubles speed
+        for (int i = 0; i < coordinates.length; i++) {     //loop through each edge only once (n(n-1)/n) - ~doubles speed
             for (int j = i+1; j < coordinates.length; j++) {
                 violationSum1 += proximityConstraintViolation(coordinates[i], coordinates[j], minDist);
             }
-            violationSum2 += lol(coordinates[i]);
+            lol(coordinates[i]);
+
         }
-        // System.out.printf("boundary :%d\n",bound/2);
+        System.out.printf("boundary :%d\n",bound/2);
         System.out.println("mindist: " + countViolations(coordinates));
 
         bound = 0;
+        // double penalty1 = this.penaltyCoefficient1 * (Math.sqrt(violationSum1));
+        // double penalty1 = this.penaltyCoefficient1 * violationSum1;
+        double penalty1 = 1;
 
-        
-        double penalty1 = this.penaltyCoefficient1 * (Math.sqrt(violationSum1));
-        // double penalty1 = this.penaltyCoefficient1 * (Math.hypot(violationSum1-1, 1));
+        double violations = Math.pow(countViolations(coordinates), 2);
+        // System.out.println(Math.sqrt(violations));
+        // double penalty1 = this.penaltyCoefficient1 * violations;
 
         
 
@@ -203,17 +209,17 @@ public class Problem {
     public Vector createRandomVector() {
         Random random = new Random();
         double[] randomPosition = new double[nDimension];
-        // double[][] layout = new double[nTurbines][2];
+        double[][] layout = new double[nTurbines][2];
 
         for (int i = 0; i < nDimension; i+=2) {
             randomPosition[i] = random.nextDouble(width);    //x coordinate
             randomPosition[i + 1] = random.nextDouble(height);  //y coordinate
         }
 
-        // layout = geometricReformer(decodeDirect(randomPosition), minDist);
-        // randomPosition = encodeDirect(layout);
-        // randomPosition = absorbBoundHandle(randomPosition);
-        // randomPosition = encodeDirect(decodeDirect(randomPosition));
+        layout = geometricReformer(decodeDirect(randomPosition), minDist);
+        randomPosition = encodeDirect(layout);
+        
+        randomPosition = periodicBoundHandle(randomPosition);
 
         Vector randomvector = new Vector(randomPosition, true, this);
         return randomvector;
@@ -246,8 +252,19 @@ public class Problem {
                     manner = spacialShift(repulser, manner, distance, z, 1); 
                 }
             }
+            for (int r = layout.length-1; r > 0; r--) {
+                if (r != m) {
+                    repulser = layout[r];
+                    double distance = calculateEuclideanDistance(repulser, manner);
+                    if (distance > z) continue;
+
+                    manner = spacialShiftRight(repulser, manner, distance, z, 1); 
+                }
+            }
 
             layout[m] = manner;
+            // layout = decodeDirect(periodicBoundHandle(encodeDirect(layout)));
+
         }
 
         return layout;
@@ -294,8 +311,80 @@ public class Problem {
         double shiftedPositionY = (sign*(y1 - y2) * (z + c) / distance) + y1;
 
         double[] shiftedPosition = new double[]{shiftedPositionX, shiftedPositionY};
-        double d = calculateEuclideanDistance(repulser, shiftedPosition);
+        // double d = calculateEuclideanDistance(repulser, shiftedPosition);
+        // System.out.println(d);
         return shiftedPosition;
+    }
+
+    /**
+     * Reforms the points in
+     * a planar euclidian space
+     * so as to ensure the 
+     * solution it presents is 
+     * both feasible and geometrically
+     * most similar to the original (v2)
+     * @param layout the layout to potentially modify
+     * @param z the minimum distance between two points
+     * @return a feasible layout
+     */
+    public double[][] geometricReformerV2(double[][] layout, double z) {
+        double[] manner;
+        double[] repulser;
+
+        for (int m = 0; m < layout.length; m++) {
+            manner = layout[m];
+
+            for (int r = 0; r < layout.length; r++) {
+                if (r != m) {
+                    repulser = layout[r];
+                    double distance = calculateEuclideanDistance(repulser, manner);
+                    if (distance > z) continue;
+
+                    layout = repulse(layout, repulser, manner, r, m, distance, z); 
+                    // layout = decodeDirect(periodicBoundHandle(encodeDirect(layout)));
+                }
+            }
+            for (int r = layout.length-1; r > 0; r--) {
+                if (r != m) {
+                    repulser = layout[r];
+                    double distance = calculateEuclideanDistance(repulser, manner);
+                    if (distance > z) continue;
+
+                    layout = repulse(layout, repulser, manner, r, m, distance, z); 
+                    // layout = decodeDirect(periodicBoundHandle(encodeDirect(layout)));
+                }
+            }
+        }
+
+        return layout;
+    }
+
+
+    public double[][] repulse(double[][] layout, double[] repulser, double[] manner, int r, int m, double distance, double z) {
+        distance = distance/2;
+        double x1 = repulser[0];
+        double y1 = repulser[1];
+
+        double x2 = manner[0];
+        double y2 = manner[1];
+
+        double x3 = (x1 + x2) / 2.0;    //mid point
+        double y3 = (y1 + y2) / 2.0; 
+
+        double shiftedPositionX1 = (((x3 - x1) * z) / distance) + x3; 
+        double shiftedPositionY1 = (((y3 - y1) * z) / distance) + y3; 
+
+        double shiftedPositionX2 = (((x3 - x2) * z) / distance) + x3; 
+        double shiftedPositionY2 = (((y3 - y2) * z) / distance) + y3;
+
+        double[] shiftedPosition1 = new double[]{shiftedPositionX1, shiftedPositionY1};
+        double[] shiftedPosition2 = new double[]{shiftedPositionX2, shiftedPositionY2};
+        double neww = calculateEuclideanDistance(shiftedPosition1, shiftedPosition2);
+
+        layout[r] =  shiftedPosition1;
+        layout[m] =  shiftedPosition2;
+
+        return layout;
     }
 
 
@@ -334,8 +423,10 @@ public class Problem {
         double y2 = pointB[1];
 
         // double distanceSquared = Math.pow((x1 - x2), 2) + Math.pow((y1 - y2), 2);
-        double distanceSquared = Math.pow((x1 - x2), 2) + Math.pow((y1 - y2), 2);
-        double constraint = distanceSquared - Math.pow(minDist, 2);     //If violated, distance squared will be less than minDist squared and we'll get a negative value
+        // double distanceSquared = Math.pow((x1 - x2), 2) + Math.pow((y1 - y2), 2);
+        // double constraint = distanceSquared - Math.pow(minDist, 2);     //If violated, distance squared will be less than minDist squared and we'll get a negative value
+        double distance = calculateEuclideanDistance(pointA, pointB);
+        double constraint = distance - minDist;
         constraint = Math.abs(Math.min(0, constraint));    //Get the magnitude of the negative number, or 0 otherwise
 
         return constraint;
@@ -389,6 +480,25 @@ public class Problem {
         return position;
     }
 
+    public double[] periodicBoundHandle(double[] position) {
+        for (int i = 0; i < position.length; i+=2) {
+            if (position[i] < 0) {
+                position[i] = (position[i] % width) + width; //so we wrap wround 
+            }
+            if (position[i+1] < 0) {
+                position[i+1] = (position[i+1] % height) + height;
+
+            }
+            if (position[i] > this.width) {
+                position[i] = (position[i] % width); 
+            }
+            if (position[i+1] > this.height) {
+                position[i+1] = (position[i+1] % height); 
+            }
+
+        }
+        return position;
+    }
     /**
      * Counts the number
      * of turbines breaking 
@@ -429,9 +539,9 @@ public class Problem {
     public double avgFitness(List<Vector> pop) {
         double sum = 0;
 
-        for (int i = 1; i < pop.size(); i++) {
+        for (int i = 0; i < pop.size(); i++) {
             double current = pop.get(i).fitness;
-            sum+=current;
+            sum += current;
         }
         return sum/pop.size(); 
     }

@@ -31,20 +31,19 @@ public class Recombination {
             else trial[i] = parent[i]; 
         }
         double[][] layout = new double[problem.nTurbines][2];
+        trial = problem.periodicBoundHandle(trial);
+
         layout = problem.geometricReformer(problem.decodeDirect(trial), problem.minDist);
         trial = problem.encodeDirect(layout);
-        layout = problem.geometricReformer(problem.decodeDirect(trial), problem.minDist);
-        trial = problem.encodeDirect(layout);
-        trial = problem.randomBoundHandle(trial);
-        layout = problem.geometricReformer(problem.decodeDirect(trial), problem.minDist);
-        trial = problem.encodeDirect(layout);
-        trial = problem.randomBoundHandle(trial);
-        layout = problem.geometricReformer(problem.decodeDirect(trial), problem.minDist);
-        trial = problem.encodeDirect(layout);
-        trial = problem.randomBoundHandle(trial);
-        layout = problem.geometricReformer(problem.decodeDirect(trial), problem.minDist);
-        trial = problem.encodeDirect(layout);
-        trial = problem.randomBoundHandle(trial);
+
+        // layout = problem.geometricReformer(problem.decodeDirect(trial), problem.minDist);
+        // trial = problem.encodeDirect(layout);
+
+        // layout = problem.geometricReformer(problem.decodeDirect(trial), problem.minDist);
+        // trial = problem.encodeDirect(layout);
+
+        trial = problem.periodicBoundHandle(trial);
+        
 
         return new Vector(trial, true, problem);
     }
