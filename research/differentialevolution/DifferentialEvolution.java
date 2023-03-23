@@ -23,6 +23,8 @@ public class DifferentialEvolution {
         int iteration = 0;
         Mutation mutation = new Mutation(scalingFactor, problem);
         Recombination recombination = new Recombination(crossoverRate, problem);
+        Replacement replacement = new Replacement(problem);
+
 
 
         List<Vector> population = problem.initialisePopulation(popSize);
@@ -31,8 +33,7 @@ public class DifferentialEvolution {
             System.out.println(problem.avgFitness(population));
             List<Vector> mutants= mutation.differentialMutation(population);
             List<Vector> trials = recombination.binomialCrossover(population, mutants);
-
-            population = Replacement.selectBest(population, trials); //offspring
+            population = replacement.selectBest(population, trials); //offspring
         }
 
     }

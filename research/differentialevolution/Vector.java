@@ -32,12 +32,10 @@ public class Vector {
         this.vector = newPosition;
 
         if (wantsFitnessUpdated) updateFitness();
-        
-        
     }
 
    public void updateFitness() {
-       double fitness = problem.evaluatePenalty(vector);
+       double fitness = problem.evaluate(vector);
        this.fitness = fitness;
    } 
 }

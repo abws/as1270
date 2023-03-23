@@ -249,18 +249,18 @@ public class Problem {
                     double distance = calculateEuclideanDistance(repulser, manner);
                     if (distance > z) continue;
 
-                    manner = spacialShift(repulser, manner, distance, z, 1); 
+                    manner = spacialShiftGppp(repulser, manner, distance, z, 1); 
                 }
             }
-            for (int r = layout.length-1; r > 0; r--) {
-                if (r != m) {
-                    repulser = layout[r];
-                    double distance = calculateEuclideanDistance(repulser, manner);
-                    if (distance > z) continue;
+            // for (int r = layout.length-1; r > 0; r--) {
+            //     if (r != m) {
+            //         repulser = layout[r];
+            //         double distance = calculateEuclideanDistance(repulser, manner);
+            //         if (distance > z) continue;
 
-                    manner = spacialShiftRight(repulser, manner, distance, z, 1); 
-                }
-            }
+            //         manner = spacialShift(repulser, manner, distance, z, 1); 
+            //     }
+            // }
 
             layout[m] = manner;
             // layout = decodeDirect(periodicBoundHandle(encodeDirect(layout)));
@@ -315,6 +315,81 @@ public class Problem {
         // System.out.println(d);
         return shiftedPosition;
     }
+
+    public double[] spacialShiftRightGP(double[] repulser, double[] manner, double distance, double z, double c) {
+        double x1 = repulser[0];
+        double y1 = repulser[1];
+    
+        double x2 = manner[0];
+        double y2 = manner[1];
+        
+        double dx = x1 - x2;
+        double dy = y1 - y2;
+        
+        double shiftedPositionX = (dy * (z + c) / distance) + x1; // Swapped and negated the difference in the X coordinate
+        double shiftedPositionY = (-dx * (z + c) / distance) + y1; // Swapped and negated the difference in the Y coordinate
+    
+        double[] shiftedPosition = new double[]{shiftedPositionX, shiftedPositionY};
+        return shiftedPosition;
+    }
+    public double[] spacialShiftGpp(double[] repulser, double[] manner, double distance, double z, double c) {
+        double x1 = repulser[0];
+        double y1 = repulser[1];
+    
+        double x2 = manner[0];
+        double y2 = manner[1];
+    
+        // Calculate the vector from manner to repulser
+        double vectorX = x1 - x2;
+        double vectorY = y1 - y2;
+    
+        // Calculate the perpendicular vector to the right
+        double perpVectorX = -vectorY;
+        double perpVectorY = vectorX;
+    
+        // Normalize the perpendicular vector
+        double perpMagnitude = Math.sqrt(perpVectorX * perpVectorX + perpVectorY * perpVectorY);
+        double perpUnitVectorX = perpVectorX / perpMagnitude;
+        double perpUnitVectorY = perpVectorY / perpMagnitude;
+    
+        // Calculate the shifted position by moving manner along the perpendicular direction
+        double shiftedPositionX = x2 + perpUnitVectorX * (z + c);
+        double shiftedPositionY = y2 + perpUnitVectorY * (z + c);
+    
+        double[] shiftedPosition = new double[]{shiftedPositionX, shiftedPositionY};
+    
+        return shiftedPosition;
+    }
+
+    public double[] spacialShiftGppp(double[] repulser, double[] manner, double distance, double z, double c) {
+        double x1 = repulser[0];
+        double y1 = repulser[1];
+    
+        double x2 = manner[0];
+        double y2 = manner[1];
+    
+        // Calculate the vector from repulser to manner
+        double vectorX = x2 - x1;
+        double vectorY = y2 - y1;
+    
+        // Calculate the angle of the vector
+        double angle = Math.atan2(vectorY, vectorX);
+    
+        // Add 90 degrees (pi / 2 radians) to the angle to get the angle to the right
+        double rightAngle = angle + Math.PI / 2;
+    
+        // Calculate the shifted position in the direction of the right angle
+        double shiftedPositionX = x1 + (z + c) * Math.cos(rightAngle);
+        double shiftedPositionY = y1 + (z + c) * Math.sin(rightAngle);
+    
+        double[] shiftedPosition = new double[]{shiftedPositionX, shiftedPositionY};
+    
+        return shiftedPosition;
+    }
+    
+    
+    
+    
 
     /**
      * Reforms the points in
