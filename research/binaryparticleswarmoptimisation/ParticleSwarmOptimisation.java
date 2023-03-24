@@ -46,35 +46,31 @@ public class ParticleSwarmOptimisation {
         int iteration = 0;
 
         List<Particle> swarm = problem.initialiseSwarm(swarmSize);
-    
+        double[] randomiserArray1 = generateRandomiserVector(problem.particleDimension);
+        double[] randomiserArray2 = generateRandomiserVector(problem.particleDimension); 
 
         while (iteration < maxIterations) {
-            System.out.println(problem.avgFitness(swarm));
+            System.out.println(problem.gBestFitness);
 
             for (Particle p : swarm) {
-                int count = 0;
-                System.out.println(count);
-                count++;
-                double[] randomiserArray1 = generateRandomiserVector(problem.particleDimension);
-                double[] randomiserArray2 = generateRandomiserVector(problem.particleDimension); 
                 /* Calculate Inertia */
                 double[] inertia = scalarMultipy(1, p.getVelocity()); 
 
                 /* Calculate cognitive component */
                 double[] distanceToPBest = vectorDifference(p.getPersonalBest(), p.getPosition());
                 double[] randomisedPDistance = hadamardProduct(distanceToPBest, randomiserArray1);
-                double[] cognitive = scalarMultipy(c1, distanceToPBest);
+                double[] cognitive = scalarMultipy(c1, randomisedPDistance);
                 
                 // /* Calculate social component */
                 double[] distanceToGBest = vectorDifference(problem.gBest, p.getPosition());
                 double[] randomisedGDistance = hadamardProduct(distanceToGBest, randomiserArray2);
-                double[] social = scalarMultipy(c2, distanceToGBest);
+                double[] social = scalarMultipy(c2, randomisedGDistance);
 
                 /* Update velocity and position */
                 double[] newVelocity = vectorAddition(inertia, cognitive, social);
-                // double[] normalisedVelocity = sigmoid(newVelocity);
-                // int[] newPosition = updatePosition(p.getPosition(), normalisedVelocity);    //combine with bottom for efficiency
-                int[] newPosition = updatePosition(p.getPosition(), newVelocity);    //combine with bottom for efficiency
+                double[] normalisedVelocity = sigmoid(newVelocity);
+                int[] newPosition = updatePosition(p.getPosition(), normalisedVelocity);    //combine with bottom for efficiency
+                newPosition = problem.repairRandom(newPosition);
 
                 /* Update Particle */
                 p.setPosition(newPosition, true); //updates pBest

@@ -69,6 +69,7 @@ public class Problem {
      */
     public double evaluate(int[] particlePosition) {
         double[][] particleCoordinates = decode(particlePosition);
+        // System.out.println(particleCoordinates.length);
         double fitness = evaluator.evaluate_2014(particleCoordinates);
 
         return fitness;
@@ -214,6 +215,30 @@ public class Problem {
 
         Particle randomParticle = new Particle(randomPosition, velocity, this);
         return randomParticle;
+    }
+
+    public int[] repairRandom(int[] position) {
+        Random r = new Random();
+        int n = countTurbines(position);
+        int difference = n - nTurbines; 
+
+        while (difference > 0) {    //too many
+            int i = r.nextInt(position.length);
+            if (position[i] == 1) {
+                position[i] = 0;
+                difference--;
+            }
+        }
+
+        while (difference < 0) {
+            int i = r.nextInt(position.length);
+            if (position[i] == 0) {
+                position[i] = 1;
+                difference++;
+            }
+        }
+
+        return position;
     }
 
     /**
