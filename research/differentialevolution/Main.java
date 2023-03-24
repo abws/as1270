@@ -7,7 +7,7 @@ public class Main {
 
         KusiakLayoutEvaluator evaluator = new KusiakLayoutEvaluator();
         evaluator.initialize(ws);
-        Problem problem = new Problem(evaluator, ws, 15, 250);
+        Problem problem = new Problem(evaluator, ws, 15, 2500);
         DifferentialEvolution de = new DifferentialEvolution(15, 0.9, 1000, 0.95, problem);
 
         de.run();

@@ -1,4 +1,4 @@
-package research.particleswarmoptimisation;
+package research.binaryparticleswarmoptimisation;
 
 /**
  * Class representing 
@@ -12,9 +12,9 @@ package research.particleswarmoptimisation;
  */
 public class Particle {
     private static int globalcounter=0;
-    private double[] currentPosition;
+    private int[] currentPosition;
     private double[] velocity;
-    private double[] pBest;
+    private int[] pBest;
 
     public double fitness;
     private double pBestFitness;
@@ -25,12 +25,12 @@ public class Particle {
     /*
      * A new particle will be created once
      */
-    Particle(double[] initialPosition, double[] initialVelocity, Problem problem) { //Problem provides the evaluation function
+    Particle(int[] initialPosition, double[] initialVelocity, Problem problem) { //Problem provides the evaluation function
         this.problem = problem;
 
         this.currentPosition = initialPosition;
         this.velocity = initialVelocity;
-        this.pBestFitness = Double.MIN_EXPONENT;
+        this.pBestFitness = Double.NEGATIVE_INFINITY;
         this.pBest = initialPosition;
 
         updateFitness();
@@ -38,7 +38,7 @@ public class Particle {
     
 
     /* Getters and setters */
-    public double[] getPosition() {
+    public int[] getPosition() {
         return this.currentPosition;
     }
 
@@ -46,7 +46,7 @@ public class Particle {
         return this.velocity;
     }
 
-    public double[] getPersonalBest() {
+    public int[] getPersonalBest() {
         return this.pBest;
     }
     
@@ -54,7 +54,7 @@ public class Particle {
         return this.pBestFitness;
     }
 
-   public void setPosition(double[] newPosition, boolean wantsFitnessUpdated) {    //PSO class does the calculations
+   public void setPosition(int[] newPosition, boolean wantsFitnessUpdated) {    //PSO class does the calculations
        this.currentPosition = newPosition;
        if (wantsFitnessUpdated) {
            updateFitness();
@@ -81,14 +81,4 @@ public class Particle {
        }
        return false;    //feed back to user in case of necessity
    }
-
-
-//    public boolean updatePersonalBest() {
-//     if ((fitness > pBestFitness) && !(problem.boundaryViolated(currentPosition))) { //assuming maximisation
-//          pBest = currentPosition;
-//          pBestFitness = fitness;
-//          return true;
-//     }
-//     return false;    //feed back to user in case of necessity
-// }
 }

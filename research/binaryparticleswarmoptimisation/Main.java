@@ -1,6 +1,4 @@
-package research.particleswarmoptimisation;
-
-import java.util.Arrays;
+package research.binaryparticleswarmoptimisation;
 
 import research.api.java.*;
 
@@ -10,8 +8,8 @@ public class Main {
 
         KusiakLayoutEvaluator evaluator = new KusiakLayoutEvaluator();
         evaluator.initialize(ws);
-        Problem problem = new Problem(evaluator, ws, 29, 0, 0);
-        ParticleSwarmOptimisation pso = new ParticleSwarmOptimisation(problem.swarmSize, 2, 2.5, 0.4, 0.9, 20, 0.1, problem);
+        Problem problem = new Problem(evaluator, ws, 10);
+        ParticleSwarmOptimisation pso = new ParticleSwarmOptimisation(problem.swarmSize, 0, 1, 0.4, 0.9, 20, problem);
 
         pso.run();
     }

@@ -91,7 +91,7 @@ public class Problem {
             lol(coordinates[i]);
 
         }
-        System.out.printf("boundary :%d\n",bound/2);
+        // System.out.printf("boundary :%d\n",bound/2);
         System.out.println("mindist: " + countViolations(coordinates));
 
         bound = 0;
@@ -105,7 +105,7 @@ public class Problem {
 
         
 
-        double fitness = (energyProduction - (penalty1)) / (scenario.wakeFreeEnergy * nTurbines);
+        double fitness = (energyProduction - (penaltyCoefficient1*violations)) / (scenario.wakeFreeEnergy * nTurbines);
         
 
      
@@ -216,10 +216,10 @@ public class Problem {
             randomPosition[i + 1] = random.nextDouble(height);  //y coordinate
         }
 
-        layout = geometricReformer(decodeDirect(randomPosition), minDist);
-        randomPosition = encodeDirect(layout);
+        // layout = geometricReformer(decodeDirect(randomPosition), minDist);
+        // randomPosition = encodeDirect(layout);
         
-        randomPosition = periodicBoundHandle(randomPosition);
+        // randomPosition = periodicBoundHandle(randomPosition);
 
         Vector randomvector = new Vector(randomPosition, true, this);
         return randomvector;
@@ -249,21 +249,22 @@ public class Problem {
                     double distance = calculateEuclideanDistance(repulser, manner);
                     if (distance > z) continue;
 
-                    manner = spacialShiftGppp(repulser, manner, distance, z, 1); 
+                    manner = spacialShift(repulser, manner, distance, z, 1); 
                 }
             }
-            // for (int r = layout.length-1; r > 0; r--) {
-            //     if (r != m) {
-            //         repulser = layout[r];
-            //         double distance = calculateEuclideanDistance(repulser, manner);
-            //         if (distance > z) continue;
+                        layout = decodeDirect(periodicBoundHandle(encodeDirect(layout)));
 
-            //         manner = spacialShift(repulser, manner, distance, z, 1); 
-            //     }
-            // }
+            for (int r = layout.length-1; r > 0; r--) {
+                if (r != m) {
+                    repulser = layout[r];
+                    double distance = calculateEuclideanDistance(repulser, manner);
+                    if (distance > z) continue;
+
+                    manner = spacialShiftRight(repulser, manner, distance, z, 1); 
+                }
+            }
 
             layout[m] = manner;
-            // layout = decodeDirect(periodicBoundHandle(encodeDirect(layout)));
 
         }
 

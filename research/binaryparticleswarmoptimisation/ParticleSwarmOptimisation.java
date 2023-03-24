@@ -1,4 +1,4 @@
-package research.particleswarmoptimisation;
+package research.binaryparticleswarmoptimisation;
 
 import java.util.Arrays;
 import java.util.List;
@@ -20,11 +20,9 @@ public class ParticleSwarmOptimisation {
     int maxIterations;  //Maximum number of iterations
     double wMin;        //Minimum weight
     double wMax;        //Maximum weight
-    double[] vMin;      //Minimum velocity
-    double[] vMax;      //Maximum velocity
     Problem problem;    
 
-    ParticleSwarmOptimisation(int swarmSize, double c1, double c2, double wMin, double wMax, int maxIterations, double clampConstant, Problem problem) {
+    ParticleSwarmOptimisation(int swarmSize, double c1, double c2, double wMin, double wMax, int maxIterations, Problem problem) {
         this.swarmSize = swarmSize;
         this.c1 = c1;
         this.c2 = c2;
@@ -33,10 +31,6 @@ public class ParticleSwarmOptimisation {
         this.wMax = wMax;
 
         this.problem = problem;
-
-        /* Velocity Clamping */
-        this.vMin = minVelocityClamp(problem.width, problem.height, clampConstant);
-        this.vMax = maxVelocityClamp(problem.width, problem.height, clampConstant);
     }
 
 
@@ -55,55 +49,39 @@ public class ParticleSwarmOptimisation {
     
 
         while (iteration < maxIterations) {
-            // System.out.println(problem.gBestFitness);
             System.out.println(problem.avgFitness(swarm));
-            double[] randomiserArray1 = generateRandomiserVector(problem.particleDimension);
-            double[] randomiserArray2 = generateRandomiserVector(problem.particleDimension);
 
             for (Particle p : swarm) {
-
+                int count = 0;
+                System.out.println(count);
+                count++;
+                double[] randomiserArray1 = generateRandomiserVector(problem.particleDimension);
+                double[] randomiserArray2 = generateRandomiserVector(problem.particleDimension); 
                 /* Calculate Inertia */
-                double[] inertia = scalarMultipy(weight, p.getVelocity()); 
+                double[] inertia = scalarMultipy(1, p.getVelocity()); 
 
                 /* Calculate cognitive component */
                 double[] distanceToPBest = vectorDifference(p.getPersonalBest(), p.getPosition());
                 double[] randomisedPDistance = hadamardProduct(distanceToPBest, randomiserArray1);
-                // double[] randomisedPDistance = scalarMultipy(Math.random(), distanceToPBest);
-
-                double[] cognitive = scalarMultipy(c1, randomisedPDistance);
+                double[] cognitive = scalarMultipy(c1, distanceToPBest);
                 
                 // /* Calculate social component */
                 double[] distanceToGBest = vectorDifference(problem.gBest, p.getPosition());
                 double[] randomisedGDistance = hadamardProduct(distanceToGBest, randomiserArray2);
-                // // double[] randomisedGDistance = scalarMultipy(Math.random(), distanceToGBest);
-
-                double[] social = scalarMultipy(c2, randomisedGDistance);
-                // double[] distanceToLBest = vectorDifference(problem.lBest[swarm.indexOf(p)], p.getPosition());
-                // double[] randomisedLDistance = hadamardProduct(distanceToLBest, randomiserArray2);
-                // double[] social = scalarMultipy(c2, randomisedLDistance);
+                double[] social = scalarMultipy(c2, distanceToGBest);
 
                 /* Update velocity and position */
-                // double[] newVelocity = vectorAddition(inertia, cognitive, social);
-                // double[] newVelocity = velocityClamp(vectorAddition(inertia, cognitive, social));
-                // double[] newVelocity = constrictionFactor(velocityClamp(vectorAddition(inertia, cognitive, social)), c1+c2);
-                double[] newVelocity = constrictionFactor(vectorAddition(inertia, cognitive, social), c1+c2);
-
-                double[] newPosition = vectorAddition(p.getPosition(), newVelocity);    //combine with bottom for efficiency
-
-
-                newPosition = problem.periodicBoundHandle(newPosition);
-                double[][] layout = problem.geometricReformer(problem.decodeDirect(newPosition), problem.minDist);
-                newPosition = problem.encodeDirect(layout);
+                double[] newVelocity = vectorAddition(inertia, cognitive, social);
+                // double[] normalisedVelocity = sigmoid(newVelocity);
+                // int[] newPosition = updatePosition(p.getPosition(), normalisedVelocity);    //combine with bottom for efficiency
+                int[] newPosition = updatePosition(p.getPosition(), newVelocity);    //combine with bottom for efficiency
 
                 /* Update Particle */
                 p.setPosition(newPosition, true); //updates pBest
                 p.setVelocity(newVelocity);
 
                 /* Update local and global best */
-                // p.updatePersonalBest();
                 problem.updateGlobalBest(p.getPersonalBestFitness(), p.getPersonalBest());    //will only update if pBest is better than gBest
-                // problem.updateLocalBest(swarm, swarm.indexOf(p));    //will only update if pBest is better than lBest
-
             }
             weight -= wStep;
             iteration++;
@@ -125,6 +103,15 @@ public class ParticleSwarmOptimisation {
         return scalarised;
     }
 
+    public double[] scalarMultipy(double scalar, int[] vector) {
+        double[] scalarised = new double[vector.length];
+        for (int i = 0; i < vector.length; i++) {
+            scalarised[i] = scalar * vector[i];
+        }
+
+        return scalarised;
+    }
+
     /**
      * Calculates the difference
      * between two vectors
@@ -132,6 +119,20 @@ public class ParticleSwarmOptimisation {
      * @param vectorB from this vector
      */
     public double[] vectorDifference(double[] vectorA, double[] vectorB) {
+        double[] difference = new double[vectorA.length];
+        for (int i = 0; i < vectorA.length; i++) {
+            difference[i] = vectorA[i] - vectorB[i];
+        }
+        return difference;
+    }
+
+    /**
+     * Calculates the difference
+     * between two vectors
+     * @param vectorA the vector to point towards
+     * @param vectorB from this vector
+     */
+    public double[] vectorDifference(int[] vectorA, int[] vectorB) {
         double[] difference = new double[vectorA.length];
         for (int i = 0; i < vectorA.length; i++) {
             difference[i] = vectorA[i] - vectorB[i];
@@ -166,6 +167,19 @@ public class ParticleSwarmOptimisation {
 
     /**
      * Calculates the sum
+     * of two vectors
+     */
+    public double[] vectorAddition(int[] vectorA, double[] vectorB) {
+        double[] sum = new double[vectorA.length];
+        for (int i = 0; i < vectorA.length; i++) {
+            sum[i] = vectorA[i] + vectorB[i];
+        }
+        return sum;
+    }
+
+
+    /**
+     * Calculates the sum
      * of three vectors
      */
     public double[] vectorAddition(double[] vectorA, double[] vectorB, double[] vectorC) {
@@ -189,74 +203,6 @@ public class ParticleSwarmOptimisation {
         return randomiserVector;
     }
 
-    public double[] velocityClamp(double[] currentVector) {        
-
-        for (int i = 0; i < currentVector.length; i++) {
-            currentVector[i] = Math.min(currentVector[i], this.vMax[i]);
-            currentVector[i] = Math.max(currentVector[i], this.vMin[i]);
-        }
-
-        return currentVector;
-    }
-
-    /**
-     * Puts a lower bound
-     * on each dimension of
-     * the vector
-     * @param maxX
-     * @param maxY
-     * @param clampConstant
-     * @return
-     */
-    public double[] minVelocityClamp(double maxX, double maxY, double clampConstant) {
-        double[] minVelocity = new double[problem.particleDimension];
-        for (int i = 0; i < minVelocity.length; i+=2) {
-            minVelocity[i] = clampConstant * (0 - maxX);
-            minVelocity[i + 1] = clampConstant * (0 - maxY);
-        }
-
-        return minVelocity;
-    }
-
-    /**
-     * Puts an upper bound
-     * on each dimension of
-     * the vector
-     * @param maxX - The maximum for the y coordinates
-     * @param maxY  The maximum for the x coordinates
-     * @param clampConstant
-     * @return
-     */
-    public double[] maxVelocityClamp(double maxX, double maxY, double clampConstant) {
-        double[] maxVelocity = new double[problem.particleDimension];
-        for (int i = 0; i < maxVelocity.length; i+=2) {
-            maxVelocity[i] = clampConstant * (maxX - 0);
-            maxVelocity[i + 1] = clampConstant * (maxY - 0);
-        }
-
-        return maxVelocity;
-    }
-
-    /**
-     * Boundary handling mechanism.
-     * Moves particles that fly out
-     * of boundary to the closest feasible
-     * position.
-     * @param particlePosition
-     * @return
-     */
-    public double[] absorbBoundHandle(double[] particlePosition) {
-        for (int i = 0; i < particlePosition.length; i+=2) {
-            particlePosition[i] = Math.max(0, particlePosition[i]);
-            particlePosition[i+1] = Math.max(0, particlePosition[i+1]);
-
-            particlePosition[i] = Math.min(particlePosition[i], problem.width);
-            particlePosition[i+1] = Math.min(particlePosition[i+1], problem.height);
-        }
-
-        return particlePosition;
-    }
-
     /**
      * Constriction factor to 
      * added to velocity update
@@ -272,5 +218,21 @@ public class ParticleSwarmOptimisation {
         return velocity;
     }
 
+    public double[] sigmoid(double[] velocity) {
+        double[] newVelocity = new double[velocity.length];
+        for (int i = 0; i < newVelocity.length; i++) {
+            newVelocity[i] = 1 / (1 + Math.exp(-velocity[i]));
+        }
 
+        return newVelocity;
+    }
+
+    private int[] updatePosition(int[] position, double[] velocity) {
+        int[] newPosition = new int[position.length];
+        for (int i = 0; i < position.length; i++) {
+            if (Math.random() < velocity[i]) newPosition[i] = 1;
+            else newPosition[i] = 0;
+        }
+        return newPosition;
+    }
 }

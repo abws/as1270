@@ -35,7 +35,7 @@ public class Vector {
     }
 
    public void updateFitness() {
-       double fitness = problem.evaluate(vector);
+       double fitness = problem.evaluatePenalty(vector);
        this.fitness = fitness;
    } 
 }

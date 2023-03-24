@@ -439,6 +439,26 @@ public class Problem {
         return particlePosition;
     }
 
+    public double[] periodicBoundHandle(double[] position) {
+        for (int i = 0; i < position.length; i+=2) {
+            if (position[i] < 0) {
+                position[i] = (position[i] % width) + width; //so we wrap wround 
+            }
+            if (position[i+1] < 0) {
+                position[i+1] = (position[i+1] % height) + height;
+
+            }
+            if (position[i] > this.width) {
+                position[i] = (position[i] % width); 
+            }
+            if (position[i+1] > this.height) {
+                position[i+1] = (position[i+1] % height); 
+            }
+
+        }
+        return position;
+    }
+
     /**
      * Counts the number
      * of turbines breaking 
@@ -477,7 +497,7 @@ public class Problem {
     }
 
     public boolean updateGlobalBest(double newFitness, double[] newPosition) {
-        if ((newFitness >= gBestFitness) && !(boundaryViolated(newPosition))) { //assuming maximisation
+        if ((newFitness >= gBestFitness)) { //assuming maximisation
             // System.out.println(countViolations(decodeDirect(newPosition)));
             this.gBest = newPosition;
             this.gBestFitness = newFitness;
@@ -539,6 +559,16 @@ public class Problem {
             sum+=current;
         }
         return sum/swarm.size(); 
+    }
+
+    public double maxFitness(List<Particle> pop) {
+        double maxFitness = pop.get(0).fitness;
+
+        for (int i = 1; i < pop.size(); i++) {
+            double current = pop.get(i).fitness;
+            if (current >= maxFitness) {maxFitness = current;}
+        }
+        return maxFitness; 
     }
     
 }
