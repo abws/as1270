@@ -11,7 +11,6 @@ package research.binaryparticleswarmoptimisation;
  * @version 14.02.23
  */
 public class Particle {
-    private static int globalcounter=0;
     private int[] currentPosition;
     private double[] velocity;
     private int[] pBest;
@@ -68,8 +67,6 @@ public class Particle {
    public void updateFitness() {
        double fitness = problem.evaluate(currentPosition);
        this.fitness = fitness;
-    //    System.out.println(globalcounter++%10 +": "+ fitness+": "+problem.countViolations(problem.decodeDirect(this.currentPosition)));
-
        updatePersonalBest();
    }
 

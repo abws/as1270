@@ -1,6 +1,7 @@
 package research.binaryparticleswarmoptimisation;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -93,7 +94,7 @@ public class Problem {
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
                 if (gridIndividual[i][j] == 1) {
-                    layout[count] = getCoordinates(i, j, minDist);
+                    layout[count] = getMeshCoordinates(i, j, minDist);
                     count++;
                 }
             }
@@ -120,6 +121,18 @@ public class Problem {
         return coordinates;
     }
 
+    private double[] getMeshCoordinates(int y, int x, double minDist) {
+        int maxX = columns;
+        int maxY = rows;
+
+        double [] coordinates = new double[2];
+        coordinates[0] = (x * minDist) + (y * (minDist / maxY));
+
+        coordinates[1] = ((maxY - y) * minDist) - (x * (minDist / maxX));
+
+        return coordinates;
+    }
+    
         /**
      * Gridifies a string
      * @param ind The string to be gridified
@@ -240,6 +253,71 @@ public class Problem {
 
         return position;
     }
+
+    public int[] repairWorst(int[] position) {
+        int[] tempPosition = Arrays.copyOf(position, position.length);
+        evaluate(position);
+        double[] turbineIndexes = evaluator.getTurbineFitnesses();
+
+        int n = countTurbines(position);
+        int difference = n - nTurbines; 
+
+        while (difference > 0) {    //we have too many turbines
+            int coordinatePosition = lowestIndex(turbineIndexes); //position of turbine in list of turbines
+            int i = getPosition(position, coordinatePosition); //position of turbine in grid
+            
+            int t = tempPosition[i];
+            if (t == 1) {
+                tempPosition[i] = 0;
+                difference--;
+            }
+        }
+
+        while (difference < 0) {    //we have too few turbines
+            int coordinatePosition = lowestIndex(turbineIndexes); //position of turbine in list of turbines
+            int i = getPosition(position, coordinatePosition); //position of turbine in grid
+            
+            int t = tempPosition[i];
+            if (t == 0) {
+                tempPosition[i] = 1;
+                difference++;
+            }
+        }
+
+        return tempPosition; 
+    }
+    
+    public int lowestIndex(double[] array) {
+        int lowest = 0;
+        for (int i = 1; i < array.length; i++) {
+            if (array[i] <= array[lowest]) lowest = i;
+        }
+        array[lowest] = 1;
+        return lowest;
+    }
+
+    public int highestIndex(double[] array) {
+        int highest = 0;
+        for (int i = 1; i < array.length; i++) {
+            if (array[i] >= array[highest]) highest = i;
+        }
+        array[highest] = 0;
+        return highest;
+    }
+
+    public int getPosition(int[] position, int coordinatePosition) {
+        int count, i;
+        count = i = 0;
+
+         while(i < position.length && count!=coordinatePosition ) {
+            if (position[i] == 1) {
+                count++;
+            } 
+            i++;
+        }
+        return i;
+    }
+
 
     /**
      * Calculates the weight difference

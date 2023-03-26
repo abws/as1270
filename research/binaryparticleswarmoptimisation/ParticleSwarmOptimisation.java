@@ -46,12 +46,14 @@ public class ParticleSwarmOptimisation {
         int iteration = 0;
 
         List<Particle> swarm = problem.initialiseSwarm(swarmSize);
-        double[] randomiserArray1 = generateRandomiserVector(problem.particleDimension);
-        double[] randomiserArray2 = generateRandomiserVector(problem.particleDimension); 
 
         while (iteration < maxIterations) {
-            System.out.println(problem.gBestFitness);
 
+            System.out.println(problem.gBestFitness);
+            // System.out.println(problem.avgFitness(swarm));
+            // c2 = c2 * weight;   //explore less as we go on
+            double[] randomiserArray1 = generateRandomiserVector(problem.particleDimension);
+            double[] randomiserArray2 = generateRandomiserVector(problem.particleDimension); 
             for (Particle p : swarm) {
                 /* Calculate Inertia */
                 double[] inertia = scalarMultipy(1, p.getVelocity()); 
@@ -65,6 +67,9 @@ public class ParticleSwarmOptimisation {
                 double[] distanceToGBest = vectorDifference(problem.gBest, p.getPosition());
                 double[] randomisedGDistance = hadamardProduct(distanceToGBest, randomiserArray2);
                 double[] social = scalarMultipy(c2, randomisedGDistance);
+                //  double[] distanceToLBest = vectorDifference(problem.lBest[swarm.indexOf(p)], p.getPosition());
+                // double[] randomisedLDistance = hadamardProduct(distanceToLBest, randomiserArray2);
+                // double[] social = scalarMultipy(c2, randomisedLDistance);
 
                 /* Update velocity and position */
                 double[] newVelocity = vectorAddition(inertia, cognitive, social);
@@ -78,6 +83,8 @@ public class ParticleSwarmOptimisation {
 
                 /* Update local and global best */
                 problem.updateGlobalBest(p.getPersonalBestFitness(), p.getPersonalBest());    //will only update if pBest is better than gBest
+                                // problem.updateLocalBest(swarm, swarm.indexOf(p));    //will only update if pBest is better than lBest
+
             }
             weight -= wStep;
             iteration++;

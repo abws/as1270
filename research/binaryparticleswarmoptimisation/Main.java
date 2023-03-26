@@ -8,8 +8,8 @@ public class Main {
 
         KusiakLayoutEvaluator evaluator = new KusiakLayoutEvaluator();
         evaluator.initialize(ws);
-        Problem problem = new Problem(evaluator, ws, 15);
-        ParticleSwarmOptimisation pso = new ParticleSwarmOptimisation(problem.swarmSize, 1.5, 2, 0.4, 0.9, 100, problem);
+        Problem problem = new Problem(evaluator, ws, 100);
+        ParticleSwarmOptimisation pso = new ParticleSwarmOptimisation(problem.swarmSize, 1.25, 2, 0.1, 0.9, 150, problem);
 
         pso.run();
     }
