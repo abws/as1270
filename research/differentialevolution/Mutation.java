@@ -32,17 +32,66 @@ public class Mutation {
     }
 
 
-    public List<Vector> differentialMutationBest1Z(List<Vector> population) {
+    public List<Vector> differentialMutationBest1Z(List<Vector> pop) {
         List<Vector> mutants = new ArrayList<Vector>();
 
-        for (int i = 0; i < population.size(); i++) {
-            List<double[]> randomMembers = getRandomMembers(i, population, 2);
+        for (int i = 0; i < pop.size(); i++) {
+            List<double[]> randomMembers = getRandomMembers(i, pop, 2);
 
-            double[] z = getBestMember(population);
-            double[] x = randomMembers.get(1);
-            double[] y = randomMembers.get(2);
+            double[] z = pop.get(getBestIndex(pop)).getVector();
+            double[] x = randomMembers.get(0);
+            double[] y = randomMembers.get(1);
 
             Vector m = vectorAddition(z, scale(scalingFactor, vectorDifferential(x, y)));
+            mutants.add(m);
+        }
+
+        return mutants;
+    }
+
+
+    public List<Vector> differentialMutationRandomNZ(List<Vector> pop) {
+        List<Vector> mutants = new ArrayList<Vector>();
+
+        for (int i = 0; i < pop.size(); i++) {
+            double[] sum = new double[problem.nDimension]; //the summation vector
+
+            for (int j = 0; j < pop.size(); j++) {
+                List<double[]> randomMembers = getRandomMembers(i, pop, 2);
+                double[] x = randomMembers.get(0);
+                double[] y = randomMembers.get(1);
+
+                double[] differential = vectorDifferential(x, y);
+                sum = vectorAddition(sum, differential).getVector();
+            }
+
+            double[] z = getRandomMembers(i, pop, 1).get(0);
+
+            Vector m = vectorAddition(z, scale(scalingFactor, sum));
+            mutants.add(m);
+        }
+
+        return mutants;
+    }
+
+    public List<Vector> differentialMutationBestNZ(List<Vector> pop) {
+        List<Vector> mutants = new ArrayList<Vector>();
+
+        for (int i = 0; i < pop.size(); i++) {
+            double[] bestVector = pop.get(getBestIndex(pop)).getVector();   //best stays constant
+            double[] z = Arrays.copyOf(bestVector, bestVector.length);  //enure integrity
+            double[] sum = new double[z.length]; //the summation vector
+
+            for (int j = 0; j < pop.size(); j++) {
+                List<double[]> randomMembers = getRandomMembers(i, pop, 2);
+                double[] x = randomMembers.get(0);
+                double[] y = randomMembers.get(1);
+
+                double[] differential = vectorDifferential(x, y);
+                sum = vectorAddition(sum, differential).getVector();
+            }
+
+            Vector m = vectorAddition(z, scale(scalingFactor, sum));
             mutants.add(m);
         }
 
@@ -69,22 +118,22 @@ public class Mutation {
             indexes.add(randomIndex);
         }
 
-        for (int i = 0; i < indexes.size(); i++) {
+        for (int i = 1; i < indexes.size(); i++) {
             randomMembers.add(Arrays.copyOf(pop.get(indexes.get(i)).getVector(), problem.nDimension));
         }
 
         return randomMembers;
     }
 
-    public double[] getBestMember(List<Vector> pop) {
-        double[] bestVector = pop.get(0).getVector();
+    public int getBestIndex(List<Vector> pop) {
+        int bestIndex = 0;
         double maxFitness = pop.get(0).fitness;
 
         for (int i = 1; i < pop.size(); i++) {
-            if (pop.get(0).fitness > maxFitness) bestVector = pop.get(0).getVector();
+            if (pop.get(i).fitness > maxFitness) bestIndex = i;
         }
 
-        return Arrays.copyOf(bestVector, bestVector.length);
+        return bestIndex;
     }
 
 
