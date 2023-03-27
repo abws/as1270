@@ -124,11 +124,41 @@ public class Mutation {
             zb = scale(g, zb);
             z = scale(1-g, z);
 
-
-
-
-
             Vector m = vectorAddition(zb, z, scale(scalingFactor, sum));
+            mutants.add(m);
+        }
+
+        return mutants;
+    }
+
+    /**
+     * DE/rand-to-best/n/z
+     * @param pop
+     * @param g Greediness 
+     * @return
+     */
+    public List<Vector> differentialMutationCurrentToBestNZ(List<Vector> pop) {
+        List<Vector> mutants = new ArrayList<Vector>();
+
+        for (int i = 0; i < pop.size(); i++) {
+            double[] bestVector = pop.get(getBestIndex(pop)).getVector();   //best stays constant
+            double[] zb = Arrays.copyOf(bestVector, bestVector.length);  //best
+            double[] z = getRandomMembers(i, pop, 1).get(0);
+
+            double[] sum = new double[zb.length]; //the summation vector
+
+            for (int j = 0; j < pop.size(); j++) {
+                List<double[]> randomMembers = getRandomMembers(i, pop, 3);
+                double[] x = randomMembers.get(0);
+                double[] y = randomMembers.get(1);
+
+                double[] differential = vectorDifferential(x, y);
+                sum = vectorAddition(sum, differential).getVector();
+            }
+
+            double[] differential = vectorAddition(z, scale(scalingFactor, vectorDifferential(zb, z))).getVector();
+
+            Vector m = vectorAddition(differential, scale(scalingFactor, sum));
             mutants.add(m);
         }
 
