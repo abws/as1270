@@ -98,6 +98,43 @@ public class Mutation {
         return mutants;
     }
 
+    /**
+     * DE/rand-to-best/n/z
+     * @param pop
+     * @param g Greediness 
+     * @return
+     */
+    public List<Vector> differentialMutationRandToBestNZ(List<Vector> pop, double g) {
+        List<Vector> mutants = new ArrayList<Vector>();
+
+        for (int i = 0; i < pop.size(); i++) {
+            double[] bestVector = pop.get(getBestIndex(pop)).getVector();   //best stays constant
+            double[] zb = Arrays.copyOf(bestVector, bestVector.length);  //enure integrity
+            double[] z = getRandomMembers(i, pop, 1).get(0);
+            double[] sum = new double[zb.length]; //the summation vector
+
+            for (int j = 0; j < pop.size(); j++) {
+                List<double[]> randomMembers = getRandomMembers(i, pop, 3);
+                double[] x = randomMembers.get(0);
+                double[] y = randomMembers.get(1);
+
+                double[] differential = vectorDifferential(x, y);
+                sum = vectorAddition(sum, differential).getVector();
+            }
+            zb = scale(g, zb);
+            z = scale(1-g, z);
+
+
+
+
+
+            Vector m = vectorAddition(zb, z, scale(scalingFactor, sum));
+            mutants.add(m);
+        }
+
+        return mutants;
+    }
+
 
     /**
      * Gets two random individuals
@@ -175,6 +212,19 @@ public class Mutation {
         double[] sum = new double[vectorA.length];
         for (int i = 0; i < vectorA.length; i++) {
             sum[i] = vectorA[i] + vectorB[i];
+        }
+        return new Vector(sum, false, problem);
+    }
+
+
+    /**
+     * Calculates the sum
+     * of two vectors
+     */
+    public Vector vectorAddition(double[] vectorA, double[] vectorB, double[] vectorC) {
+        double[] sum = new double[vectorA.length];
+        for (int i = 0; i < vectorA.length; i++) {
+            sum[i] = vectorA[i] + vectorB[i] + vectorC[i];
         }
         return new Vector(sum, false, problem);
     }
