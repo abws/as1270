@@ -104,8 +104,9 @@ public class Mutation {
      * @param g Greediness 
      * @return
      */
-    public List<Vector> differentialMutationRandToBestNZ(List<Vector> pop, double g) {
+    public List<Vector> differentialMutationRandToBestNZ(List<Vector> pop, double step) {
         List<Vector> mutants = new ArrayList<Vector>();
+        double g = 0;
 
         for (int i = 0; i < pop.size(); i++) {
             double[] bestVector = pop.get(getBestIndex(pop)).getVector();   //best stays constant
@@ -123,6 +124,7 @@ public class Mutation {
             }
             zb = scale(g, zb);
             z = scale(1-g, z);
+            g+=Math.abs(step);
 
             Vector m = vectorAddition(zb, z, scale(scalingFactor, sum));
             mutants.add(m);
@@ -197,7 +199,10 @@ public class Mutation {
         double maxFitness = pop.get(0).fitness;
 
         for (int i = 1; i < pop.size(); i++) {
-            if (pop.get(i).fitness > maxFitness) bestIndex = i;
+            if (pop.get(i).fitness > maxFitness) {
+                bestIndex = i;
+                maxFitness = pop.get(i).fitness;
+            }
         }
 
         return bestIndex;

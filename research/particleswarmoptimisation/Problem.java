@@ -401,7 +401,7 @@ public class Problem {
      * @return weight step
      */
     public double calculateWeightStep(double wMax, double wMin, int maxIterations) {
-        double wStep =  (wMax - wMin) / maxIterations;
+        double wStep =  (wMax - wMin) / (double) maxIterations;
         return wStep;
     }
     

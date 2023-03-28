@@ -32,10 +32,10 @@ public class Recombination {
         }
         double[][] layout = new double[problem.nTurbines][2];
 
-        layout = problem.geometricReformer(problem.decodeDirect(trial), problem.minDist);
-        trial = problem.encodeDirect(layout);
+        // layout = problem.geometricReformer(problem.decodeDirect(trial), problem.minDist);
+        // trial = problem.encodeDirect(layout);
 
-        trial = problem.periodicBoundHandle(trial);
+        // trial = problem.periodicBoundHandle(trial);
         
 
         return new Vector(trial, true, problem);

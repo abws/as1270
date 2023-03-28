@@ -1,5 +1,4 @@
 package research.differentialevolution;
-import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -20,7 +19,6 @@ import research.api.java.*;
 public class Problem {
     private KusiakLayoutEvaluator evaluator;
     private WindScenario scenario;
-
     private static int bound = 0;
 
     public int nDimension;
@@ -32,7 +30,7 @@ public class Problem {
     double penaltyCoefficient1;
     double penaltyCoefficient2;
 
-    public Problem(KusiakLayoutEvaluator evaluator, WindScenario scenario, int popSize, double penaltyCoefficient1) throws Exception {
+    public Problem(KusiakLayoutEvaluator evaluator, WindScenario scenario, int popSize, double penaltyCoefficient1, double penaltyCoefficient2) throws Exception {
         this.scenario = scenario;
         this.evaluator = evaluator;
 
@@ -44,6 +42,8 @@ public class Problem {
         this.width = scenario.width;
         this.minDist = scenario.R * 8;
         this.penaltyCoefficient1 = penaltyCoefficient1;
+        this.penaltyCoefficient2 = penaltyCoefficient2;
+
     }
     /**
      * Evaluates a given vector 
@@ -56,7 +56,7 @@ public class Problem {
     public double evaluate(double[] position) {
         double[][] vectorCoordinates = decodeDirect(position);
         double fitness = evaluator.evaluate_2014(vectorCoordinates);
-        System.out.println("mindist: " + countViolations(vectorCoordinates));
+        // System.out.println("mindist: " + countViolations(vectorCoordinates));
 
 
         return fitness;
@@ -79,37 +79,65 @@ public class Problem {
         evaluator.evaluate_2014(coordinates);   //calculates the AEP and sets it in the evaluator
         double energyProduction = evaluator.getEnergyOutput();
 
-        double violationSum1 = 0;
-        double violationSum2 = 0;
-
-
+        double violationSum1 = 0.0;
+        double violationSum2 = 0.0;
 
         for (int i = 0; i < coordinates.length; i++) {     //loop through each edge only once (n(n-1)/n) - ~doubles speed
             for (int j = i+1; j < coordinates.length; j++) {
                 violationSum1 += proximityConstraintViolation(coordinates[i], coordinates[j], minDist);
             }
-            lol(coordinates[i]);
-
+            violationSum2 += boundConstraintViolation(coordinates[i]);
         }
-        // System.out.printf("boundary :%d\n",bound/2);
-        System.out.println("mindist: " + countViolations(coordinates));
 
+        //debugging
+        System.out.printf("boundary :%d, num:%f\n",bound/2, violationSum1);
+        System.out.println("mindist: " + countProxmityViolations(coordinates)+ ", num: "+ violationSum2);
         bound = 0;
-        // double penalty1 = this.penaltyCoefficient1 * (Math.sqrt(violationSum1));
-        // double penalty1 = this.penaltyCoefficient1 * violationSum1;
-        double penalty1 = 1;
 
-        double violations = Math.pow(countViolations(coordinates), 2);
-        // System.out.println(Math.sqrt(violations));
-        // double penalty1 = this.penaltyCoefficient1 * violations;
 
-        
+        double penalty1 = this.penaltyCoefficient1 * Math.pow(violationSum1, 1);
+        double penalty2 = this.penaltyCoefficient2 * Math.pow(violationSum2, 1);
 
-        double fitness = (energyProduction - (penaltyCoefficient1*violations)) / (scenario.wakeFreeEnergy * nTurbines);
-        
+        double penalty = penalty1 + penalty2;
 
-     
+        // double fitness = (energyProduction - (penalty)) / (scenario.wakeFreeEnergy * nTurbines);
+        double fitness = energyProduction - penalty ;
+        return fitness;
+    }
 
+        /**
+     * Evaluates a given vector 
+     * position using the Wake Free
+     * Ratio evaluation function and 
+     * applying a penalty function.
+     * Only takes in vectors.
+     * @param vector
+     * @param c penalty coefficient
+     * @return
+     */
+    public double evaluatePenaltyBinary(double[] position) {
+        double[][] coordinates = decodeDirect(position);
+
+        /* Calculate total energy production */
+        evaluator.evaluate_2014(coordinates);   //calculates the AEP and sets it in the evaluator
+        double energyProduction = evaluator.getEnergyOutput();
+
+        double violationSum1 = 0.0;
+        double violationSum2 = 0.0;
+
+        violationSum1 = countProxmityViolations(coordinates);
+        violationSum2 = countBoundaryViolations(coordinates);
+
+        //debugging
+        System.out.printf("mindist:%.0f\n",violationSum1);
+        System.out.printf("boundary:%.0f\n",violationSum2);
+        double penalty1 = this.penaltyCoefficient1 * Math.pow(violationSum1, 2);
+        double penalty2 = this.penaltyCoefficient2 * Math.pow(violationSum2, 2);
+
+        double penalty = penalty1 + penalty2;
+
+        // double fitness = (energyProduction - (penalty)) / (scenario.wakeFreeEnergy * nTurbines);
+        double fitness = energyProduction - penalty ;
         return fitness;
     }
 
@@ -493,32 +521,25 @@ public class Problem {
      * @return
      */
     public double proximityConstraintViolation(double[] pointA, double[] pointB, double minDist) {
-        double x1 = pointA[0];
-        double x2 = pointB[0];
-        double y1 = pointA[1];
-        double y2 = pointB[1];
-
-        // double distanceSquared = Math.pow((x1 - x2), 2) + Math.pow((y1 - y2), 2);
-        // double distanceSquared = Math.pow((x1 - x2), 2) + Math.pow((y1 - y2), 2);
-        // double constraint = distanceSquared - Math.pow(minDist, 2);     //If violated, distance squared will be less than minDist squared and we'll get a negative value
         double distance = calculateEuclideanDistance(pointA, pointB);
-        double constraint = distance - minDist;
-        constraint = Math.abs(Math.min(0, constraint));    //Get the magnitude of the negative number, or 0 otherwise
+        double constraint = minDist - distance;
+        constraint = Math.max(0, constraint);    //0 if good
 
         return constraint;
     }
 
     public double boundConstraintViolation(double[] coordinate) {
-        double xDistance, yDistance, distanceSquared;
-        xDistance = yDistance = distanceSquared = 0;
+        double xDistance, yDistance, distance;
+        xDistance = yDistance = distance = 0;
+        
+        if (coordinate[0] < 0) {xDistance+=(Math.abs(coordinate[0])); bound++;}        
+        else if (coordinate[0] > this.width) {xDistance+=(coordinate[0]-this.width); bound++;}
 
-        if (coordinate[0] < 0) xDistance+=(coordinate[0]*-1);
-        if (coordinate[1] < 0) yDistance+=(coordinate[1]*-1);
-        if (coordinate[0] > this.width) xDistance+=(coordinate[0]-this.width);
-        if (coordinate[1] > this.height) yDistance+=(coordinate[1]-this.height);
+        if (coordinate[1] < 0) {yDistance+=(Math.abs(coordinate[1])); bound++;}
+        else if (coordinate[1] > this.height) {yDistance+=(coordinate[1]-this.height); bound++;}
 
-        distanceSquared = Math.pow((xDistance), 2) + Math.pow((yDistance), 2);
-        return distanceSquared;
+        distance = Math.sqrt(Math.pow((xDistance), 2) + Math.pow((yDistance), 2));
+        return distance;
     }
 
 
@@ -580,10 +601,11 @@ public class Problem {
      * of turbines breaking 
      * the minimum distance 
      * constraint.
+     * For debugging or binary penalties
      * @param layout
      * @return
      */
-    public int countViolations(double[][] layout) {
+    public int countProxmityViolations(double[][] layout) {
         int count = 0;
         for (int i = 0; i < layout.length; i++) {     //loop through each edge only once (n(n+1)/n) - ~doubles speed
             for (int j = i+1; j < layout.length; j++) {
@@ -593,13 +615,18 @@ public class Problem {
         return count;
     }
 
-    public boolean boundaryViolated(double[] position) {
-        double[][] layout = decodeDirect(position);
-        for (double[] l: layout) {     //loop through each edge only once (n(n+1)/n) - ~doubles speed
-            if ((l[0] < 0) || (l[1] < 0) || (l[0] > this.width) || (l[1] > this.height)) return true;
+    /**
+     * For debugging or binary penalties
+     * @param position
+     * @return
+     */
+    public int countBoundaryViolations(double[][] layout) {
+        int count = 0;
+        for (double[] l: layout) { 
+            if ((l[0] < 0) || (l[1] < 0) || (l[0] > this.width) || (l[1] > this.height)) count++;
         }
 
-        return false;
+        return count;
     }
 
     public double maxFitness(List<Vector> pop) {
@@ -620,21 +647,5 @@ public class Problem {
             sum += current;
         }
         return sum/pop.size(); 
-    }
-
-
-    public double lol(double[] coordinate) {
-        double xDistance, yDistance, distanceSquared;
-        xDistance = yDistance = distanceSquared = 0;
-
-        if (coordinate[0] < 0) {xDistance+=(coordinate[0]*-1);bound++;}
-        if (coordinate[1] < 0) {yDistance+=(coordinate[1]*-1); bound++;}
-        if (coordinate[0] > this.width) {xDistance+=(coordinate[0]-this.width); bound++;}
-        if (coordinate[1] > this.height) {yDistance+=(coordinate[1]-this.height); bound++;}
-
-        distanceSquared = Math.pow((xDistance), 2) + Math.pow((yDistance), 2);
-        // System.out.println("Vio; "+ distanceSquared);
-        return distanceSquared;
-    }
-    
+    }    
 }
