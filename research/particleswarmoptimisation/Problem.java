@@ -34,10 +34,10 @@ public class Problem {
     public double minDist;
     public double height;
     public double width;
-    double penaltyCoefficient1;
-    double penaltyCoefficient2;
+    double w1;
+    double w2;
 
-    public Problem(KusiakLayoutEvaluator evaluator, WindScenario scenario, int swarmSize, double penaltyCoefficient1, double penaltyCoefficient2) throws Exception {
+    public Problem(KusiakLayoutEvaluator evaluator, WindScenario scenario, int swarmSize, double w1, double w2) throws Exception {
         this.scenario = scenario;
         this.evaluator = evaluator;
 
@@ -48,8 +48,8 @@ public class Problem {
         this.height = scenario.height;
         this.width = scenario.width;
         this.minDist = scenario.R * 8;
-        this.penaltyCoefficient1 = penaltyCoefficient1;
-        this.penaltyCoefficient2 = penaltyCoefficient2;
+        this.w1 = w1;
+        this.w2 = w2;
         this.lBest = new double[swarmSize][particleDimension];
         this.lBestFitnesses = new double[swarmSize];
 
@@ -87,22 +87,22 @@ public class Problem {
         evaluator.evaluate_2014(particleCoordinates);   //calculates the AEP and sets it in the evaluator
         double energyProduction = evaluator.getEnergyOutput();
 
-        double violationSum1 = 0;
-        double violationSum2 = 0;
+        double p1 = 0;
+        double p2 = 0;
 
 
         for (int i = 0; i < particleCoordinates.length; i++) {     //loop through each edge only once (n(n+1)/n) - ~doubles speed
             for (int j = i+1; j < particleCoordinates.length; j++) {
-                violationSum1 += proximityConstraintViolation(particleCoordinates[i], particleCoordinates[j], minDist);
+                p1 += proximityConstraintViolation(particleCoordinates[i], particleCoordinates[j], minDist);
             }
-            violationSum2 += boundConstraintViolation(particleCoordinates[i]);
+            // violationSum2 += boundConstraintViolation(particleCoordinates[i]);
         }
         // System.out.printf(" :%d: ",bound/2);
         // System.out.println("Vio;0000 "+violationSum2);
 
         bound =0;
         
-        double penalty1 = this.penaltyCoefficient1 * (Math.sqrt(violationSum1));
+        // double penalty1 = this.penaltyCoefficient1 * (Math.sqrt(violationSum1));
         // System.out.println("Vio;1111 "+penalty1);
 
         // double penalty2 = this.penaltyCoefficient2 * (Math.sqrt(violationSum2));
@@ -110,7 +110,7 @@ public class Problem {
 
 
         // double fitness = (energyProduction - (penalty1 + penalty2)) / (scenario.wakeFreeEnergy * nTurbines);
-        double fitness = (energyProduction - (penalty1 )) / (scenario.wakeFreeEnergy * nTurbines);
+        double fitness = (energyProduction - (p1 )) / (scenario.wakeFreeEnergy * nTurbines);
         
 
      
