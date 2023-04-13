@@ -59,7 +59,7 @@ public class Mutation {
         return individual;
     }
 
-        /**
+    /**
      * Overview method.
      * Uses the bitmutation method
      * to randomly flip the bits in 
@@ -78,7 +78,7 @@ public class Mutation {
     private Individual bitMutationReflect(Individual individual) {
         StringBuilder indivArray = new StringBuilder(individual.getValue());
 
-        for (int i = 0; i < indivArray.length(); i++) {
+        for (int i = 0; i < (indivArray.length()/2); i++) {
             if (Math.random() < MUT_RATE) {
                 char newChar = indivArray.charAt(i) == '1' ? '0' : '1'; //flips the bit, //could use XOR
                 indivArray.setCharAt(i, newChar);
@@ -146,6 +146,339 @@ public class Mutation {
         individual.setValue(indivArray.toString());
         return individual;
     }
+
+    /**
+     * Basic Swap Mutation
+     * @param offSpring
+     * @return
+     */
+    public List<Individual> mutatePopulationSwap(List<Individual> offSpring) {
+        //mutation
+        for (int i = 0; i < offSpring.size(); i++) {
+            offSpring.set(i, bitMutationSwap(offSpring.get(i)));    //mutate each individual in the offspring array
+        }
+        return offSpring;
+    }
+
+    private Individual bitMutationSwap(Individual individual) {
+        StringBuilder indivArray = new StringBuilder(individual.getValue());
+        Random rand = new Random();
+
+
+        for (int i = 0; i < (indivArray.length()/2); i++) {
+            if (Math.random() < MUT_RATE) {
+                //pick two random positions, and swap them
+                int position1 = rand.nextInt(indivArray.length());
+                int position2 = rand.nextInt(indivArray.length());
+                char temp = indivArray.charAt(position1);
+                indivArray.setCharAt(position1, indivArray.charAt(position2));
+                indivArray.setCharAt(position2, temp);
+            }
+        }
+        individual.setValue(indivArray.toString());
+        return individual;
+    }
+    
+    /**
+     * Reflective Swap Mutation
+     * @param offSpring
+     * @return
+     */
+    public List<Individual> mutatePopulationSwapReflect(List<Individual> offSpring) {
+        //mutation
+        for (int i = 0; i < offSpring.size(); i++) {
+            offSpring.set(i, bitMutationSwapReflect(offSpring.get(i)));    //mutate each individual in the offspring array
+        }
+        return offSpring;
+    }
+
+    private Individual bitMutationSwapReflect(Individual individual) {
+        StringBuilder indivArray = new StringBuilder(individual.getValue());
+
+        for (int i = 0; i < (indivArray.length()/2); i++) {
+            if (Math.random() < MUT_RATE) {
+                char c = indivArray.charAt(i); //current char
+                int j = indivArray.length()- 1 - i;   //reflective position
+                char r = indivArray.charAt(j); //reflective char
+
+                indivArray.setCharAt(i, r); //swap their positions
+                indivArray.setCharAt(j, c);
+            }
+        }
+        individual.setValue(indivArray.toString());
+        return individual;
+    }
+
+    /**
+     * Informed Deterministic Swap Mutation
+     * @param offSpring
+     * @return
+     */
+    public List<Individual> mutatePopulationDeterministicSwap(List<Individual> offSpring) {
+        //mutation
+        for (int i = 0; i < offSpring.size(); i++) {
+            offSpring.set(i, bitMutationDeterministicSwap(offSpring.get(i)));    //mutate each individual in the offspring array
+        }
+        return offSpring;
+    }
+
+    private Individual bitMutationDeterministicSwap(Individual individual) {
+        StringBuilder indivArray = new StringBuilder(individual.getValue());
+        Random rand = new Random();
+
+        problem.evaluate(individual.getValue());
+        double[] turbineIndexes = problem.evaluator.getTurbineFitnesses();
+        for (int i = 0; i < (indivArray.length()/2); i++) {
+            if (Math.random() < MUT_RATE) {
+                //deterministic step - USES FITNESS EVALUATION
+
+                int coordinatePosition = problem.lowestIndex(turbineIndexes); //position of turbine in list of turbines
+                int position1 = problem.getPosition(individual.getValue(), coordinatePosition); //position of turbine in grid
+
+                //pick 1 random position, and swap with 
+                int position2 = rand.nextInt(indivArray.length());
+                char temp = indivArray.charAt(position1);
+                indivArray.setCharAt(position1, indivArray.charAt(position2));
+                indivArray.setCharAt(position2, temp);
+            }
+        }
+        individual.setValue(indivArray.toString());
+        return individual;
+    }
+
+    /**
+     * Overview method
+     * @param offSpring
+     * @return
+     */
+    public List<Individual> mutatePopulationStationaryBox(List<Individual> offSpring) {
+        //mutation
+        for (int i = 0; i < offSpring.size(); i++) {
+            Individual ind = offSpring.get(i);
+            // int[][] grid = problem.gridify(o.getValue(), problem.columns, problem.rows);
+            double[] boxes = stationaryBoxes(ind.getValue());
+
+            offSpring.set(i, stationaryBoxMutation(ind, boxes));    //mutate each individual in the offspring array
+        }
+        return offSpring;
+
+    }
+
+    public double[] stationaryBoxes(String ind) {
+        double[] boxes = new double[(rows - 1) * (columns - 1)];    //number of sliding boxes
+        int count = 0;
+        for (int y = 0; y < rows - 1; y+=2) {
+            for (int x = 0; x < columns - 1; x+=2) {
+                int a = Character.getNumericValue(ind.charAt(((y) * (columns-1)) + x));                  //the 4 coordinates of a box
+                int b = Character.getNumericValue(ind.charAt(((y) * (columns-1)) + x + 1));
+                int c = Character.getNumericValue(ind.charAt(((y+1) * (columns-1)) + x));
+                int d = Character.getNumericValue(ind.charAt(((y+1) * (columns-1)) + x + 1));
+                
+                boxes[count] = (a + b + c + d) / 4.0;
+                count++;
+            }
+        }
+
+        return boxes;
+    }
+
+    public Individual stationaryBoxMutation(Individual ind, double[] boxes) { //boxes rows are 0 -> (col - 2)
+        StringBuilder indivArray = new StringBuilder(ind.getValue());
+
+        for (int i = 0; i < INDIV_LENGTH; i++) {
+            double classis;
+            int y = i / columns;
+            int x = i % columns;
+
+            int boxRow = rows-2;
+            int boxCol = columns-2;
+
+            int bx1 = x, bx2 = x-1;
+            int by1 = y, by2 = y-1;
+
+            int[][] bValues = {
+                {bx1, by1},
+                {bx1, by2},
+                {bx2, by1},
+                {bx2, by2}
+            };
+
+            double counter, sum, prob;
+            counter = 1; sum = prob = 0 ;
+
+            for (int[] c : bValues) {
+                if ((c[0] < 0) || (c[0] > boxCol) || (c[1] < 0) || (c[1] > boxRow)) continue;   //skip infeasible box positions
+                
+                int a = c[0];
+                int b = c[1];
+
+                sum += boxes[(b * boxCol) + a];
+                prob = sum / counter;
+                counter++;
+            
+            }
+            classis = this.MUT_RATE * (1/prob);
+            if (Math.random() < classis) {     //greater p corresponds to more turbine density
+                char newChar = indivArray.charAt(i) == '1' ? '0' : '0'; //flips the one
+                indivArray.setCharAt(i, newChar);
+            }
+
+        }
+        // System.out.println("Befow: "+problem.countTurbines(ind.getValue()));
+        // System.out.println("After: "+problem.countTurbines(indivArray.toString()));
+        ind.setValue(indivArray.toString());
+        return ind; 
+    }
+
+
+    /**
+     * Overview method.
+     * Uses the bitmutation method
+     * to randomly flip the bits in 
+     * the whole population using a sliding
+     * box heuristic
+     * @param offSpring
+     * @return
+     */
+    public List<Individual> mutatePopulationSlidingBox(List<Individual> offSpring) {
+        //mutation
+        for (int i = 0; i < offSpring.size(); i++) {
+            offSpring.set(i, bitMutationSlidingBox(offSpring.get(i)));    //mutate each individual in the offspring array
+        }
+        return offSpring;
+    }
+
+    /**
+     * Bit flipping Mutation Operator.
+     * Considers each gene independently.
+     * May introduce or remove turbines from
+     * the layout
+     * @param parent1
+     * @param parent2
+     * @return
+     */
+    private Individual bitMutationSlidingBox(Individual individual) {
+        StringBuilder indivArray = new StringBuilder(individual.getValue());
+
+        for (int i = 0; i < indivArray.length(); i++) {
+            double newRate = slidingBox(new String(indivArray.toString()), i);
+            newRate = MUT_RATE * (1 + (newRate));
+            if (Math.random() <newRate) {
+                char newChar = indivArray.charAt(i) == '1' ? '0' : '1'; //flips the bit, //could use XOR
+                indivArray.setCharAt(i, newChar);
+            }
+        }
+        individual.setValue(indivArray.toString());
+        return individual;
+    }
+
+    /**
+     * Builds a 9x9 box around the turbine of focus
+     * @param individual
+     * @param position
+     */
+    private double slidingBox(String individual, int position) {
+        //bits' position in farm
+        int y = (position / columns) + 1;
+        int x = (position % columns) + 1;
+        int[][] grid = gridifyZeroPad(individual, columns, rows);
+
+        double sum = 
+        grid[y-1][x-1] +
+        grid[y-1][x] +
+        grid[y-1][x+1] +
+        grid[y][x-1] +
+        grid[y][x] +
+        grid[y][x+1] +
+        grid[y+1][x-1] +
+        grid[y+1][x] +
+        grid[y+1][x+1];
+
+        sum /= 9;
+        return sum;
+    }
+
+        
+    /**
+     * Gridifies a string
+     * @param ind The string to be gridified
+     * @param x The width of the grid
+     * @param y The height of the grid
+     * @return A two-dimensional array representing the grid
+     * @tested
+     */
+    public int[][] gridifyZeroPad(String ind, int x, int y) {
+        int[][] grid = new int[y+2][x+2]; //[rows][columns] since rows are 'bigger' and classified by first
+        int count = 0;
+
+        for (int i = 1; i < y-1; i ++) {
+            for (int j = 1; j < x-1; j++) {
+                grid[i][j] = Character.getNumericValue(ind.charAt(count));
+                count++;
+            }
+        }
+
+        return grid;
+    }
+
+        /**
+     * Basic Swap Mutation
+     * @param offSpring
+     * @return
+     */
+    public List<Individual> mutatePopulationSwapSlidingBox(List<Individual> offSpring) {
+        //mutation
+        for (int i = 0; i < offSpring.size(); i++) {
+            offSpring.set(i, bitMutationSwapSlidingBox(offSpring.get(i)));    //mutate each individual in the offspring array
+        }
+        return offSpring;
+    }
+
+    private Individual bitMutationSwapSlidingBox(Individual individual) {
+        StringBuilder indivArray = new StringBuilder(individual.getValue());
+        Random rand = new Random();
+
+
+        for (int i = 0; i < (indivArray.length()/2); i++) {
+            int position1 = rand.nextInt(indivArray.length());
+            int position2 = rand.nextInt(indivArray.length());
+
+            double newRate = slidingBox(new String(indivArray.toString()), position1) /10;
+            // newRate = MUT_RATE * (1 + (3*newRate));
+            newRate = MUT_RATE + newRate;
+
+            if (Math.random() < newRate) {
+                char temp = indivArray.charAt(position1);
+                indivArray.setCharAt(position1, indivArray.charAt(position2));
+                indivArray.setCharAt(position2, temp);
+            }
+        }
+        individual.setValue(indivArray.toString());
+        return individual;
+    }
+
+    public int[][] xx(String ind, int x, int y) {
+        int[][] grid = new int[y+2][x+2]; //[rows][columns] since rows are 'bigger' and classified by first
+        int count = 0;
+
+        for (int i = 0; i < y; i ++) {
+            if ((i == 0) || i == (y - 1)) { //zero padding top and bottom
+                for (int tb = 0; tb<x; tb++) {
+                    grid[i][tb] = 0;
+                }
+                continue;
+            }
+            for (int j = 0; j < x; j++) {
+                if (j==0 || j==(x-1)) {grid[i][j] = 0; continue;}
+                grid[i][j] = Character.getNumericValue(ind.charAt(count));
+                count++;
+            }
+        }
+
+        return grid;
+    }
+
+
 
 
 }

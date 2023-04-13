@@ -1,4 +1,4 @@
-package research.differentialevolution;
+package research.anglemodulateddifferentialevolution;
 
 /**
  * Class representing a
@@ -11,6 +11,7 @@ package research.differentialevolution;
  */
 public class Vector {
     private double[] vector;
+    private int[] layout;
     public double fitness;
 
     private Problem problem;
@@ -30,12 +31,20 @@ public class Vector {
 
     public void setVector(double[] newPosition, boolean wantsFitnessUpdated) {
         this.vector = newPosition;
-
         if (wantsFitnessUpdated) updateFitness();
     }
 
-   public void updateFitness() {
-       double fitness = problem.evaluatePenaltyBinary(vector);
-       this.fitness = fitness;
+    public int[] getLayout() {
+        return this.layout;
+    }
+
+    public void setLayout(int[] newLayout) {
+        this.layout = newLayout;
+    }
+
+    public void updateFitness() {
+        this.layout = this.problem.decodeAM(this.vector); 
+        double fitness = problem.evaluate(layout);
+        this.fitness = fitness;
    } 
 }

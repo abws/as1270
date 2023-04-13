@@ -391,4 +391,51 @@ public class Problem {
 
         return fitnesses;
     }
+
+    /**
+     * The index of the lowest value in the array
+     * @param array
+     * @return
+     */
+    public int lowestIndex(double[] array) {
+        int lowest = 0;
+        for (int i = 1; i < array.length; i++) {
+            if (array[i] <= array[lowest]) lowest = i;
+        }
+        array[lowest] = 1;
+        return lowest;
+    }
+
+    /**
+     * The index of the highest value in the array
+     * @param array
+     * @return
+     */
+    public int highestIndex(double[] array) {
+        int highest = 0;
+        for (int i = 1; i < array.length; i++) {
+            if (array[i] >= array[highest]) highest = i;
+        }
+        array[highest] = 0;
+        return highest;
+    }
+
+    /**
+     * Maps the coordinate array coordinate to a bit in the string
+     * @param ind
+     * @param coordinatePosition
+     * @return
+     */
+    public int getPosition(String ind, int coordinatePosition) {
+        int count, i;
+        count = i = 0;
+        
+        while(i < ind.length() && count!=coordinatePosition ) {
+            if (ind.charAt(i) == '1') {
+                count++;
+            } 
+            i++;
+        }
+        return i;
+    }
 }

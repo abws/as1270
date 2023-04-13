@@ -35,7 +35,7 @@ public class Vector {
     }
 
    public void updateFitness() {
-       double fitness = problem.evaluatePenaltyBinary(vector);
+       double fitness = problem.evaluatePenalty(vector);
        this.fitness = fitness;
    } 
 }

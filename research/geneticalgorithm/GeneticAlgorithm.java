@@ -22,11 +22,11 @@ public class GeneticAlgorithm {
             List<Individual> matingPool = new ArrayList<>();
             List<Individual> offSpring = new ArrayList<>();
 
-            matingPool = ps.tournamentSelection(population, popSize, 5, false); //parent selection
-            // offSpring = r.recombineNPoint(matingPool, popSize, 50); //recombination
-            offSpring = r.recombineUniform(matingPool, popSize, 0.7); //recombination
+            matingPool = ps.tournamentSelection(population, popSize, 2, false); //parent selection
+            offSpring = r.recombineNPoint(matingPool, popSize, 50); //recombination
+            // offSpring = r.recombineUniform(matingPool, popSize, 0.7); //recombination
 
-            offSpring = re.repairRandom(m.mutatePopulationRandom(offSpring)); //mutation and repair
+            offSpring = re.repairRandom(m.mutatePopulationSwap(offSpring)); //mutation and repair
             population = rp.elitism(population, offSpring, 1); //survival selection
         }
     }

@@ -1,4 +1,4 @@
-package research.differentialevolution;
+package research.anglemodulateddifferentialevolution;
 
 import java.util.ArrayList;
 import java.util.List;

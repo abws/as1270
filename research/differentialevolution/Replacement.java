@@ -9,8 +9,20 @@ public class Replacement {
     Replacement(Problem problem) {
         this.problem = problem;
     }
-
     public List<Vector> selectBest(List<Vector> parents, List<Vector> trials) {
+        List<Vector> offSpring = new ArrayList<>();
+        for (int i = 0; i < parents.size(); i++) {
+            Vector p = parents.get(i);
+            Vector t = trials.get(i);
+
+            if (p.fitness > t.fitness) {offSpring.add(p);}
+            else {offSpring.add(t);}
+        }
+
+        return offSpring;
+    }
+
+    public List<Vector> selectBestSpecial(List<Vector> parents, List<Vector> trials) {
         List<Vector> offSpring = new ArrayList<>();
         double violationSumP = 0;
         double violationSumT = 0;
@@ -26,8 +38,8 @@ public class Replacement {
 
             for (int j = 0; j < coordinatesP.length; j++) {     //loop through each edge only once (n(n-1)/n) - ~doubles speed
                 for (int k = j+1; k < coordinatesP.length; k++) {
-                    violationSumP += problem.proximityConstraintViolation(coordinatesP[j], coordinatesP[k], problem.minDist);
-                    violationSumT += problem.proximityConstraintViolation(coordinatesT[j], coordinatesT[k], problem.minDist);
+                    violationSumP += problem.staticProximityViolation(coordinatesP[j], coordinatesP[k], problem.minDist);
+                    violationSumT += problem.staticProximityViolation(coordinatesT[j], coordinatesT[k], problem.minDist);
                 }
             }
 

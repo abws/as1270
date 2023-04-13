@@ -1,4 +1,4 @@
-package research.differentialevolution;
+package research.anglemodulateddifferentialevolution;
 
 import java.util.List;
 
@@ -12,7 +12,7 @@ public class AngleModulatedDE {
     Problem problem;    
 
     AngleModulatedDE(double crossoverRate, int maxIterations, double scalingFactor, Problem problem) {
-        this.popSize = popSize;
+        this.popSize = problem.popSize;
         this.crossoverRate = crossoverRate;
         this.maxIterations = maxIterations;
         this.scalingFactor = scalingFactor;
@@ -27,7 +27,7 @@ public class AngleModulatedDE {
 
 
 
-        List<Vector> population = problem.initialiseAMDE();
+        List<Vector> population = problem.initialiseAMDEPopulation(popSize);
         
         while (iteration < maxIterations) {
             System.out.println(problem.avgFitness(population));

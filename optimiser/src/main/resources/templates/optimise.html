@@ -14,7 +14,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="icon" type="image/svg+xml" href="../static/images/logo.svg">
 
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300&family=Space+Mono&display=swap" rel="stylesheet">    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300&family=Space+Mono&display=swap" rel="stylesheet">
     <title>Wind Optimisation</title>
 </head>
 <body>
@@ -28,7 +28,7 @@
             </div>
             <svg class="header-line" width="1" height="39" viewBox="0 0 1 39" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <line x1="0.25" x2="0.25" y2="39" stroke="#464646" stroke-width="0.5"/>
-            </svg>       
+            </svg>
             <svg width="37" height="37" viewBox="0 0 37 37" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M30.7144 6.47499C30.7144 6.28 30.6142 6.10869 30.4621 6.00953L24.5965 0.97568C24.541 0.92795 24.4766 0.89761 24.4096 0.87541C24.3123 0.79216 24.188 0.73999 24.05 0.73999H6.84499C6.53826 0.73999 6.28999 0.98826 6.28999 1.29499V35.705C6.28999 36.0114 6.53826 36.26 6.84499 36.26H30.155C30.4614 36.26 30.71 36.0114 30.71 35.705V6.65999C30.71 6.6352 30.7059 6.61189 30.7026 6.58784C30.7104 6.55158 30.7144 6.51347 30.7144 6.47499ZM7.39999 35.15V1.84999H23.68V6.47499C23.68 6.78172 23.9286 7.02999 24.235 7.02999H29.6V35.15H7.39999Z" fill="#757575"/>
                 <path d="M25.53 11.47H11.47C11.2658 11.47 11.1 11.3042 11.1 11.1C11.1 10.8957 11.2658 10.73 11.47 10.73H25.53C25.7346 10.73 25.9 10.8957 25.9 11.1C25.9 11.3042 25.7346 11.47 25.53 11.47Z" fill="#757575"/>
@@ -45,7 +45,7 @@
                 </svg>
             </a>
         </div>
-            
+
         <svg width="70" height="70" viewBox="0 0 70 70" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M20.65 32.41C23.87 29.68 28.14 28.28 32.27 28.56C37.24 28.91 42 31.43 46.9 30.87C48.3 30.73 49.7 30.31 50.82 29.47C52.43 28.28 53.41 26.18 53.13 24.15C52.85 22.12 51.24 20.37 49.28 19.95C47.32 19.53 45.08 20.65 44.31 22.54C43.82 23.73 43.96 25.27 44.87 26.18C45.78 27.09 47.46 27.23 48.37 26.25" stroke="#A0C8D7" stroke-width="3" stroke-miterlimit="10" stroke-linecap="round"/>
             <path d="M18.13 37.73C21.42 35.28 25.13 33.39 29.05 32.13" stroke="#A0C8D7" stroke-width="3" stroke-miterlimit="10" stroke-linecap="round"/>
@@ -64,7 +64,7 @@
             <div>5 Optimise</div>
 
         </div>
-        
+
         <div class="optimise">
             <form th:action="@{/optimise}" method="post" id="form">
                 <div class="title">Evaluation Function</div>
@@ -76,14 +76,14 @@
 
                 <div class="title">Algorithm</div>
                 <div class="algorithms">
-                    <div class="algorithm" id="geneticAlgorithm"> 
+                    <div class="algorithm" id="geneticAlgorithm">
                         <div><img th:src="@{images/dna-image.jpeg}" alt="dna-image"></div>
                         <p>Genetic Algorithm</p>
                         <input type="hidden" name="algorithm" value="geneticAlgorithm">
                         <input class="algorithm-input" name="popSize" id="popSize" type="number" placeholder="Population Size" />
                         <input class="algorithm-input" name="generations" id="generations" type="number" placeholder="Generations" />
                     </div>
-                    <div class="algorithm" id="particeSwarmOptimisation"> 
+                    <div class="algorithm" id="particeSwarmOptimisation">
                         <div><img th:src="@{images/birds-flocking.jpeg}" alt="birds-flocking"></div>
                         <p>Particle Swarm Optimisation</p>
                         <input type="hidden" name="algorithm" value="particeSwarmOptimisation">
@@ -96,7 +96,7 @@
                         <input class="algorithm-input" name="minWeight" id="minWeight" type="number" placeholder="Minimum Weight" />
 
                     </div>
-                    <div class="algorithm" id="simulatedAnnealing"> 
+                    <div class="algorithm" id="simulatedAnnealing">
                         <div><img th:src="@{images/explosion.png}" alt="explosion-annealing-in-nebula"></div>
                         <p>Simulated Annealing</p>
                         <input type="hidden" name="algorithm" value="simulatedAnnealing">
@@ -106,7 +106,7 @@
                 </div>
 
                     <input class="optimise-button" type="submit" id="optimise" value="OPTIMISE" />
-                
+
             </form>
 
 <!--            &lt;!&ndash;Optimal Farm Coordinates&ndash;&gt;-->
@@ -119,12 +119,6 @@
             </div>
 
 
-
-
-        //add turbines
-        for (let i = 0; i < turbines.length; i++) {
-        addTurbineToScene(turbines[i][0], turbines[i][1]);
-        }
 
     </div>
     <script async src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>
@@ -145,6 +139,6 @@
         const coordinates = [[${coordinates}]];
     </script>
     <script type="module" th:src="@{/scripts/optimise.js}"> </script>
-    
+
 </body>
 </html>

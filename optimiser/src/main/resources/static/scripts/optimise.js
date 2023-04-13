@@ -28,7 +28,6 @@ import { addTurbine } from './components/turbine.js';
 //     // const data = await response;
 //     // console.log(data)
 //   }
-
 const turbines = JSON.parse(coordinates);
 if (turbines.length != null) {
 

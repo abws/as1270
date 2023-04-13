@@ -35,7 +35,7 @@ public class Recombination {
         // layout = problem.geometricReformer(problem.decodeDirect(trial), problem.minDist);
         // trial = problem.encodeDirect(layout);
 
-        // trial = problem.periodicBoundHandle(trial);
+        trial = problem.randomBoundHandle(trial);
         
 
         return new Vector(trial, true, problem);

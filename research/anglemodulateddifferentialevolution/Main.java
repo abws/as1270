@@ -1,4 +1,4 @@
-package research.differentialevolution;
+package research.anglemodulateddifferentialevolution;
 import research.api.java.*;
 
 public class Main {
@@ -7,8 +7,8 @@ public class Main {
 
         KusiakLayoutEvaluator evaluator = new KusiakLayoutEvaluator();
         evaluator.initialize(ws);
-        Problem problem = new Problem(evaluator, ws, 15, 1, 500);
-        DifferentialEvolution de = new DifferentialEvolution(15, 0.6, 1000, 0.55, problem);
+        Problem problem = new Problem(evaluator, ws, 15);
+        AngleModulatedDE de = new AngleModulatedDE(0.7, 1000, 0.55, problem);
         de.run();
     }
 
