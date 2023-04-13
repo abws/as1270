@@ -254,7 +254,7 @@ public class Mutation {
 
     /**
      * Calculates the sum
-     * of two vectors
+     * of three vectors
      */
     public Vector vectorAddition(double[] vectorA, double[] vectorB, double[] vectorC) {
         double[] sum = new double[vectorA.length];

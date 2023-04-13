@@ -430,6 +430,7 @@ public class Problem {
 
     /**
      * Latest edition that combines the 
+     * fixation of both constraints
      * @param layout the layout to potentially modify
      * @param z the minimum distance between two points
      * @return a feasible layout
@@ -447,7 +448,23 @@ public class Problem {
                     double distance = calculateEuclideanDistance(repulser, manner);
                     if (distance > z) continue;
 
-                    manner = spacialShift(repulser, manner, distance, z, 1); 
+                    manner = spacialShift(repulser, manner, distance, z, 1);
+                    if (manner[0] < 0) {
+                        manner[0] = (manner[0] % width) + width; //so we wrap wround 
+                        r = 0;
+                    }
+                    if (manner[1] < 0) {
+                        manner[1] = (manner[1] % height) + height;
+                        r = 0;
+                    }
+                    if (manner[0] > this.width) {
+                        manner[0] = (manner[0] % width); 
+                        r=0;
+                    }
+                    if (manner[1] > this.height) {
+                        manner[1] = (manner[1] % height); 
+                        r=0;
+                    }
                 }
             }
 
