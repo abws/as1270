@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import javax.security.auth.x500.X500Principal;
+
 public class Mutation {
     private Problem problem;
     public double MUT_RATE;
@@ -155,12 +157,12 @@ public class Mutation {
     public List<Individual> mutatePopulationSwap(List<Individual> offSpring) {
         //mutation
         for (int i = 0; i < offSpring.size(); i++) {
-            offSpring.set(i, bitMutationSwap(offSpring.get(i)));    //mutate each individual in the offspring array
+            offSpring.set(i, mutationSwap(offSpring.get(i)));    //mutate each individual in the offspring array
         }
         return offSpring;
     }
 
-    private Individual bitMutationSwap(Individual individual) {
+    private Individual mutationSwap(Individual individual) {
         StringBuilder indivArray = new StringBuilder(individual.getValue());
         Random rand = new Random();
 
@@ -170,6 +172,9 @@ public class Mutation {
                 //pick two random positions, and swap them
                 int position1 = rand.nextInt(indivArray.length());
                 int position2 = rand.nextInt(indivArray.length());
+                char newChar = indivArray.charAt(position1) == '1' ? '0' : '1'; //flips the bit, //could use XOR
+
+                position2 = getNearest(indivArray.toString(), position2, newChar);
                 char temp = indivArray.charAt(position1);
                 indivArray.setCharAt(position1, indivArray.charAt(position2));
                 indivArray.setCharAt(position2, temp);
@@ -362,6 +367,10 @@ public class Mutation {
 
         for (int i = 0; i < indivArray.length(); i++) {
             double newRate = slidingBox(new String(indivArray.toString()), i);
+            if (indivArray.charAt(i) != 1) { //only change if its a one
+                newRate = MUT_RATE;
+            }
+
             newRate = MUT_RATE * (1 + (newRate));
             if (Math.random() <newRate) {
                 char newChar = indivArray.charAt(i) == '1' ? '0' : '1'; //flips the bit, //could use XOR
@@ -373,11 +382,11 @@ public class Mutation {
     }
 
     /**
-     * Builds a 9x9 box around the turbine of focus
+     * Builds a 3x3 box around the turbine of focus
      * @param individual
      * @param position
      */
-    private double slidingBox(String individual, int position) {
+    public double slidingBox(String individual, int position) {
         //bits' position in farm
         int y = (position / columns) + 1;
         int x = (position % columns) + 1;
@@ -421,7 +430,7 @@ public class Mutation {
         return grid;
     }
 
-        /**
+    /**
      * Basic Swap Mutation
      * @param offSpring
      * @return
@@ -439,15 +448,31 @@ public class Mutation {
         Random rand = new Random();
 
 
-        for (int i = 0; i < (indivArray.length()/2); i++) {
-            int position1 = rand.nextInt(indivArray.length());
+        for (int i = 0; i < (indivArray.length()); i++) {
+            // int position1 = rand.nextInt(indivArray.length());
+            int position1 = i;
+            if (indivArray.charAt(position1) != '1') continue; //only change if its a one
+
+
             int position2 = rand.nextInt(indivArray.length());
+            char newChar = indivArray.charAt(position2) == '1' ? '0' : '1'; //flips the bit, //could use XOR
 
-            double newRate = slidingBox(new String(indivArray.toString()), position1) /10;
-            // newRate = MUT_RATE * (1 + (3*newRate));
-            newRate = MUT_RATE + newRate;
+            position2 = getNearest(indivArray.toString(), position2, newChar);
 
-            if (Math.random() < newRate) {
+            // double rate = MUT_RATE;
+            double rate = slidingBox(new String(indivArray.toString()), position1);
+            if (indivArray.charAt(position1) == '1') { //only change if its a one
+                // rate = x;
+                // rate = MUT_RATE * (1 + (1.5*(rate)));
+                rate = rate /10;
+                // rate = MUT_RATE + rate;
+            }
+            // else {
+            //     rate = 1 - x; //how little dense it is
+            //     rate = MUT_RATE * (1 + 1*(rate));
+            // }
+
+            if (Math.random() < rate) {
                 char temp = indivArray.charAt(position1);
                 indivArray.setCharAt(position1, indivArray.charAt(position2));
                 indivArray.setCharAt(position2, temp);
@@ -476,6 +501,49 @@ public class Mutation {
         }
 
         return grid;
+    }
+
+    /**
+     * Basic Swap Mutation
+     * @param offSpring
+     * @return
+     */
+    public List<Individual> mutatePopulationSwapSlidingBoxGreedy(List<Individual> offSpring) {
+        //mutation
+        for (int i = 0; i < offSpring.size(); i++) {
+            offSpring.set(i, bitMutationSwapSlidingBoxGreedy(offSpring.get(i)));    //mutate each individual in the offspring array
+        }
+        return offSpring;
+    }
+
+    private Individual bitMutationSwapSlidingBoxGreedy(Individual individual) {
+        StringBuilder indivArray = new StringBuilder(individual.getValue());
+        Random rand = new Random();
+
+
+        for (int i = 0; i < (indivArray.length()/2); i++) {
+            int position1 = rand.nextInt(indivArray.length());
+            int position2 = rand.nextInt(indivArray.length());
+            double rate = MUT_RATE;
+            double x = slidingBox(new String(indivArray.toString()), position1);
+            if (indivArray.charAt(position1) == 1) { //only change if its a one
+                rate = x;
+                // rate = MUT_RATE * (1 + 2*(rate));
+                rate = MUT_RATE + rate;
+            }
+            else {
+                rate = 1 - x; //how little dense it is
+                rate = MUT_RATE * (1 + 1*(rate));
+            }
+
+            if (Math.random() < rate) {
+                char temp = indivArray.charAt(position1);
+                indivArray.setCharAt(position1, indivArray.charAt(position2));
+                indivArray.setCharAt(position2, temp);
+            }
+        }
+        individual.setValue(indivArray.toString());
+        return individual;
     }
 
 

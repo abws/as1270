@@ -133,7 +133,7 @@ public class ParentSelection {
      * Tested
      */
 
-    public List<Double> calculateWeights(List<Individual> population) {
+    private List<Double> calculateWeights(List<Individual> population) {
         double sum = 0;
         double fitness;
         List<Double> weights = new ArrayList<>(population.size());
@@ -161,7 +161,7 @@ public class ParentSelection {
      * @param c Sigma constant
      * @return
      */
-    public List<Double> calculateSigmaWeights(List<Individual> population, double c) {
+    private List<Double> calculateSigmaWeights(List<Individual> population, double c) {
         double sum = 0;
         List<Double> weights = new ArrayList<>();
         double[] fitnesses = problem.getFitnesses(population);
@@ -187,7 +187,7 @@ public class ParentSelection {
      * @param c
      * @return
      */
-    public List<Double> calculateLinearRankedWeights(List<Individual> population, double c) {
+    private List<Double> calculateLinearRankedWeights(List<Individual> population, double c) {
         List<Double> weights = new ArrayList<>();
         double popSize = (double) population.size();
 
@@ -219,7 +219,7 @@ public class ParentSelection {
      * @param populationSize
      * @return
      */
-    public List<Individual> rouletteWheel(List<Individual> population, List<Double> weights, int n) {
+    private List<Individual> rouletteWheel(List<Individual> population, List<Double> weights, int n) {
         List<Individual> matingPool = new ArrayList<>();
 
         while (matingPool.size() < n) {  //Repeat so we select n individuals
@@ -250,7 +250,7 @@ public class ParentSelection {
      * @param n
      * @return
      */
-    public List<Individual> stochasticUniversalSample(List<Individual> population, List<Double> weights, int n) { //n is population size
+    private List<Individual> stochasticUniversalSample(List<Individual> population, List<Double> weights, int n) { //n is population size
         List<Individual> matingPool = new ArrayList<>();
         double cumulativeWeight = 0;   //Represents the starting position of the roulette wheel
         int index = 0; int p = 0;

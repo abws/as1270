@@ -30,7 +30,7 @@ public class Recombination {
         this.CROSSOVER_RATE = crossoverRate;
     }
 
-    public List<Individual> recombineOnePoint(ArrayList<Individual> matingPool, int offspringSize) {
+    public List<Individual> recombineOnePoint(List<Individual> matingPool, int offspringSize) {
         //crossover
         List<Individual> offSpring = new ArrayList<>();
         while (offSpring.size() < offspringSize) {
