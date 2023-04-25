@@ -5,4 +5,4 @@ for x in f:
     x = float(x)
     array.append(x)
 
-print(array) 
+print(array)  

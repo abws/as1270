@@ -1,10 +1,6 @@
 package research.geneticalgorithm;
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-
-import javax.security.auth.x500.X500Principal;
 
 public class Mutation {
     private Problem problem;
@@ -463,8 +459,8 @@ public class Mutation {
             double rate = slidingBox(new String(indivArray.toString()), position1);
             if (indivArray.charAt(position1) == '1') { //only change if its a one
                 // rate = x;
-                // rate = MUT_RATE * (1 + (1.5*(rate)));
-                rate = rate /10;
+                rate = MUT_RATE * (1 + (1.5*(rate)));
+                // rate = rate /10;
                 // rate = MUT_RATE + rate;
             }
             // else {

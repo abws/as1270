@@ -10,7 +10,7 @@ public class GeneticAlgorithm {
     public static void run(Problem problem, int generations) {
         int popSize = problem.POP_SIZE;
         ParentSelection ps = new ParentSelection(problem);
-        Recombination r = new Recombination(problem, 0.7);
+        Recombination r = new Recombination(problem, 0.8);
         Mutation m = new Mutation(problem, 0.01);
         Replacement rp = new Replacement(problem);
         Repair re = new Repair(problem);
@@ -26,10 +26,10 @@ public class GeneticAlgorithm {
             matingPool = ps.tournamentSelection(population, popSize, popSize/2, false); //parent selection
 
             // offSpring = r.recombineUniform(matingPool, popSize, 0.5); //recombination
-            offSpring = r.recombineNPoint(matingPool, popSize, problem.N_TURBINES / 4); //recombination
+            offSpring = r.recombineNPoint(matingPool, popSize, problem.N_TURBINES/4); //recombination
             // offSpring = r.recombineOnePoint(matingPool, popSize); //recombination
 
-            offSpring = re.repairRandom(m.mutatePopulationSwap(offSpring)); //mutation and repair
+            offSpring = re.repairInformed(m.mutatePopulationRandom(offSpring)); //mutation and repair
             population = rp.elitism(population, offSpring, 1); //survival selection
 
         }

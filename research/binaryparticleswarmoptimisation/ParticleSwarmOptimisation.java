@@ -14,13 +14,25 @@ import java.util.List;
  * @version 03/03/23
  */
 public class ParticleSwarmOptimisation {
-    int swarmSize;      //Size of population
-    double c1;          //Acceleration factor for cognitive component  
-    double c2;          //Acceleration factor for cognitive component 
-    int maxIterations;  //Maximum number of iterations
-    double wMin;        //Minimum weight
-    double wMax;        //Maximum weight
+    int swarmSize;        //Size of population
+    double c1;            //Acceleration factor for cognitive component  
+    double c2;            //Acceleration factor for cognitive component 
+    int maxIterations;    //Maximum number of iterations
+    double wMin;          //Minimum weight
+    double wMax;          //Maximum weight
+    double clampConstant; //Clamp constant
+    double[] vMax;          //Maximum velocity
+    boolean useWeight = false;
+    boolean useClamp = false;
     Problem problem;    
+
+    ParticleSwarmOptimisation(int swarmSize, double c1, double c2, int maxIterations, Problem problem) {
+        this.swarmSize = swarmSize;
+        this.c1 = c1;
+        this.c2 = c2;
+        this.maxIterations = maxIterations;
+        this.problem = problem;
+    }
 
     ParticleSwarmOptimisation(int swarmSize, double c1, double c2, double wMin, double wMax, int maxIterations, Problem problem) {
         this.swarmSize = swarmSize;
@@ -29,10 +41,23 @@ public class ParticleSwarmOptimisation {
         this.maxIterations = maxIterations;
         this.wMin = wMin;
         this.wMax = wMax;
-
+        this.useWeight = true;
         this.problem = problem;
     }
 
+    ParticleSwarmOptimisation(int swarmSize, double c1, double c2, double wMin, double wMax, double clampConstant, int maxIterations, Problem problem) {
+        this.swarmSize = swarmSize;
+        this.c1 = c1;
+        this.c2 = c2;
+        this.maxIterations = maxIterations;
+        this.wMin = wMin;
+        this.wMax = wMax;
+        this.clampConstant = clampConstant;
+        this.useClamp = true;
+        this.problem = problem;
+        this.vMax = intiateClamp(clampConstant, problem.height, problem.width);
+
+    }
 
     /**
     * Main loop iteratively moving particles along search space 
@@ -73,6 +98,7 @@ public class ParticleSwarmOptimisation {
 
                 /* Update velocity and position */
                 double[] newVelocity = vectorAddition(inertia, cognitive, social);
+                if (useClamp) newVelocity = clamp(newVelocity, clampConstant);
                 double[] normalisedVelocity = sigmoid(newVelocity);
                 int[] newPosition = updatePosition(p.getPosition(), normalisedVelocity);    //combine with bottom for efficiency
                 newPosition = problem.repairRandom(newPosition);
@@ -83,7 +109,7 @@ public class ParticleSwarmOptimisation {
 
                 /* Update local and global best */
                 problem.updateGlobalBest(p.getPersonalBestFitness(), p.getPersonalBest());    //will only update if pBest is better than gBest
-                                // problem.updateLocalBest(swarm, swarm.indexOf(p));    //will only update if pBest is better than lBest
+                // problem.updateLocalBest(swarm, swarm.indexOf(p));    //will only update if pBest is better than lBest
 
             }
             weight -= wStep;
@@ -237,5 +263,24 @@ public class ParticleSwarmOptimisation {
             else newPosition[i] = 0;
         }
         return newPosition;
+    }
+
+
+ 
+    private double[] intiateClamp(double c, double height, double width) {
+        this.vMax = new double[height * width];
+        for (int i = 0; i < vMax.length; i+=+) {
+            this.vMax[i] = c * (height - width);
+        }
+    }
+
+    private double[] clamp(double[] velocity, double c) {
+        double max
+        for (int i = 0; i < velocity.length; i+=2) {
+            velocity[i] = Math.min(currentVector[i], this.vMax[i]);
+        }
+
+        return currentVector;
+        
     }
 }

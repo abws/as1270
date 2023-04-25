@@ -64,7 +64,74 @@ public class Repair {
         return cleanPop;
     }
 
-     /**
+
+    public List<Individual> repairInformed(List<Individual> pop) {
+            for (int i = 0; i < pop.size(); i++) {
+                Individual ind = pop.get(i);
+                ind = removeWorst(ind);
+                pop.set(i, ind);    //mutate each individual in the offspring array
+            }
+        return pop;
+    }
+
+    public Individual removeWorst(Individual ind) {
+        Random r = new Random();
+        String value = ind.getValue();
+        StringBuilder indivArray = new StringBuilder(value);
+
+        int turbineCount = problem.countTurbines(value);
+        int difference = turbineCount - problem.N_TURBINES;
+        if (difference > 0) problem.evaluate(ind.getValue());
+        double[] turbineIndexes = problem.evaluator.getTurbineFitnesses();
+
+        while (difference > 0) {    //we have too many turbines
+            int coordinatePosition = problem.lowestIndex(turbineIndexes); //position of turbine in list of turbines
+            int position = problem.getPosition(ind.getValue(), coordinatePosition); //position of turbine in grid
+            Character c = indivArray.charAt(position);
+            if (c == '1') {
+                indivArray.setCharAt(position, '0');
+                difference--;
+            }
+
+        }
+
+        while (difference < 0) {    //we have too few turbines
+            int position = r.nextInt(INDIV_LENGTH); //position to add turbine to
+            Character c = indivArray.charAt(position);
+            if (c == '0') {
+                indivArray.setCharAt(position, '1');
+                difference++;
+            }
+        }
+        ind.setValue(indivArray.toString());
+        return ind; 
+    }
+    
+
+
+
+
+
+  /**
+   * DO NOT USE THE FOLLOWING CODE.
+   * IT IS FOR EXPERIMENTAL PURPOSES
+   * AND CONTAINS AND NUMBER OF SIGNIFICANT
+   * BUGS. I REPEAT, DO NOT, UNDER ANY
+   * CIRCUMSTANCES, USE THE FOLLOWING CODE.
+   */
+
+
+
+
+
+
+
+
+
+
+
+
+    /**
      * Overview method
      * @param offSpring
      * @return
@@ -263,132 +330,4 @@ public class Repair {
         ind.setValue(indivArray.toString());
         return ind;
     }
-
-    public List<Individual> repairInformed(List<Individual> pop) {
-            for (int i = 0; i < pop.size(); i++) {
-                Individual ind = pop.get(i);
-                ind = removeWorst(ind);
-                pop.set(i, ind);    //mutate each individual in the offspring array
-            }
-        return pop;
-    }
-
-    public Individual removeWorst(Individual ind) {
-        Random r = new Random();
-        String value = ind.getValue();
-        StringBuilder indivArray = new StringBuilder(value);
-
-        problem.evaluate(ind.getValue());
-        double[] turbineIndexes = problem.evaluator.getTurbineFitnesses();
-
-        int turbineCount = problem.countTurbines(value);
-        int difference = turbineCount - problem.N_TURBINES;
-
-        while (difference > 0) {    //we have too many turbines
-            int coordinatePosition = problem.lowestIndex(turbineIndexes); //position of turbine in list of turbines
-            int position = problem.getPosition(ind.getValue(), coordinatePosition); //position of turbine in grid
-            
-            Character c = indivArray.charAt(position);
-            if (c == '1') {
-                indivArray.setCharAt(position, '0');
-                difference--;
-            }
-        }
-
-        while (difference < 0) {    //we have too few turbines
-            int position = r.nextInt(INDIV_LENGTH); //position to add turbine to
-            Character c = indivArray.charAt(position);
-            if (c == '0') {
-                indivArray.setCharAt(position, '1');
-                difference++;
-            }
-        }
-        ind.setValue(indivArray.toString());
-        return ind; 
-    }
-
-    public List<Individual> repairInformedSlidingBox(List<Individual> pop) {
-        for (int i = 0; i < pop.size(); i++) {
-            Individual ind = pop.get(i);
-            ind = removeWorstSlidingBox(ind);
-            pop.set(i, ind);    //mutate each individual in the offspring array
-        }
-
-        return pop;
-    }
-//complete
-    public Individual removeWorstSlidingBox(Individual ind) {
-        Random r = new Random();
-        String value = ind.getValue();
-        StringBuilder indivArray = new StringBuilder(value);
-
-        problem.evaluate(ind.getValue());
-        double[] turbineIndexes = problem.evaluator.getTurbineFitnesses();
-
-        int turbineCount = problem.countTurbines(value);
-        int difference = turbineCount - problem.N_TURBINES;
-
-        while (difference > 0) {    //we have too many turbines
-            int coordinatePosition = problem.lowestIndex(turbineIndexes); //position of turbine in list of turbines
-            int position = problem.getPosition(ind.getValue(), coordinatePosition); //position of turbine in grid
-            
-            Character c = indivArray.charAt(position);
-            if (c == '1') {
-                indivArray.setCharAt(position, '0');
-                difference--;
-            }
-        }
-
-        while (difference < 0) {    //we have too few turbines
-            int position = r.nextInt(INDIV_LENGTH); //position to add turbine to
-            Character c = indivArray.charAt(position);
-            if (c == '0') {
-                indivArray.setCharAt(position, '1');
-                difference++;
-            }
-        }
-        ind.setValue(indivArray.toString());
-        return ind; 
-    }
-  
-
-    /**
-     * Builds a 3x3 box around the turbine of focus
-     * @param individual
-     * @param position
-     */
-    private double slidingBoxv2(String individual, int position) {
-        //bits' position in farm
-        int y = (position / columns) + 1;
-        int x = (position % columns) + 1;
-        int[][] grid = gridifyZeroPad(individual, columns, rows);
-
-        double sum = 
-        grid[y-1][x-1] +
-        grid[y-1][x] +
-        grid[y-1][x+1] +
-        grid[y][x-1] +
-        grid[y][x] +
-        grid[y][x+1] +
-        grid[y+1][x-1] +
-        grid[y+1][x] +
-        grid[y+1][x+1];
-
-        sum /= 9;
-        return sum;
-    }
-    public int[][] gridifyZeroPad(String ind, int x, int y) {
-        int[][] grid = new int[y+2][x+2]; //[rows][columns] since rows are 'bigger' and classified by first
-        int count = 0;
-
-        for (int i = 1; i < y-1; i ++) {
-            for (int j = 1; j < x-1; j++) {
-                grid[i][j] = Character.getNumericValue(ind.charAt(count));
-                count++;
-            }
-        }
-
-        return grid;
-    }
-    
 }

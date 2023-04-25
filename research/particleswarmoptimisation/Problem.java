@@ -286,9 +286,148 @@ public class Problem {
                     manner = spacialShift(repulser, manner, distance, z, 1); 
                 }
             }
+            for (int r = 0; r < layout.length; r++) {
+                if (r != m) {
+                    repulser = layout[r];
+                    double distance = calculateEuclideanDistance(repulser, manner);
+                    if (distance > z) continue;
+
+                    manner = spacialShift(repulser, manner, distance, z, 1); 
+                }
+            }
 
             layout[m] = manner;
         }
+
+        return layout;
+    }
+
+    public double[][] geometricReformerRight(double[][] layout, double z) {
+        double[] manner;
+        double[] repulser;
+
+        for (int m = 0; m < layout.length; m++) {
+            manner = layout[m];
+
+            for (int r = 0; r < layout.length; r++) {
+                if (r != m) {
+                    repulser = layout[r];
+                    double distance = calculateEuclideanDistance(repulser, manner);
+                    if (distance > z) continue;
+
+                    manner = spacialShiftRight(repulser, manner, distance, z, 1); 
+                }
+            }
+
+            layout[m] = manner;
+        }
+
+        return layout;
+    }
+
+    /**
+     * Latest edition that combines the 
+     * repairment of both constraints. Uses 
+     * a periodic boundary repair. The complexity
+     * of this may be infinite though. As a result,
+     * we may fix a layout and completely reform its
+     * spacial structure since we loop so many time. 
+     * Furthermore, a valid comparison may not be possible
+     * because of this extra functionality.
+     * @param layout the layout to potentially modify
+     * @param z the minimum distance between two points
+     * @return a feasible layout
+     */
+    public double[][] geometricReformerEmbedded(double[][] layout, double z) {
+        double[] manner;
+        double[] repulser;
+
+        for (int m = 0; m < layout.length; m++) {
+            manner = layout[m];
+
+            for (int r = 0; r < layout.length; r++) {
+                if (r != m) {
+                    repulser = layout[r];
+                    double distance = calculateEuclideanDistance(repulser, manner);
+                    if (distance > z) continue;
+
+                    manner = spacialShift(repulser, manner, distance, z, 1);
+                    if (manner[0] < 0) {
+                        manner[0] = (manner[0] % width) + width; //so we wrap wround 
+                        r = 0;
+                    }
+                    if (manner[1] < 0) {
+                        manner[1] = (manner[1] % height) + height;
+                        r = 0;
+                    }
+                    if (manner[0] > this.width) {
+                        manner[0] = (manner[0] % width); 
+                        r=0;
+                    }
+                    if (manner[1] > this.height) {
+                        manner[1] = (manner[1] % height); 
+                        r=0;
+                    }
+                }
+            }
+
+            layout[m] = manner;
+        }
+
+        return layout;
+    }
+
+    /**
+     * Both the turbines repulse one another
+     * in this scheme
+     * @param layout the layout to potentially modify
+     * @param z the minimum distance between two points
+     * @return a feasible layout
+     */
+    public double[][] geometricReformerRepulse(double[][] layout, double z) {
+        double[] manner;
+        double[] repulser;
+
+        for (int m = 0; m < layout.length; m++) {
+            manner = layout[m];
+
+            for (int r = 0; r < layout.length; r++) {
+                if (r != m) {
+                    repulser = layout[r];
+                    double distance = calculateEuclideanDistance(repulser, manner);
+                    if (distance > z) continue;
+
+                    layout = repulse(layout, repulser, manner, r, m, distance, z); 
+                }
+            }
+        }
+
+        return layout;
+    }
+
+
+    public double[][] repulse(double[][] layout, double[] repulser, double[] manner, int r, int m, double distance, double z) {
+        distance = distance/2;
+        double x1 = repulser[0];
+        double y1 = repulser[1];
+
+        double x2 = manner[0];
+        double y2 = manner[1];
+
+        double x3 = (x1 + x2) / 2.0;    //mid point
+        double y3 = (y1 + y2) / 2.0; 
+
+        double shiftedPositionX1 = (((x3 - x1) * z) / distance) + x3; 
+        double shiftedPositionY1 = (((y3 - y1) * z) / distance) + y3; 
+
+        double shiftedPositionX2 = (((x3 - x2) * z) / distance) + x3; 
+        double shiftedPositionY2 = (((y3 - y2) * z) / distance) + y3;
+
+        double[] shiftedPosition1 = new double[]{shiftedPositionX1, shiftedPositionY1};
+        double[] shiftedPosition2 = new double[]{shiftedPositionX2, shiftedPositionY2};
+
+        layout[r] =  shiftedPosition1;
+        layout[m] =  shiftedPosition2;
 
         return layout;
     }
@@ -467,13 +606,22 @@ public class Problem {
      * @param layout
      * @return
      */
-    public int countViolations(double[][] layout) {
+    public int countProximityViolations(double[][] layout) {
         int count = 0;
         for (int i = 0; i < layout.length; i++) {     //loop through each edge only once (n(n+1)/n) - ~doubles speed
             for (int j = i+1; j < layout.length; j++) {
                 if (calculateEuclideanDistance(layout[i], layout[j]) < 308 ) count++;
             }
         }
+        return count;
+    }
+
+    public int countBoundaryViolations(double[][] layout) {
+        int count = 0;
+        for (double[] l: layout) {     //loop through each edge only once (n(n+1)/n) - ~doubles speed
+            if ((l[0] < 0) || (l[1] < 0) || (l[0] > this.width) || (l[1] > this.height)) count++;
+        }
+
         return count;
     }
 

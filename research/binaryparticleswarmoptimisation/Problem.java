@@ -230,6 +230,28 @@ public class Problem {
         return randomParticle;
     }
 
+    public Particle createRandomParticleSpecial() {
+        Random random = new Random();
+        int counter = 0;
+        int[] randomPosition = new int[particleDimension];
+        double[] velocity = new double[particleDimension];  //instantiate with all zeros
+
+        while (counter != nTurbines) {
+            int randomIndex = random.nextInt(particleDimension);
+            if (randomPosition[randomIndex] != 1) {
+                randomPosition[randomIndex] = 1;
+                counter++;
+            }
+        }
+
+        // for (int i = 0; i < particleDimension; i++) {
+        //     randomPosition[i] = random.nextInt(2);    //x coordinate
+        // }
+
+        Particle randomParticle = new Particle(randomPosition, velocity, this);
+        return randomParticle;
+    }
+
     public int[] repairRandom(int[] position) {
         Random r = new Random();
         int n = countTurbines(position);
@@ -256,11 +278,12 @@ public class Problem {
 
     public int[] repairWorst(int[] position) {
         int[] tempPosition = Arrays.copyOf(position, position.length);
-        evaluate(position);
-        double[] turbineIndexes = evaluator.getTurbineFitnesses();
 
         int n = countTurbines(position);
         int difference = n - nTurbines; 
+
+        if (difference > 0) evaluate(position);
+        double[] turbineIndexes = evaluator.getTurbineFitnesses();
 
         while (difference > 0) {    //we have too many turbines
             int coordinatePosition = lowestIndex(turbineIndexes); //position of turbine in list of turbines
