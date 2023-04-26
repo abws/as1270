@@ -621,7 +621,6 @@ public class Problem {
         for (double[] l: layout) {     //loop through each edge only once (n(n+1)/n) - ~doubles speed
             if ((l[0] < 0) || (l[1] < 0) || (l[0] > this.width) || (l[1] > this.height)) count++;
         }
-
         return count;
     }
 

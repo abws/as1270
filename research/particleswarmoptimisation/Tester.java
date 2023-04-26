@@ -37,6 +37,7 @@ public class Tester {
                 writer.write("Proximity Violations: " + problem.countProximityViolations(coordinates) + "\n");
                 writer.write("Boundary Violations: " + problem.countBoundaryViolations(coordinates) + "\n");
                 writer.write("Coordinates: " + Arrays.deepToString(coordinates) + "\n\n");
+                System.out.println(problem.countProximityViolations(coordinates));
 
                 coordinates = problem.geometricReformer(coordinates, problem.minDist);
                 writer.write("After geometricReformerx2:\n");

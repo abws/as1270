@@ -2,19 +2,19 @@ package research.simulatedannealing;
 
 /**
  * Class for representing 
- * a solution from the simulated
+ * a state from the simulated
  * annealing algorithm
  * @author Abdiwahab Salah
  * @version 20.02.23
  */
-public class Solution {
+public class State {
     public int[][] grid;
     public double fitness;
 
     public Problem problem;
 
 
-    Solution(int[][] grid, Problem problem) {
+    State(int[][] grid, Problem problem) {
         this.grid = grid;
         this.problem = problem;
 

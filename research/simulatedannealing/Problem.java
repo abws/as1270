@@ -57,12 +57,12 @@ public class Problem {
      * space really matters.
      * @return
      */
-    public Solution generateInitialSolution() {
+    public State generateInitialState() {
         int[][] solution = new int[row][col];
         int x, y;
         Random r = new Random();
         double count = 0;
-        double step = (row * col) / (double) nTurbines;   //by taking a greater step, we can avoid unnecessarily crowing turbines (will get less than nturbines). By doing this, we can then exploit random position to further benefit the cause
+        double step = (row * col) / (double) nTurbines;   //by taking a greater step, we can avoid unnecessarily crowding turbines (will get less than nturbines). By doing this, we can then exploit random position to further benefit the cause
 
         while (count < row * col) {
             y = ((int) count / col);
@@ -84,7 +84,7 @@ public class Problem {
             }
         }
 
-        return new Solution(solution, this);
+        return new State(solution, this);
     }
 
     /**

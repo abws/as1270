@@ -20,21 +20,24 @@ public class ParticleSwarmOptimisation {
     int maxIterations;    //Maximum number of iterations
     double wMin;          //Minimum weight
     double wMax;          //Maximum weight
-    double clampConstant; //Clamp constant
-    double[] vMax;          //Maximum velocity
+    double c = (c1*Math.random()) + (c2*Math.random()); //constriction factor
+    double k;
+    
     boolean useWeight = false;
-    boolean useClamp = false;
+    boolean useConstriction = false;
+    boolean useRing = false;
     Problem problem;    
 
-    ParticleSwarmOptimisation(int swarmSize, double c1, double c2, int maxIterations, Problem problem) {
+    ParticleSwarmOptimisation(int swarmSize, double c1, double c2, int maxIterations, boolean useRing, Problem problem) {
         this.swarmSize = swarmSize;
         this.c1 = c1;
         this.c2 = c2;
         this.maxIterations = maxIterations;
+        this.useRing = useRing;
         this.problem = problem;
     }
 
-    ParticleSwarmOptimisation(int swarmSize, double c1, double c2, double wMin, double wMax, int maxIterations, Problem problem) {
+    ParticleSwarmOptimisation(int swarmSize, double c1, double c2, double wMin, double wMax, int maxIterations, boolean useRing, Problem problem) {
         this.swarmSize = swarmSize;
         this.c1 = c1;
         this.c2 = c2;
@@ -42,21 +45,18 @@ public class ParticleSwarmOptimisation {
         this.wMin = wMin;
         this.wMax = wMax;
         this.useWeight = true;
+        this.useRing = useRing;
         this.problem = problem;
     }
 
-    ParticleSwarmOptimisation(int swarmSize, double c1, double c2, double wMin, double wMax, double clampConstant, int maxIterations, Problem problem) {
+    ParticleSwarmOptimisation(int swarmSize, double c1, double c2, double k, int maxIterations, boolean useRing, Problem problem) {
         this.swarmSize = swarmSize;
         this.c1 = c1;
         this.c2 = c2;
         this.maxIterations = maxIterations;
-        this.wMin = wMin;
-        this.wMax = wMax;
-        this.clampConstant = clampConstant;
-        this.useClamp = true;
+        this.useConstriction = true;
+        this.useRing = useRing;
         this.problem = problem;
-        this.vMax = intiateClamp(clampConstant, problem.height, problem.width);
-
     }
 
     /**
@@ -66,11 +66,16 @@ public class ParticleSwarmOptimisation {
     */
     public void run() {
         /* Initialise weight step size for inertia */
-        double weight = wMax;
-        double wStep = problem.calculateWeightStep(wMax, wMin, maxIterations);
-        int iteration = 0;
-
-        List<Particle> swarm = problem.initialiseSwarm(swarmSize);
+        double weight, wStep; weight = 1; wStep = 0;
+        if (useWeight){
+            weight = wMax;
+            wStep = problem.calculateWeightStep(wMax, wMin, maxIterations);
+        }
+        int iteration = 0; 
+        
+        List<Particle> swarm;
+        if (useRing) swarm = problem.initialiseSwarmRing(swarmSize);
+        else swarm = problem.initialiseSwarm(swarmSize);
 
         while (iteration < maxIterations) {
 
@@ -81,7 +86,7 @@ public class ParticleSwarmOptimisation {
             double[] randomiserArray2 = generateRandomiserVector(problem.particleDimension); 
             for (Particle p : swarm) {
                 /* Calculate Inertia */
-                double[] inertia = scalarMultipy(1, p.getVelocity()); 
+                double[] inertia = scalarMultipy(weight, p.getVelocity()); 
 
                 /* Calculate cognitive component */
                 double[] distanceToPBest = vectorDifference(p.getPersonalBest(), p.getPosition());
@@ -89,16 +94,21 @@ public class ParticleSwarmOptimisation {
                 double[] cognitive = scalarMultipy(c1, randomisedPDistance);
                 
                 // /* Calculate social component */
-                double[] distanceToGBest = vectorDifference(problem.gBest, p.getPosition());
-                double[] randomisedGDistance = hadamardProduct(distanceToGBest, randomiserArray2);
-                double[] social = scalarMultipy(c2, randomisedGDistance);
-                //  double[] distanceToLBest = vectorDifference(problem.lBest[swarm.indexOf(p)], p.getPosition());
-                // double[] randomisedLDistance = hadamardProduct(distanceToLBest, randomiserArray2);
-                // double[] social = scalarMultipy(c2, randomisedLDistance);
+                double[] social;
+                if (useRing) {
+                    double[] distanceToLBest = vectorDifference(problem.lBest[swarm.indexOf(p)], p.getPosition());
+                    double[] randomisedLDistance = hadamardProduct(distanceToLBest, randomiserArray2);
+                    social = scalarMultipy(c2, randomisedLDistance);
+                }
+                else {
+                    double[] distanceToGBest = vectorDifference(problem.gBest, p.getPosition());
+                    double[] randomisedGDistance = hadamardProduct(distanceToGBest, randomiserArray2);
+                    social = scalarMultipy(c2, randomisedGDistance);
+                }
 
                 /* Update velocity and position */
                 double[] newVelocity = vectorAddition(inertia, cognitive, social);
-                if (useClamp) newVelocity = clamp(newVelocity, clampConstant);
+                if (useConstriction) newVelocity = constrictionFactor(newVelocity, k, c);
                 double[] normalisedVelocity = sigmoid(newVelocity);
                 int[] newPosition = updatePosition(p.getPosition(), normalisedVelocity);    //combine with bottom for efficiency
                 newPosition = problem.repairRandom(newPosition);
@@ -108,9 +118,8 @@ public class ParticleSwarmOptimisation {
                 p.setVelocity(newVelocity);
 
                 /* Update local and global best */
-                problem.updateGlobalBest(p.getPersonalBestFitness(), p.getPersonalBest());    //will only update if pBest is better than gBest
-                // problem.updateLocalBest(swarm, swarm.indexOf(p));    //will only update if pBest is better than lBest
-
+                if (useRing) problem.updateLocalBest(swarm, swarm.indexOf(p));
+                else problem.updateGlobalBest(p.getPersonalBestFitness(), p.getPersonalBest());    //will only update if pBest is better than gBest/lBest
             }
             weight -= wStep;
             iteration++;
@@ -241,9 +250,9 @@ public class ParticleSwarmOptimisation {
      * @param c - Constant, set at c1+c2
      * @return
      */
-    public double[] constrictionFactor(double[] velocity, double c) {
-        double k = 2.0 / Math.abs(2 - c - Math.sqrt(Math.pow(c, 2) - (4*c)));
-        velocity = scalarMultipy(k, velocity);
+    public double[] constrictionFactor(double[] velocity, double k, double c) {
+        double x = (2.0*k) / Math.abs(2 - c - Math.sqrt(Math.pow(c, 2) - (4*c)));
+        velocity = scalarMultipy(x, velocity);
         return velocity;
     }
 
@@ -265,22 +274,4 @@ public class ParticleSwarmOptimisation {
         return newPosition;
     }
 
-
- 
-    private double[] intiateClamp(double c, double height, double width) {
-        this.vMax = new double[height * width];
-        for (int i = 0; i < vMax.length; i+=+) {
-            this.vMax[i] = c * (height - width);
-        }
-    }
-
-    private double[] clamp(double[] velocity, double c) {
-        double max
-        for (int i = 0; i < velocity.length; i+=2) {
-            velocity[i] = Math.min(currentVector[i], this.vMax[i]);
-        }
-
-        return currentVector;
-        
-    }
 }
