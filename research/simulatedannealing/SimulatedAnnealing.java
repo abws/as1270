@@ -36,7 +36,11 @@ public class SimulatedAnnealing {
             System.out.println(current.getFitness());
 
             // State neighbour = perturbate(current);
-            State neighbour = relocate(current);
+            // State neighbour = relocate(current);
+            // State neighbour = relocateSlidingBox(current);
+            State neighbour = relocateSlidingBoxGreedy(current);
+
+
 
             double p = maxMetropolisAlgorithm(current.getFitness(), neighbour.getFitness(), temperature);
             // System.out.println("probs: "+ p);
@@ -62,7 +66,7 @@ public class SimulatedAnnealing {
     private double maxMetropolisAlgorithm(double current, double neighbour, double t) {
         if (neighbour > current) return 1;
 
-        double difference = -(current - neighbour) * 100;
+        double difference = -(current - neighbour) * 1000;
 
         double p = Math.exp(difference / t);
         return p;
@@ -169,6 +173,59 @@ public class SimulatedAnnealing {
             grid[y2][x2] = temp;
         }
 
+        return new State(grid, problem);
+    }
+
+    private State relocateSlidingBox(State current) {
+        Random r = new Random();
+        String state = problem.stringify(current.getGrid());
+        StringBuilder stateArray = new StringBuilder(state);
+
+        for (int i = 0; i < (stateArray.length()); i++) {
+            if (stateArray.charAt(i) != '1') continue; //only change if its a one
+            int position1 = i;
+
+
+            int position2 = r.nextInt(stateArray.length());
+
+            // double rate = MUT_RATE;
+            double rate = problem.slidingBox(new String(stateArray.toString()), position1);
+            if (Math.random() < rate*(1-temperature)) {
+                char temp = stateArray.charAt(position1);
+                stateArray.setCharAt(position1, stateArray.charAt(position2));
+                stateArray.setCharAt(position2, temp);  
+            }
+        }
+
+        int[][] grid = problem.gridify(stateArray.toString(), problem.col, problem.row);
+        return new State(grid, problem);
+    }
+
+    private State relocateSlidingBoxGreedy(State current) {
+        Random r = new Random();
+        String state = problem.stringify(current.getGrid());
+        StringBuilder stateArray = new StringBuilder(state);
+
+        for (int i = 0; i < (stateArray.length()); i++) {
+            if (stateArray.charAt(i) != '1') continue; //only change if its a one
+            int position1 = i;
+
+
+            int position2 = r.nextInt(stateArray.length());
+            char newChar = stateArray.charAt(position2) == '1' ? '0' : '1'; //flips the bit, //could use XOR
+
+            position2 = problem.getNearest(stateArray.toString(), position2, newChar);
+
+            // double rate = MUT_RATE;
+            double rate = problem.slidingBox(new String(stateArray.toString()), position1);
+            if (Math.random() < rate*(1-temperature)) {
+                char temp = stateArray.charAt(position1);
+                stateArray.setCharAt(position1, stateArray.charAt(position2));
+                stateArray.setCharAt(position2, temp);  
+            }
+        }
+
+        int[][] grid = problem.gridify(stateArray.toString(), problem.col, problem.row);
         return new State(grid, problem);
     }
 

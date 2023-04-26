@@ -58,7 +58,7 @@ public class Problem {
      */
     public double evaluate(int[] position) {
         double[][] particleCoordinates = decode(position);
-        double fitness = evaluator.evaluate_2014(particleCoordinates);
+        double fitness = evaluator.evaluate(particleCoordinates);
 
         return fitness;
     }
@@ -226,9 +226,7 @@ public class Problem {
         for (int i = 0; i < 4; i++) {
             randomPosition[i] = random.nextInt(2000)- 1000;    //a, b, c, d
         }
-
         Vector randomvector = new Vector(randomPosition, true, this);
-        System.out.println(Arrays.toString(randomvector.getLayout()));
         return randomvector;
     }
 

@@ -5,8 +5,8 @@ import java.util.Random;
 import research.api.java.*;
 
 public class Problem {
-    private KusiakLayoutEvaluator evaluator;
-    private WindScenario scenario;
+    public KusiakLayoutEvaluator evaluator;
+    public WindScenario scenario;
     public int nTurbines;
     public int popSize;
     public int col;
@@ -48,6 +48,39 @@ public class Problem {
         return layout;
     }
     
+    /**
+     * Gridifies a string
+     * @param ind The string to be gridified
+     * @param x The width of the grid
+     * @param y The height of the grid
+     * @return A two-dimensional array representing the grid
+     * @tested
+     */
+    public int[][] gridify(String state, int x, int y) {
+        int[][] grid = new int[y][x]; //[rows][columns] since rows are 'bigger' and classified by first
+        int count = 0;
+
+        for (int i = 0; i < y; i ++) {
+            for (int j = 0; j < x; j++) {
+                grid[i][j] = Character.getNumericValue(state.charAt(count));
+                count++;
+            }
+        }
+
+        return grid;
+    }
+
+    public String stringify(int[][] grid) {
+        String state = "";
+
+        for (int i = 0; i < grid.length; i ++) {
+            for (int j = 0; j < grid[0].length; j++) {
+                state += grid[i][j];
+            }
+        }
+
+        return state;
+    }
 
     /**
      * Generates a solution whereby
@@ -116,6 +149,77 @@ public class Problem {
 
         return coordinates;
     }
+
+    public int getNearest(String indiv, int position, char value) {//value is either '1' or '0'
+    Random rand = new Random();
+    int r, l;
+    r = l = position;
+    while (indiv.charAt(position) != value) { //basically while true if we ever enter the loop
+        boolean b = rand.nextBoolean();
+        if (b) {
+            r = Math.min(r+2, indiv.length()-1);   //to move as far as possible from 'bad' regions (regions that are rich with the thing we want to add or remove) - experiment with how this value changes optimisation, if it does
+            if (indiv.charAt(r) == value) return r;
+
+        } else {
+            l = Math.max(l-2, 0);
+            if (indiv.charAt(l) == value) return l;
+
+        }
+
+
+    }
+    return position;
+}
+
+    /**
+     * Builds a 3x3 box around the turbine of focus
+     * @param individual
+     * @param position
+     */
+    public double slidingBox(String individual, int position) {
+        //bits' position in farm
+        int y = (position / col) + 1;
+        int x = (position % col) + 1;
+        int[][] grid = gridifyZeroPad(individual, col, row);
+
+        double sum = 
+        grid[y-1][x-1] +
+        grid[y-1][x] +
+        grid[y-1][x+1] +
+        grid[y][x-1] +
+        grid[y][x] +
+        grid[y][x+1] +
+        grid[y+1][x-1] +
+        grid[y+1][x] +
+        grid[y+1][x+1];
+
+        sum /= 9;
+        return sum;
+    }
+
+        
+    /**
+     * Gridifies a string
+     * @param ind The string to be gridified
+     * @param x The width of the grid
+     * @param y The height of the grid
+     * @return A two-dimensional array representing the grid
+     * @tested
+     */
+    public int[][] gridifyZeroPad(String ind, int x, int y) {
+        int[][] grid = new int[y+2][x+2]; //[rows][columns] since rows are 'bigger' and classified by first
+        int count = 0;
+
+        for (int i = 1; i < y-1; i ++) {
+            for (int j = 1; j < x-1; j++) {
+                grid[i][j] = Character.getNumericValue(ind.charAt(count));
+                count++;
+            }
+        }
+
+        return grid;
+    }
+
 
     
 }
