@@ -17,7 +17,6 @@ public class GeneticAlgorithm {
 
 
         List<Individual> population = problem.getRandomPopulation(popSize, problem.INDIV_LENGTH, problem.N_TURBINES);
-        
         for (int i = 0; i < generations; i++) {
             System.out.println(Collections.max(problem.getFitnessesArrayList(population)));
             List<Individual> matingPool = new ArrayList<>();
@@ -28,10 +27,11 @@ public class GeneticAlgorithm {
             // offSpring = r.recombineUniform(matingPool, popSize, 0.5); //recombination
             offSpring = r.recombineNPoint(matingPool, popSize, problem.N_TURBINES/4); //recombination
             // offSpring = r.recombineOnePoint(matingPool, popSize); //recombination
+            // offSpring = r.recombineNPoint(matingPool, popSize, 50); //recombination
 
-            offSpring = re.repairInformed(m.mutatePopulationRandom(offSpring)); //mutation and repair
+            offSpring = re.repairRandom(m.mutatePopulationSwapSlidingBox(offSpring)); //mutation and repair
             population = rp.elitism(population, offSpring, 1); //survival selection
-
         }
     }
+    
 }
