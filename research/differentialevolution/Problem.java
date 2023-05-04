@@ -399,6 +399,7 @@ public class Problem {
 
         return layout;
     }
+    
 
 
     public double[][] repulse(double[][] layout, double[] repulser, double[] manner, int r, int m, double distance, double z) {
@@ -420,7 +421,6 @@ public class Problem {
 
         double[] shiftedPosition1 = new double[]{shiftedPositionX1, shiftedPositionY1};
         double[] shiftedPosition2 = new double[]{shiftedPositionX2, shiftedPositionY2};
-        double neww = calculateEuclideanDistance(shiftedPosition1, shiftedPosition2);
 
         layout[r] =  shiftedPosition1;
         layout[m] =  shiftedPosition2;
@@ -451,6 +451,45 @@ public class Problem {
                     manner = spacialShift(repulser, manner, distance, z, 1);
                     if (manner[0] < 0) {
                         manner[0] = (manner[0] % width) + width; //so we wrap wround 
+                        r = 0;
+                    }
+                    if (manner[1] < 0) {
+                        manner[1] = (manner[1] % height) + height;
+                        r = 0;
+                    }
+                    if (manner[0] > this.width) {
+                        manner[0] = (manner[0] % width); 
+                        r=0;
+                    }
+                    if (manner[1] > this.height) {
+                        manner[1] = (manner[1] % height); 
+                        r=0;
+                    }
+                }
+            }
+
+            layout[m] = manner;
+        }
+
+        return layout;
+    }
+
+    public double[][] geometricReformerHybrid(double[][] layout, double z) {
+        double[] manner;
+        double[] repulser;
+
+        for (int m = 0; m < layout.length; m++) {
+            manner = layout[m];
+
+            for (int r = 0; r < layout.length; r++) {
+                if (r != m) {
+                    repulser = layout[r];
+                    double distance = calculateEuclideanDistance(repulser, manner);
+                    if (distance > z) continue;
+
+                    manner = spacialShift(repulser, manner, distance, z, 1);
+                    if (manner[0] < 0) {
+                        manner[0] = (manner[0] % width) + width; 
                         r = 0;
                     }
                     if (manner[1] < 0) {

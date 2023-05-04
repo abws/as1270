@@ -19,23 +19,23 @@ public class Tests {
         Repair re = new Repair(problem);
 
 
-        String outputFilename = "/Users/abdiwahabsalah/Documents/GitLab/as1270/research/geneticalgorithm/02-Perf-sliding.txt";
+        String outputFilename = "/Users/abdiwahabsalah/Documents/GitLab/as1270/research/geneticalgorithm/lattice/03g.txt";
 
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(outputFilename))) {
-            for (int n = 0; n < 30; n++) {
+            for (int n = 0; n < 1; n++) {
                 List<Individual> population = problem.getRandomPopulation(popSize, problem.INDIV_LENGTH, problem.N_TURBINES);
                 for (int i = 0; i < generations; i++) {
                     double maxFitness = Collections.max(problem.getFitnessesArrayList(population));
+                    System.out.println(maxFitness);
                     bw.write(maxFitness + " ");
 
                     List<Individual> matingPool = new ArrayList<>();
                     List<Individual> offSpring = new ArrayList<>();
 
                     matingPool = ps.tournamentSelection(population, popSize, popSize / 2, false); //parent selection
+                    offSpring = r.recombineNPoint(matingPool, popSize, problem.N_TURBINES/4); //recombination
 
-                    offSpring = r.recombineNPoint(matingPool, popSize, problem.N_TURBINES/8); //recombination
-
-                    offSpring = re.repairRandom(m.mutatePopulationSwapSlidingBox(offSpring)); //mutation and repair
+                    offSpring = re.repairRandom(m.mutatePopulationSwap(offSpring)); //mutation and repair
                     population = rp.elitism(population, offSpring, 1); //survival selection
                 }
                 bw.newLine();

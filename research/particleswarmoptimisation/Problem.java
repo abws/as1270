@@ -286,15 +286,6 @@ public class Problem {
                     manner = spacialShift(repulser, manner, distance, z, 1); 
                 }
             }
-            for (int r = 0; r < layout.length; r++) {
-                if (r != m) {
-                    repulser = layout[r];
-                    double distance = calculateEuclideanDistance(repulser, manner);
-                    if (distance > z) continue;
-
-                    manner = spacialShift(repulser, manner, distance, z, 1); 
-                }
-            }
 
             layout[m] = manner;
         }
@@ -618,7 +609,7 @@ public class Problem {
 
     public int countBoundaryViolations(double[][] layout) {
         int count = 0;
-        for (double[] l: layout) {     //loop through each edge only once (n(n+1)/n) - ~doubles speed
+        for (double[] l: layout) {     //loop through each edge only once (n(n-1)/n) - ~doubles speed
             if ((l[0] < 0) || (l[1] < 0) || (l[0] > this.width) || (l[1] > this.height)) count++;
         }
         return count;
@@ -626,7 +617,7 @@ public class Problem {
 
     public boolean boundaryViolated(double[] position) {
         double[][] layout = decodeDirect(position);
-        for (double[] l: layout) {     //loop through each edge only once (n(n+1)/n) - ~doubles speed
+        for (double[] l: layout) {     //loop through each edge only once (n(n-1)/n) - ~doubles speed
             if ((l[0] < 0) || (l[1] < 0) || (l[0] > this.width) || (l[1] > this.height)) return true;
         }
 

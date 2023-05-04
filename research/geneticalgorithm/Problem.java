@@ -63,7 +63,7 @@ public class Problem {
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
                 if (gridIndividual[i][j] == 1) {
-                    layout[count] = getMeshCoordinates(i, j, minDist);
+                    layout[count] = getCoordinatesX(i, j, minDist);
                     count++;
                 }
             }
@@ -89,17 +89,50 @@ public class Problem {
         return coordinates;
     }
 
-    private double[] getMeshCoordinates(int y, int x, double minDist) {
+    private double[] getMeshCoordinatesLR(int y, int x, double minDist) {
         int maxX = columns;
         int maxY = rows;
-
         double [] coordinates = new double[2];
         coordinates[0] = (x * minDist) + (y * (minDist / maxY));
-
         coordinates[1] = ((maxY - y) * minDist) - (x * (minDist / maxX));
 
         return coordinates;
     }
+
+    private double[] getMeshCoordinatesRL(int y, int x, double minDist) {
+        int maxX = columns;
+        int maxY = rows;
+        double [] coordinates = new double[2];
+        coordinates[0] = ((maxX - x) * minDist) - (y * (minDist / maxY));
+        coordinates[1] = ((maxY - y) * minDist) - (x * (minDist / maxX));
+
+        return coordinates;
+    }
+
+    private double[] getCoordinatesY(int y, int x, double minDist) {
+        double [] coordinates = new double[2];
+        coordinates[0] = ((x * minDist));
+        if (x % 2 == 0) {
+            coordinates[1] = ((y * minDist) + (minDist / 2));
+        } else {
+            coordinates[1] = ((y * minDist));
+        }
+
+        return coordinates;
+    }
+
+    private double[] getCoordinatesX(int y, int x, double minDist) {
+        double [] coordinates = new double[2];
+        if (y % 2 == 0) {
+            coordinates[0] = ((x * minDist) + (minDist / 2));
+        } else {
+            coordinates[0] = ((x * minDist));
+        }
+        coordinates[1] = ((y * minDist) + (minDist / 2));
+
+        return coordinates;
+    }
+
 
     /**
      * Gridifies a string
