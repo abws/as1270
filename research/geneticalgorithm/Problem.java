@@ -63,7 +63,7 @@ public class Problem {
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
                 if (gridIndividual[i][j] == 1) {
-                    layout[count] = getCoordinatesX(i, j, minDist);
+                    layout[count] = getMeshCoordinatesRL(i, j, minDist);
                     count++;
                 }
             }
@@ -82,6 +82,14 @@ public class Problem {
      * @tested
      */
     private double[] getCoordinates(int y, int x, double minDist) {
+        double [] coordinates = new double[2];
+        coordinates[0] = (x * minDist);
+        coordinates[1] = (y * minDist);
+
+        return coordinates;
+    }
+
+    private double[] getCoordinatesCenter(int y, int x, double minDist) {
         double [] coordinates = new double[2];
         coordinates[0] = ((x * minDist) + (minDist / 2));
         coordinates[1] = ((y * minDist) + (minDist / 2));
@@ -128,7 +136,7 @@ public class Problem {
         } else {
             coordinates[0] = ((x * minDist));
         }
-        coordinates[1] = ((y * minDist) + (minDist / 2));
+        coordinates[1] = y * minDist;
 
         return coordinates;
     }

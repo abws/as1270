@@ -1,4 +1,4 @@
-package research.algorithms;
+package research.miscellaneous.algorithms;
 
 import java.util.*;
 

@@ -19,7 +19,7 @@ public class Tests {
         Repair re = new Repair(problem);
 
 
-        String outputFilename = "/Users/abdiwahabsalah/Documents/GitLab/as1270/research/geneticalgorithm/lattice/03g.txt";
+        String outputFilename = "/Users/abdiwahabsalah/Documents/GitLab/as1270/research/geneticalgorithm/lattice/01g.txt";
 
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(outputFilename))) {
             for (int n = 0; n < 1; n++) {
@@ -27,7 +27,7 @@ public class Tests {
                 for (int i = 0; i < generations; i++) {
                     double maxFitness = Collections.max(problem.getFitnessesArrayList(population));
                     System.out.println(maxFitness);
-                    bw.write(maxFitness + " ");
+                    // bw.write(maxFitness + " ");
 
                     List<Individual> matingPool = new ArrayList<>();
                     List<Individual> offSpring = new ArrayList<>();

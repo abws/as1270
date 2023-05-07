@@ -9,7 +9,7 @@ import research.api.java.*;
 
 public class Tester {
     public static void main(String[] args) throws Exception {
-        WindScenario ws = new WindScenario("/Users/abdiwahabsalah/Documents/GitLab/as1270/research/testscenarios/0.xml");
+        WindScenario ws = new WindScenario("/Users/abdiwahabsalah/Documents/GitLab/as1270/research/testscenarios/1.xml");
 
         KusiakLayoutEvaluator evaluator = new KusiakLayoutEvaluator();
         evaluator.initialize(ws);
@@ -29,14 +29,13 @@ public class Tester {
                 writer.write("Proximity Violations: " + problem.countProximityViolations(coordinates) + "\n");
                 writer.write("---------------------------------------------"+"\n\n");
 
-                coordinates = problem.decodeDirect(swarm.get(i).getPosition());
+                coordinates = Arrays.copyOf(problem.decodeDirect(swarm.get(i).getPosition()), problem.nTurbines);
                 coordinates = problem.geometricReformer(coordinates, problem.minDist);
                 writer.write("After geometricReformer:\n");
                 writer.write("Proximity Violations: " + problem.countProximityViolations(coordinates) + "\n");
                 writer.write("Boundary Violations: " + problem.countBoundaryViolations(coordinates) + "\n");
                 writer.write("Coordinates: " + Arrays.deepToString(coordinates) + "\n\n");
                 System.out.println(problem.countProximityViolations(coordinates));
-
                 coordinates = problem.geometricReformer(coordinates, problem.minDist);
                 writer.write("After geometricReformerx2:\n");
                 writer.write("Proximity Violations: " + problem.countProximityViolations(coordinates) + "\n");
@@ -45,13 +44,12 @@ public class Tester {
 
                 writer.write("---------------------------------------------\n\n");
 
-                coordinates = problem.decodeDirect(swarm.get(i).getPosition());
+                coordinates = Arrays.copyOf(problem.decodeDirect(swarm.get(i).getPosition()), problem.nTurbines);
                 coordinates = problem.geometricReformerRight(coordinates, problem.minDist);
                 writer.write("After geometricReformerRight:\n");
                 writer.write("Proximity Violations: " + problem.countProximityViolations(coordinates) + "\n");
                 writer.write("Boundary Violations: " + problem.countBoundaryViolations(coordinates) + "\n");
                 writer.write("Coordinates: " + Arrays.deepToString(coordinates) + "\n\n");
-
                 coordinates = problem.geometricReformerRight(coordinates, problem.minDist);
                 writer.write("After geometricReformerRightx2:\n");
                 writer.write("Proximity Violations: " + problem.countProximityViolations(coordinates) + "\n");
@@ -60,13 +58,12 @@ public class Tester {
 
                 writer.write("---------------------------------------------\n\n");
         
-                coordinates = problem.decodeDirect(swarm.get(i).getPosition());
+                coordinates = Arrays.copyOf(problem.decodeDirect(swarm.get(i).getPosition()), problem.nTurbines);
                 coordinates = problem.geometricReformerRepulse(coordinates, problem.minDist);
                 writer.write("After geometricReformerRepulse:\n");
                 writer.write("Proximity Violations: " + problem.countProximityViolations(coordinates) + "\n");
                 writer.write("Boundary Violations: " + problem.countBoundaryViolations(coordinates) + "\n");
                 writer.write("Coordinates: " + Arrays.deepToString(coordinates) + "\n\n");
-
                 coordinates = problem.geometricReformerRepulse(coordinates, problem.minDist);
                 writer.write("After geometricReformerRepulsex2:\n");
                 writer.write("Proximity Violations: " + problem.countProximityViolations(coordinates) + "\n");

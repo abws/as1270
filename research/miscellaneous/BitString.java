@@ -1,4 +1,4 @@
-package research;
+package research.miscellaneous;
 
 public class BitString {
     private String BitString;
