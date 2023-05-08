@@ -13,7 +13,7 @@ public class Main {
         //List<String> values = output.stream().map(Individual::getValue).collect(Collectors.toList());
     
 
-        GeneticAlgorithm.run(problem, 100, 10);
+//        GeneticAlgorithm.run(problem, 100, 10);
 
     }
 

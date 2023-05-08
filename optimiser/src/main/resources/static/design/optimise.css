@@ -5,6 +5,7 @@
 }
 * {
     background-color: inherit!important;
+
 }
 .title {
     font-family: 'Inter', sans-serif;
@@ -16,7 +17,7 @@
 .header {
     display: flex;
     flex-direction: row;
-    justify-content: space-between; 
+    justify-content: space-between;
     margin: 1em 1.8em 0em 1.8em;
 }
 
@@ -32,6 +33,8 @@
 }
 .header-optimise {
     padding: 0.4em;
+    white-space: nowrap!important;
+
 }
 
 .active {
@@ -57,7 +60,7 @@
     display: flex;
     flex-direction: column;
     gap: 0.6em;
-    
+
 }
 
 .evaluation-functions {
@@ -182,9 +185,74 @@ input::-webkit-inner-spin-button {
     margin: 2em 0 2em 20%;
 }
 
-.wind-farm {
+/* Real-time progress */
+.monitor {
+    position: absolute;
+    top: 50vh;
+    left: 50vw;
+    transform: translate(-50%, -50%);
+    width: fit-content;
+    height: fit-content;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    padding: 20px;
+    background-color: #f8f8f8;
+    border: 1px solid #ddd;
     border-radius: 2em;
-    max-width: 80%!important;
-    min-width: 60em!important;
-    height: 30em!important;
+    font-family: 'Space Mono', monospace;
+    z-index: 2;
+    transition: opacity 0.5s ease-in-out; /* Add this line to set the transition duration and easing function */
+}
+
+.monitor-main {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    flex-grow: 1;
+}
+
+#chart {
+    flex-grow: 1;
+    margin-top: 3em;
+
+}
+
+.energy {
+    margin-left: 3.5em;
+    font-size: 16px;
+    font-weight: bold;
+    white-space: nowrap;
+}
+.stop-button {
+    font-family: 'Space Mono', monospace;
+    color: #363636;
+    font-size: 1.2em;
+    border: 0.15em solid transparent;
+    border-radius: 0.4em;
+    padding: 0.5em 0.8em;
+    background: linear-gradient(white, white) padding-box, linear-gradient(to right, #B80000, #EA8F3B) border-box;
+    box-shadow: 5px 5px 5px #c2c1c1;
+    width: fit-content;
+    margin-top: 3em;
+}
+
+/* Add the blur effect */
+.blur::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    backdrop-filter: blur(5px);
+    z-index: 1;
+}
+
+.hide {
+    opacity: 0; /* Change from 'display: none' to 'opacity: 0' for smooth transition */
+    pointer-events: none; /* Add this line to disable user interactions with the hidden element */
 }

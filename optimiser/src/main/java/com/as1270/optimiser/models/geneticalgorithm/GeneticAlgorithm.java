@@ -1,5 +1,9 @@
 package com.as1270.optimiser.models.geneticalgorithm;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.web.socket.TextMessage;
+import org.springframework.web.socket.WebSocketSession;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -7,7 +11,7 @@ import java.util.List;
 //remember, since the lists contains objects, changing their values in a function will change their true values
 public class GeneticAlgorithm {
 
-    public static double[][] run(Problem problem, int generations, int popSize) {
+    public static double[][] run(Problem problem, int generations, int popSize, WebSocketSession session, ObjectMapper objectMapper) throws Exception {
         ParentSelection ps = new ParentSelection(problem);
         Recombination r = new Recombination(problem, 0.7);
         Mutation m = new Mutation(problem, 0.1);
@@ -18,6 +22,7 @@ public class GeneticAlgorithm {
         
         for (int i = 0; i < generations; i++) {
             System.out.println(Collections.max(problem.getFitnessesArrayList(population)));
+            session.sendMessage(new TextMessage(objectMapper.writeValueAsString(Collections.max(problem.getFitnessesArrayList(population)))));
             List<Individual> matingPool = new ArrayList<>();
             List<Individual> offSpring = new ArrayList<>();
 
