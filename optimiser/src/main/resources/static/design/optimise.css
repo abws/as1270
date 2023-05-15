@@ -1,10 +1,12 @@
 :root {
     background-color: #FAFAFA!important;
     color: #494848!important;
-    /* height: 100vh; */
 }
-* {
+
+body {
+    min-height: 100vh;
     background-color: inherit!important;
+
 
 }
 .title {
@@ -37,7 +39,7 @@
 
 }
 
-.active {
+.active-header {
     border: 1px solid transparent;
     border-radius: 0.7em;
     background: linear-gradient(#FAFAFA, #FAFAFA) padding-box, linear-gradient(to right, #0098EE, #3BEADF) border-box;
@@ -49,6 +51,7 @@
     justify-content: space-between;
     margin: 1em 1.8em 0em 1.8em;
     flex: 1;
+    height: -webkit-fill-available;
 }
 
 
@@ -60,6 +63,7 @@
     display: flex;
     flex-direction: column;
     gap: 0.6em;
+    min-width: fit-content;
 
 }
 
@@ -132,13 +136,11 @@
     width: 100%;
 }
 
-.algorithm.active, .algorithm:hover {
+.active, .algorithm:hover {
     border: 0.3em solid transparent;
     border-radius: 2em;
     background: linear-gradient(white, white) padding-box, linear-gradient(to right, #0098EE, #3BEADF) border-box;
     transition: all 0.2s ease-in-out;
-
-
 }
 
 .algorithm-input {
@@ -199,7 +201,7 @@ input::-webkit-inner-spin-button {
     align-items: center;
     box-sizing: border-box;
     padding: 20px;
-    background-color: #f8f8f8;
+    background-color: rgba(255, 255, 255, 0.89);
     border: 1px solid #ddd;
     border-radius: 2em;
     font-family: 'Space Mono', monospace;
@@ -226,7 +228,9 @@ input::-webkit-inner-spin-button {
     font-size: 16px;
     font-weight: bold;
     white-space: nowrap;
+    color: #079600;
 }
+
 .stop-button {
     font-family: 'Space Mono', monospace;
     color: #363636;
@@ -238,6 +242,29 @@ input::-webkit-inner-spin-button {
     box-shadow: 5px 5px 5px #c2c1c1;
     width: fit-content;
     margin-top: 3em;
+}
+
+.complete-button {
+    font-family: 'Space Mono', monospace;
+    color: #363636;
+    font-size: 1.2em;
+    border: 0.15em solid transparent;
+    border-radius: 0.4em;
+    padding: 0.5em 0.8em;
+    background: linear-gradient(white, white) padding-box, linear-gradient(to right, #00B53D, #76FFAD) border-box;
+    box-shadow: 5px 5px 5px #c2c1c1;
+    width: fit-content;
+    margin-top: 3em;
+}
+
+.destroy {
+    display: none;
+
+
+}
+
+span#update {
+    color:#4e79a3
 }
 
 /* Add the blur effect */
@@ -255,4 +282,118 @@ input::-webkit-inner-spin-button {
 .hide {
     opacity: 0; /* Change from 'display: none' to 'opacity: 0' for smooth transition */
     pointer-events: none; /* Add this line to disable user interactions with the hidden element */
+}
+
+.visualise {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.8rem;
+    background-color: white!important;
+    box-shadow: 5px 5px 20px #c2c1c1;
+    border-radius: 2em;
+    max-width: 30em;
+    min-width: 20em;
+    height: fit-content;
+    overflow-wrap: break-word;
+    text-align: center;
+    margin: 1.2em;
+    border: 0.3em solid transparent;
+    border-radius: 2em;
+    background: linear-gradient(white, white) padding-box, linear-gradient(to right, #0098EE, #3BEADF) border-box;
+    transition: all 0.2s ease-in-out;
+    padding: 0.3em;
+}
+
+
+.visualise div {
+    margin: 0.5em 0 0.2em 0 ;
+    width: 90%;
+    overflow: hidden;
+}
+
+.visualise img {
+    object-fit: cover;
+    border-radius: 2em;
+    height: 100%;
+    width: 100%;
+}
+
+.redirect {
+    display: flex;
+    justify-content: space-around;
+  }
+/*manipulate children*/
+.redirect > * {
+    margin: 0!important;
+    font-size: 1.2rem;
+    align-self: center;
+  }
+
+.report {
+    font-family: 'Space Mono', monospace;
+    color: #363636;
+    font-size: 1.2em;
+    border: 0.15em solid transparent;
+    border-radius: 0.4em;
+    padding: 0.8em 0.5em;
+    background: linear-gradient(white, white) padding-box, linear-gradient(to right, #00B53D, #76FFAD) border-box;
+    box-shadow: 5px 5px 5px #c2c1c1;
+    width: fit-content;
+}
+
+a {
+    text-decoration: none !important;
+    color: #363636 !important;
+}
+.result {
+    font-family: 'Space Mono', monospace;
+    font-size: 1.5rem;
+    color: #0076B8;
+}
+.footer {
+    font-family: Montserrat, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+}
+
+.footer > * {
+    align-self: center;
+    margin-left: 0.5em
+}
+
+.main-visualise {
+    display: flex;
+    flex-direction: column;
+    align-items: space-between;
+    justify-content: center;
+    margin-right: 50%;
+}
+
+.environment {
+    /* box-shadow: 5px 5px 20px #c2c1c1; */
+    border-radius: 0.5em;
+    padding: 0.2em 0.5em;
+    background-color: #FAFAFA!important;
+    border: 1px solid #1274d69d;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.9rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.8rem;
+    background-color: white!important;
+    box-shadow: 5px 5px 20px #c2c1c1;
+    border-radius: 2em;
+    max-width: 15em;
+    min-width: 15em;
+    height: fit-content;
+    overflow-wrap: break-word;
+    text-align: center;
+    margin: 1.2em;
 }

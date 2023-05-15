@@ -12,7 +12,7 @@ public class WebSocketConfig implements WebSocketConfigurer {
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(new GeneticAlgorithmHandler(), "/optimise-connect") //this guy handles all traffic (*) to optimise-connect
+        registry.addHandler(new GeneticAlgorithmHandler(), "/optimise-socket") //this guy handles all traffic (*) to optimise-connect
                 .setAllowedOrigins("*");
     }
 }

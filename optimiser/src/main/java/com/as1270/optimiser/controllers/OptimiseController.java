@@ -16,4 +16,8 @@ public class OptimiseController {
     public String showOptimisePage() {
         return "optimise";
     }
+    @GetMapping("/wind-farm")
+    public String showWindFarm() {
+        return "wind-farm";
+    }
 }

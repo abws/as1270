@@ -1,7 +1,6 @@
 package research.simulatedannealing;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -35,10 +34,10 @@ public class SimulatedAnnealing {
         while (i < iterations) {
             System.out.println(current.getFitness());
 
-            // State neighbour = perturbate(current);
+            State neighbour = perturbate(current);
             // State neighbour = relocate(current);
             // State neighbour = relocateSlidingBox(current);
-            State neighbour = relocateSlidingBoxGreedy(current);
+            // State neighbour = relocateSlidingBoxGreedy(current);
 
 
 
@@ -185,10 +184,8 @@ public class SimulatedAnnealing {
             if (stateArray.charAt(i) != '1') continue; //only change if its a one
             int position1 = i;
 
-
             int position2 = r.nextInt(stateArray.length());
 
-            // double rate = MUT_RATE;
             double rate = problem.slidingBox(new String(stateArray.toString()), position1);
             if (Math.random() < rate*(1-temperature)) {
                 char temp = stateArray.charAt(position1);
