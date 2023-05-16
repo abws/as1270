@@ -5,7 +5,6 @@ const energy = document.getElementById("energy")
 const stop = document.getElementById("stop")
 const complete = document.getElementById("complete")
 const algorithms = document.querySelectorAll(".algorithm")
-
 algorithms.forEach((algorithm) => {
     algorithm.addEventListener("click", () => {
 
@@ -60,13 +59,26 @@ form.addEventListener("submit", (event) => {
     body.classList.toggle("blur")
     monitor.classList.toggle("hide")
 
+
     const data = new FormData(form);
 
     const jsonData = {};
     for (const [key, value] of data.entries()) {
-        jsonData[key] = value;
-    }
+        if(value instanceof File){
+            // Create a new FileReader object
+            let reader = new FileReader();
 
+            // Add an event listener for when the file has been loaded
+            reader.addEventListener("load", function () {
+                let base64String = this.result.split(',')[1];
+                jsonData[key] = base64String;
+            }, false);
+            reader.readAsDataURL(value);
+        }
+        else{
+            jsonData[key] = value;
+        }
+    }
     // Connect to the WebSocket
     const socket = new WebSocket("ws://localhost:8080/optimise-socket");
     socket.onopen = (event) => {
@@ -79,6 +91,7 @@ form.addEventListener("submit", (event) => {
             localStorage.setItem('coordinates', event.data)
             stop.classList.toggle("destroy")
             complete.classList.toggle("destroy")
+            update.innerHTML = "optimisation complete (100%)"
             return
         }
         plotData.push({ generation: i++, fitness: parseFloat(event.data) });
@@ -148,35 +161,40 @@ function showVisualise() {
     const visualise = document.createElement("div")
     visualise.classList.add("main-visualise")
     visualise.innerHTML=
-        `
-            <div class="visualise">
-                <img src="../images/wind-farm.jpg" alt="wind-farm">
-                <div class="redirect">
-                    <p>Visualise in 3D</p>
-
-                    <svg width="20" height="20" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M29.144 0H20.9558C20.4801 0 20.0996 0.38055 20.0996 0.856237C20.0996 1.33192 20.4801 1.71247 20.9558 1.71247H27.0763L13.8776 14.9112C13.5415 15.2474 13.5415 15.7865 13.8776 16.1226C14.0425 16.2875 14.2645 16.3763 14.4801 16.3763C14.6958 16.3763 14.9178 16.2939 15.0827 16.1226L28.2878 2.92389V9.0444C28.2878 9.52008 28.6683 9.90063 29.144 9.90063C29.6197 9.90063 30.0002 9.52008 30.0002 9.0444V0.856237C30.0002 0.38055 29.6197 0 29.144 0Z" fill="#656565"/>
-                        <path d="M29.1438 14.6638C28.6681 14.6638 28.2875 15.0444 28.2875 15.5201V23.8224C28.2875 26.2833 26.2833 28.2875 23.8224 28.2875H6.17759C3.7167 28.2875 1.71247 26.2833 1.71247 23.8224V6.17759C1.71247 3.7167 3.7167 1.71247 6.17759 1.71247H14.4165C14.8922 1.71247 15.2727 1.33192 15.2727 0.856237C15.2727 0.38055 14.8922 0 14.4165 0H6.17759C2.77167 0 0 2.77167 0 6.17759V23.8224C0 27.2283 2.77167 30 6.17759 30H23.8224C27.2283 30 30 27.2283 30 23.8224V15.5201C30 15.0444 29.6194 14.6638 29.1438 14.6638Z" fill="#656565"/>
-                    </svg>
+        `    <div>
+                <div class="visualise">
+                    <img src="../images/wind-farm.jpg" alt="wind-farm">
+                    <div class="redirect">
+                        <p>Visualise in 3D</p>
+    
+                        <svg width="20" height="20" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M29.144 0H20.9558C20.4801 0 20.0996 0.38055 20.0996 0.856237C20.0996 1.33192 20.4801 1.71247 20.9558 1.71247H27.0763L13.8776 14.9112C13.5415 15.2474 13.5415 15.7865 13.8776 16.1226C14.0425 16.2875 14.2645 16.3763 14.4801 16.3763C14.6958 16.3763 14.9178 16.2939 15.0827 16.1226L28.2878 2.92389V9.0444C28.2878 9.52008 28.6683 9.90063 29.144 9.90063C29.6197 9.90063 30.0002 9.52008 30.0002 9.0444V0.856237C30.0002 0.38055 29.6197 0 29.144 0Z" fill="#656565"/>
+                            <path d="M29.1438 14.6638C28.6681 14.6638 28.2875 15.0444 28.2875 15.5201V23.8224C28.2875 26.2833 26.2833 28.2875 23.8224 28.2875H6.17759C3.7167 28.2875 1.71247 26.2833 1.71247 23.8224V6.17759C1.71247 3.7167 3.7167 1.71247 6.17759 1.71247H14.4165C14.8922 1.71247 15.2727 1.33192 15.2727 0.856237C15.2727 0.38055 14.8922 0 14.4165 0H6.17759C2.77167 0 0 2.77167 0 6.17759V23.8224C0 27.2283 2.77167 30 6.17759 30H23.8224C27.2283 30 30 27.2283 30 23.8224V15.5201C30 15.0444 29.6194 14.6638 29.1438 14.6638Z" fill="#656565"/>
+                        </svg>
+                    </div>
                 </div>
-            </div>
-            <span class="result"></span>
-
-            <div class="report">
-                Report
-                <a href="/wind-farm" target="_blank">
-                    <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <g clip-path="url(#clip0_406_72)">
-                            <path d="M14.4125 23.4247C14.5733 23.5856 14.7898 23.6722 15.0001 23.6722C15.2104 23.6722 15.4269 23.5918 15.5877 23.4247L22.2372 16.7753C22.565 16.4474 22.565 15.9216 22.2372 15.5938C21.9094 15.266 21.3836 15.266 21.0557 15.5938L15.8351 20.8144V0.835051C15.8351 0.371134 15.464 0 15.0001 0C14.5362 0 14.165 0.371134 14.165 0.835051V20.8144L8.94441 15.5938C8.61657 15.266 8.0908 15.266 7.76297 15.5938C7.43513 15.9216 7.43513 16.4474 7.76297 16.7753L14.4125 23.4247Z" fill="#757575"/>
-                            <path d="M26.3816 28.3299H3.61874C3.15483 28.3299 2.78369 28.701 2.78369 29.1649C2.78369 29.6289 3.15483 30 3.61874 30H26.3816C26.8455 30 27.2167 29.6289 27.2167 29.1649C27.2167 28.701 26.8455 28.3299 26.3816 28.3299Z" fill="#757575"/>
-                        </g>
-                        <defs>
-                            <clipPath id="clip0_406_72">
-                                <rect width="30" height="30" fill="white"/>
-                            </clipPath>
-                        </defs>
-                    </svg>
-                </a>
+                <div>
+                    <span class="result"></span><br>
+                    <span class="result">Economical: 0.56kJ/h</span><br>
+                    <span class="result">Energy: 789999.87kJ</span>
+        
+                    <div class="report">
+                        <span>Report</span>
+                        <a href="/wind-farm" target="_blank">
+                            <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <g clip-path="url(#clip0_406_72)">
+                                    <path d="M14.4125 23.4247C14.5733 23.5856 14.7898 23.6722 15.0001 23.6722C15.2104 23.6722 15.4269 23.5918 15.5877 23.4247L22.2372 16.7753C22.565 16.4474 22.565 15.9216 22.2372 15.5938C21.9094 15.266 21.3836 15.266 21.0557 15.5938L15.8351 20.8144V0.835051C15.8351 0.371134 15.464 0 15.0001 0C14.5362 0 14.165 0.371134 14.165 0.835051V20.8144L8.94441 15.5938C8.61657 15.266 8.0908 15.266 7.76297 15.5938C7.43513 15.9216 7.43513 16.4474 7.76297 16.7753L14.4125 23.4247Z" fill="#757575"/>
+                                    <path d="M26.3816 28.3299H3.61874C3.15483 28.3299 2.78369 28.701 2.78369 29.1649C2.78369 29.6289 3.15483 30 3.61874 30H26.3816C26.8455 30 27.2167 29.6289 27.2167 29.1649C27.2167 28.701 26.8455 28.3299 26.3816 28.3299Z" fill="#757575"/>
+                                </g>
+                                <defs>
+                                    <clipPath id="clip0_406_72">
+                                        <rect width="30" height="30" fill="white"/>
+                                    </clipPath>
+                                </defs>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
             </div>
             
             <div class="footer">

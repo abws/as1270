@@ -1,4 +1,4 @@
-f = open("/Users/abdiwahabsalah/Documents/GitLab/as1270/research/result/results.txt", "r")
+f = open("/Users/abdiwahabsalah/Documents/GitLab/as1270/research/miscellaneous/result/results.txt", "r")
 array = []
 for x in f:
     x = x.strip()

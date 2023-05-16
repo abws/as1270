@@ -14,12 +14,12 @@ public class Tests {
         int popSize = problem.POP_SIZE;
         ParentSelection ps = new ParentSelection(problem);
         Recombination r = new Recombination(problem, 0.8);
-        Mutation m = new Mutation(problem, 0.01);
+        Mutation m = new Mutation(problem, 0.03);
         Replacement rp = new Replacement(problem);
         Repair re = new Repair(problem);
 
 
-        String outputFilename = "/Users/abdiwahabsalah/Documents/GitLab/as1270/research/geneticalgorithm/lattice/01g.txt";
+        String outputFilename = "/Users/abdiwahabsalah/Documents/GitLab/as1270/research/geneticalgorithm/lattice/ga-bit-3.txt";
 
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(outputFilename))) {
             for (int n = 0; n < 1; n++) {
@@ -35,7 +35,7 @@ public class Tests {
                     matingPool = ps.tournamentSelection(population, popSize, popSize / 2, false); //parent selection
                     offSpring = r.recombineNPoint(matingPool, popSize, problem.N_TURBINES/4); //recombination
 
-                    offSpring = re.repairRandom(m.mutatePopulationSwap(offSpring)); //mutation and repair
+                    offSpring = re.repairInformed(m.mutatePopulationSwap(offSpring)); //mutation and repair
                     population = rp.elitism(population, offSpring, 1); //survival selection
                 }
                 bw.newLine();

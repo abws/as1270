@@ -9,6 +9,8 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 import java.util.Map;
+import java.util.Base64;
+import java.nio.charset.StandardCharsets;
 
 public class GeneticAlgorithmHandler extends TextWebSocketHandler {
     private static final ObjectMapper objectMapper = new ObjectMapper();
@@ -19,9 +21,12 @@ public class GeneticAlgorithmHandler extends TextWebSocketHandler {
         Map<String, String> data = objectMapper.readValue(message.getPayload(), new TypeReference<>() {});
         int popSize = Integer.parseInt(data.get("popSize"));
         int generations = Integer.parseInt(data.get("generations"));
+        String environmentB64 = data.get("environment");
+        byte[] environmentBytes = Base64.getDecoder().decode(environmentB64);
+        String environmentXml = new String(environmentBytes, StandardCharsets.UTF_8);
 
         // Set up preliminaries
-        WindScenario ws = new WindScenario("/Users/abdiwahabsalah/Documents/GitLab/as1270/research/api/Scenarios/00.xml");
+        WindScenario ws = new WindScenario(environmentXml);
         KusiakLayoutEvaluator evaluator = new KusiakLayoutEvaluator();
         evaluator.initialize(ws);
         Problem problem = new Problem(evaluator, ws, popSize);

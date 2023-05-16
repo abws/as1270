@@ -1,5 +1,6 @@
 package com.as1270.optimiser.models.api.java;
 import java.io.File;
+import java.io.StringReader;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -8,6 +9,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 
 public class WindScenario {
 	// wind resources
@@ -46,11 +48,11 @@ public class WindScenario {
     public double trans_CT;
     public double minDist;
 
-    public WindScenario(String xmlFileName) throws Exception {
-    	File fXmlFile = new File(xmlFileName);
-    	DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-    	DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-    	Document doc = dBuilder.parse(fXmlFile);
+    public WindScenario(String xmlString) throws Exception {
+		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+		InputSource is = new InputSource(new StringReader(xmlString));
+		Document doc = dBuilder.parse(is);
 
     	doc.getDocumentElement().normalize();
 

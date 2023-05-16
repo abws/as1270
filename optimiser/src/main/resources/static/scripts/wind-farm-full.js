@@ -5,8 +5,26 @@ import { Water } from 'three/addons/objects/Water.js';
 import Stats from 'three/addons/libs/stats.module.js';
 import { addTurbine } from './components/turbine.js';
 
+const input = document.getElementById('coordinates');
+if (localStorage.getItem('coordinates')) {
+    input.value = localStorage.getItem('coordinates');
+}
+else {
+    input.value = '[]';
+    localStorage.setItem('coordinates', JSON.stringify([]));
+}
+
+input .addEventListener('change', (e) => {
+    console.log(e.target.value)
+    //store coordinates in local storage, while also changing it from how it was in input field
+    localStorage.setItem('coordinates', JSON.stringify(JSON.parse(e.target.value)));
+
+
+
+    location.reload();
+});
+
 let container, sizes, renderer, scene, camera, mesh, controls, stats, water, sky, sun, turbines, farmLength, farmWidth;
-if (localStorage.getItem('coordinates') == null) { localStorage.setItem('coordinates', JSON.stringify([]))}
 
 setUp();
 animate();
@@ -16,8 +34,7 @@ function setUp () {
     container = document.querySelector('.wind-farm');
     turbines = JSON.parse(localStorage.getItem('coordinates'))
     console.log(turbines)
-    farmLength = 7000
-    farmWidth = 14000
+
 
     sizes = {
         width: window.innerWidth,
@@ -132,7 +149,7 @@ function setUp () {
     window.addEventListener( 'resize', onWindowResize );
 
     for (let i = 0; i < turbines.length; i++) {
-        addTurbineToScene(turbines[i][0], turbines[i][1] - (farmLength));
+        addTurbineToScene(turbines[i][0], turbines[i][1]);
     }
 
 }
@@ -174,6 +191,3 @@ async function addTurbineToScene(x, y) {
     const turbine = await addTurbine(x, y);
     scene.add(turbine.scene);
 }
-
-
-

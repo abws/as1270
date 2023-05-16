@@ -19,6 +19,11 @@ public class Problem {
     public int INDIV_LENGTH;
     public int N_TURBINES;
     public int POP_SIZE;
+    double minDist;
+
+    public int columns;
+    public int rows;
+
 
 
     public Problem(KusiakLayoutEvaluator evaluator, WindScenario scenario, int populationSize) throws Exception {
@@ -29,6 +34,12 @@ public class Problem {
         INDIV_LENGTH = this.getStringLength();
         N_TURBINES = scenario.nturbines;
         POP_SIZE = populationSize;
+        minDist = 8 * scenario.R;
+        rows = (int) (scenario.height / minDist);
+        columns = (int) (scenario.width / minDist);
+
+
+
     }
 
     public double evaluate(String individual) {
@@ -60,7 +71,7 @@ public class Problem {
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
                 if (gridIndividual[i][j] == 1) {
-                    layout[count] = getCoordinates(i, j, minDist);
+                    layout[count] = getMeshCoordinatesLR(i, j, minDist);
                     count++;
                 }
             }
@@ -78,10 +89,12 @@ public class Problem {
      * @return Coordinates (x, y)
      * Tested
      */
-    private double[] getCoordinates(int y, int x, double minDist) {
+    private double[] getMeshCoordinatesLR(int y, int x, double minDist) {
+        int maxX = columns;
+        int maxY = rows;
         double [] coordinates = new double[2];
-        coordinates[0] = ((x * minDist) + (minDist / 2));
-        coordinates[1] = ((y * minDist) + (minDist / 2));
+        coordinates[0] = (x * minDist) + (y * (minDist / maxY));
+        coordinates[1] = ((maxY - y) * minDist) - (x * (minDist / maxX));
 
         return coordinates;
     }

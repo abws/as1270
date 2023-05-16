@@ -6,9 +6,10 @@
 body {
     min-height: 100vh;
     background-color: inherit!important;
-
-
+    display: flex;
+    flex-direction: column;
 }
+
 .title {
     font-family: 'Inter', sans-serif;
     font-weight: 200;
@@ -220,7 +221,6 @@ input::-webkit-inner-spin-button {
 #chart {
     flex-grow: 1;
     margin-top: 3em;
-
 }
 
 .energy {
@@ -342,6 +342,12 @@ span#update {
     background: linear-gradient(white, white) padding-box, linear-gradient(to right, #00B53D, #76FFAD) border-box;
     box-shadow: 5px 5px 5px #c2c1c1;
     width: fit-content;
+    height: fit-content;
+    margin: auto;
+    margin-top: 1em;
+}
+.report span {
+    margin-right: 0.5em;
 }
 
 a {
@@ -358,18 +364,24 @@ a {
     display: flex;
     justify-content: center;
     align-content: center;
+    margin-left: 5em;
+    margin-bottom: 0.5em;
+    white-space: nowrap;
+    position: relative;
+    left: 50%;
+    /**/
 }
 
 .footer > * {
     align-self: center;
-    margin-left: 0.5em
+    margin-left: 0.5em;
 }
 
 .main-visualise {
     display: flex;
     flex-direction: column;
-    align-items: space-between;
-    justify-content: center;
+    align-items: center;
+    justify-content: space-between;
     margin-right: 50%;
 }
 
