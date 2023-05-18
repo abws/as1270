@@ -14,7 +14,6 @@ import java.util.stream.IntStream;
  * Made up of two type of methods.
  * One method simply combines n parents.
  * The other uses these methods to create n offspring.
- * ONE POINT CROSSOVER is A SPECIAL FORM OF N POINT CROSSOVER
  * @author Abdiwahab Salah
  * @version 07/02/23
  */
@@ -30,6 +29,13 @@ public class Recombination {
         this.CROSSOVER_RATE = crossoverRate;
     }
 
+    /**
+     * One point crossover (overview method)
+     * ONE POINT CROSSOVER is A SPECIAL FORM OF N POINT CROSSOVER
+     * @param matingPool
+     * @param offspringSize
+     * @return
+     */
     public List<Individual> recombineOnePoint(List<Individual> matingPool, int offspringSize) {
         //crossover
         List<Individual> offSpring = new ArrayList<>();
@@ -54,6 +60,13 @@ public class Recombination {
         return offSpring;
     }
 
+    /**
+     * N point crossover (overview method)
+     * @param matingPool
+     * @param offspringSize
+     * @param n
+     * @return
+     */
     public List<Individual> recombineNPoint(List<Individual> matingPool, int offspringSize, int n) {
         //crossover
         List<Individual> offSpring = new ArrayList<>();
@@ -78,30 +91,14 @@ public class Recombination {
         return offSpring;
     }
 
-    public List<Individual> recombineNPointFixed(List<Individual> matingPool, int offspringSize, int n) {
-        //crossover
-        List<Individual> offSpring = new ArrayList<>();
-        while (offSpring.size() < offspringSize) {
 
-            //Select a random pair of parents
-            Random r = new Random();
-            Individual parent1; Individual parent2;
-            parent1 = matingPool.get(r.nextInt(offspringSize)); parent2 = matingPool.get(r.nextInt(offspringSize));
-
-            //Crossover at rate
-            if (Math.random() < CROSSOVER_RATE) {
-                offSpring.addAll(nPointCrossoverFixed(parent1, parent2, n));
-            }
-            else {
-                Individual child1; Individual child2;
-                child1 = new Individual(parent1.getValue(), problem, false); child2 = new Individual(parent2.getValue(), problem, false); 
-
-                offSpring.addAll(Arrays.asList(child1, child2)); //by adding this line, we make the crossover rate meaningful
-            }
-        }
-        return offSpring;
-    }
-
+    /**
+     * Uniform crossover (overview method)
+     * @param matingPool
+     * @param offspringSize
+     * @param p
+     * @return
+     */
     public List<Individual> recombineUniform(List<Individual> matingPool, int offspringSize, double p) {
         //crossover
         List<Individual> offSpring = new ArrayList<>();
@@ -190,72 +187,6 @@ public class Recombination {
             v2.replace(lower, upper, temp);
         }
         
-        String value1, value2; 
-        value1 = v1.toString(); value2 = v2.toString();
-
-        Individual child1, child2;
-        child1 = new Individual(value1, problem, false); child2 = new Individual(value2, problem, false); //dont want to waste away any evaluations right now
-
-        children.addAll(Arrays.asList(child1, child2));
-        return children;    
-    }
-
-    /**
-     * N-point crossover.
-     * Crosses over two parents
-     * at n points and creates
-     * two children with fixed turbine 
-     * count
-     * @param parent1
-     * @param parent2
-     * @param n
-     * @return
-     */
-    public List<Individual> nPointCrossoverFixed(Individual parent1, Individual parent2, int n) {
-        Random r = new Random();
-        n = Math.min(n, INDIV_LENGTH - 1); //make sure n never overflows
-        List<Integer> crossoverPoints = new ArrayList<>(Arrays.asList(0));
-        List<Individual> children = new ArrayList<>();
-
-        StringBuilder v1 = new StringBuilder(parent1.getValue());
-        StringBuilder v2 = new StringBuilder(parent2.getValue());
-
-        while (crossoverPoints.size() < n+1) { //since 0 is already contained, we want to 'ignore' it
-            int cp = r.nextInt(INDIV_LENGTH - 1) + 1;
-            if (!crossoverPoints.contains(cp)) crossoverPoints.add(cp);
-        }
-
-        Collections.sort(crossoverPoints);
-
-        if (n % 2 == 0) crossoverPoints.add(INDIV_LENGTH); //so we can wrap to the end
-
-        int lower, upper;
-
-        for (int i = 1; i < crossoverPoints.size(); i+=2) {
-            lower = crossoverPoints.get(i - 1);
-            upper = crossoverPoints.get(i); //account for i and i+1 here so no need to loop n times 
-
-            String temp = v1.substring(lower, upper); //save here since child1 is about to change for good
-
-            v1.replace(lower, upper, v2.substring(lower, upper));
-            v2.replace(lower, upper, temp);
-        }
-
-        int turbineCount = problem.countTurbines(v1.toString());
-        int difference = turbineCount - problem.N_TURBINES;
-
-        while (difference > 0) {    //we have too many turbines in child 1 (v1)
-            //start giving back the turbines
-            Random rand = new Random();
-            int index = rand.nextInt(INDIV_LENGTH);
-            if (v1.charAt(index) == '1') {
-                v1.setCharAt(index, '0');
-                difference--;
-            }
-
-        }
-        while (difference < 0) {    //we have too little turbines
-        }
         String value1, value2; 
         value1 = v1.toString(); value2 = v2.toString();
 

@@ -65,6 +65,14 @@ public class Repair {
     }
 
 
+    /**
+     * Informed repair.
+     * Removes the worst turbines
+     * if excess. Otherwise random.
+     * Warning: Calls evaluation function! 
+     * @param pop
+     * @return
+     */
     public List<Individual> repairInformed(List<Individual> pop) {
             for (int i = 0; i < pop.size(); i++) {
                 Individual ind = pop.get(i);
@@ -113,22 +121,13 @@ public class Repair {
 
 
   /**
-   * DO NOT USE THE FOLLOWING CODE.
+   * WARNING.
+   * BEWARE OF USING THE FOLLOWING CODE.
    * IT IS FOR EXPERIMENTAL PURPOSES
    * AND CONTAINS AND NUMBER OF SIGNIFICANT
-   * BUGS. I REPEAT, DO NOT, UNDER ANY
-   * CIRCUMSTANCES, USE THE FOLLOWING CODE.
+   * BUGS.
+   * USER DISCRETION IS ADVISED.
    */
-
-
-
-
-
-
-
-
-
-
 
 
     /**

@@ -8,7 +8,12 @@ import java.util.List;
 import research.api.java.KusiakLayoutEvaluator;
 import research.api.java.WindScenario;
 
-public class Init {
+/**
+ * Workspace for experimenting on the lattice structures
+ * Feel free to change parameters and run the experiments.
+ * More scenarios can be found in the API package
+ */
+public class Lattice {
     public static void main(String[] args) throws Exception {
         WindScenario ws = new WindScenario("/Users/abdiwahabsalah/Documents/GitLab/as1270/research/testscenarios/2.xml");
 

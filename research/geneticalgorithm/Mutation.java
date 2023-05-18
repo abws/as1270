@@ -2,6 +2,13 @@ package research.geneticalgorithm;
 import java.util.List;
 import java.util.Random;
 
+
+/**
+ * Mutation class.
+ * Each mutation strategy has a main method that 
+ * iterates through the individuals. Each also has a 
+ * specific operator. 
+ */
 public class Mutation {
     private Problem problem;
     public double MUT_RATE;
@@ -20,6 +27,7 @@ public class Mutation {
     }
 
     /**
+     * Bit flipping Mutation Operator.
      * Overview method.
      * Uses the bitmutation method
      * to randomly flip the bits in 
@@ -84,33 +92,11 @@ public class Mutation {
                 int relection = getNearest(indivArray.toString(), indivArray.length()- 1 - i, newChar);    //replicate whatever we do on the other side of the string; assumes a string represents a farm well, which isnt really the case
                 char oppositeChar = newChar == '1' ? '0' : '1'; //flips the bit, //could use XOR
 
-
                 indivArray.setCharAt(relection, oppositeChar);
             }
         }
         individual.setValue(indivArray.toString());
         return individual;
-    }
-
-    private int getNearest(String indiv, int position, char value) {//value is either '1' or '0'
-        Random rand = new Random();
-        int r, l;
-        r = l = position;
-        while (indiv.charAt(position) != value) { //basically while true if we ever enter the loop
-            boolean b = rand.nextBoolean();
-            if (b) {
-                r = Math.min(r+2, indiv.length()-1);   //to move as far as possible from 'bad' regions (regions that are rich with the thing we want to add or remove) - experiment with how this value changes optimisation, if it does
-                if (indiv.charAt(r) == value) return r;
-
-            } else {
-                l = Math.max(l-2, 0);
-                if (indiv.charAt(l) == value) return l;
-
-            }
-
-
-        }
-        return position;
     }
 
     /**
@@ -249,7 +235,8 @@ public class Mutation {
 
     /**
      * Overview method
-     * @param offSpring
+     * Obsolete. Please refer to chapter 4.1 for more details
+     * @param ind
      * @return
      */
     public List<Individual> mutatePopulationStationaryBox(List<Individual> offSpring) {
@@ -263,24 +250,6 @@ public class Mutation {
         }
         return offSpring;
 
-    }
-
-    public double[] stationaryBoxes(String ind) {
-        double[] boxes = new double[(rows - 1) * (columns - 1)];    //number of sliding boxes
-        int count = 0;
-        for (int y = 0; y < rows - 1; y+=2) {
-            for (int x = 0; x < columns - 1; x+=2) {
-                int a = Character.getNumericValue(ind.charAt(((y) * (columns-1)) + x));                  //the 4 coordinates of a box
-                int b = Character.getNumericValue(ind.charAt(((y) * (columns-1)) + x + 1));
-                int c = Character.getNumericValue(ind.charAt(((y+1) * (columns-1)) + x));
-                int d = Character.getNumericValue(ind.charAt(((y+1) * (columns-1)) + x + 1));
-                
-                boxes[count] = (a + b + c + d) / 4.0;
-                count++;
-            }
-        }
-
-        return boxes;
     }
 
     public Individual stationaryBoxMutation(Individual ind, double[] boxes) { //boxes rows are 0 -> (col - 2)
@@ -325,8 +294,6 @@ public class Mutation {
             }
 
         }
-        // System.out.println("Befow: "+problem.countTurbines(ind.getValue()));
-        // System.out.println("After: "+problem.countTurbines(indivArray.toString()));
         ind.setValue(indivArray.toString());
         return ind; 
     }
@@ -337,7 +304,9 @@ public class Mutation {
      * Uses the bitmutation method
      * to randomly flip the bits in 
      * the whole population using a sliding
-     * box heuristic
+     * box heuristic.
+     * Stopped being updated as of March 2023. 
+     * Please refer to the swap sliding box method
      * @param offSpring
      * @return
      */
@@ -378,19 +347,19 @@ public class Mutation {
     }
 
     /**
-     * Basic Swap Mutation
+     * Swap Mutation with Sliding Box heuristic
      * @param offSpring
      * @return
      */
-    public List<Individual> mutatePopulationSwapSlidingBox(List<Individual> offSpring) {
+    public List<Individual> mutatePopulationSwapSlidingBox(List<Individual> offSpring, double g) {
         //mutation
         for (int i = 0; i < offSpring.size(); i++) {
-            offSpring.set(i, bitMutationSwapSlidingBox(offSpring.get(i)));    //mutate each individual in the offspring array
+            offSpring.set(i, bitMutationSwapSlidingBox(offSpring.get(i), g));    //mutate each individual in the offspring array
         }
         return offSpring;
     }
 
-    private Individual bitMutationSwapSlidingBox(Individual individual) {
+    private Individual bitMutationSwapSlidingBox(Individual individual, double g) {
         StringBuilder indivArray = new StringBuilder(individual.getValue());
         Random rand = new Random();
 
@@ -404,7 +373,7 @@ public class Mutation {
             position2 = getNearest(indivArray.toString(), position2, newChar);
 
             double rate = slidingBox(new String(indivArray.toString()), position1);
-            rate = MUT_RATE * (1 + (2*(rate)));
+            rate = MUT_RATE * (1 + (g*(rate)));
 
             if (Math.random() < rate) {
                 char temp = indivArray.charAt(position1);
@@ -416,7 +385,9 @@ public class Mutation {
         return individual;
     }
 
-
+    /**
+     * Helper functions
+     */
 
     /**
      * Builds a 3x3 box around the turbine of focus
@@ -467,6 +438,55 @@ public class Mutation {
         return grid;
     }
 
+    /**
+     * Persists the two locations being swapped
+     * to be different
+     * @param indiv
+     * @param position
+     * @param value
+     * @return
+     */
+    private int getNearest(String indiv, int position, char value) {//value is either '1' or '0'
+        Random rand = new Random();
+        int r, l;
+        r = l = position;
+        while (indiv.charAt(position) != value) { //basically while true if we ever enter the loop
+            boolean b = rand.nextBoolean();
+            if (b) {
+                r = Math.min(r+2, indiv.length()-1);   //to move as far as possible from 'bad' regions (regions that are rich with the thing we want to add or remove) - experiment with how this value changes optimisation, if it does
+                if (indiv.charAt(r) == value) return r;
+
+            } else {
+                l = Math.max(l-2, 0);
+                if (indiv.charAt(l) == value) return l;
+
+            }
 
 
+        }
+        return position;
+    }
+
+    /**
+     * Obsolete. Please refer to chapter 4.1 for more details
+     * @param ind
+     * @return
+     */
+    public double[] stationaryBoxes(String ind) {
+        double[] boxes = new double[(rows - 1) * (columns - 1)];    //number of sliding boxes
+        int count = 0;
+        for (int y = 0; y < rows - 1; y+=2) {
+            for (int x = 0; x < columns - 1; x+=2) {
+                int a = Character.getNumericValue(ind.charAt(((y) * (columns-1)) + x));                  //the 4 coordinates of a box
+                int b = Character.getNumericValue(ind.charAt(((y) * (columns-1)) + x + 1));
+                int c = Character.getNumericValue(ind.charAt(((y+1) * (columns-1)) + x));
+                int d = Character.getNumericValue(ind.charAt(((y+1) * (columns-1)) + x + 1));
+                
+                boxes[count] = (a + b + c + d) / 4.0;
+                count++;
+            }
+        }
+
+        return boxes;
+    }
 }

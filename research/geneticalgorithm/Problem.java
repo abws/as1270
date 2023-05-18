@@ -74,7 +74,8 @@ public class Problem {
     /**
      * Helper method to return
      * turbine coordinates given 
-     * cell they're in within grid
+     * cell they're in within grid.
+     * Add 1 to both the column and row
      * @param y
      * @param x
      * @param minDist
@@ -89,6 +90,14 @@ public class Problem {
         return coordinates;
     }
 
+    /**
+     * Obsolete centered turbines grid
+     * Do not add anything to column and row
+     * @param y
+     * @param x
+     * @param minDist
+     * @return
+     */
     private double[] getCoordinatesCenter(int y, int x, double minDist) {
         double [] coordinates = new double[2];
         coordinates[0] = ((x * minDist) + (minDist / 2));
@@ -97,6 +106,14 @@ public class Problem {
         return coordinates;
     }
 
+    /**
+     * Left to right mesh.
+     * Do not add anything to column and row
+     * @param y
+     * @param x
+     * @param minDist
+     * @return
+     */
     private double[] getMeshCoordinatesLR(int y, int x, double minDist) {
         int maxX = columns;
         int maxY = rows;
@@ -107,6 +124,14 @@ public class Problem {
         return coordinates;
     }
 
+    /**
+     * Right to left mesh
+     * Do not add anything to column and row
+     * @param y
+     * @param x
+     * @param minDist
+     * @return
+     */
     private double[] getMeshCoordinatesRL(int y, int x, double minDist) {
         int maxX = columns;
         int maxY = rows;
@@ -117,6 +142,14 @@ public class Problem {
         return coordinates;
     }
 
+    /**
+     * Hexagonal lattice
+     * Add 1 to column
+     * @param y
+     * @param x
+     * @param minDist
+     * @return
+     */
     private double[] getCoordinatesY(int y, int x, double minDist) {
         double [] coordinates = new double[2];
         coordinates[0] = ((x * minDist));
@@ -129,6 +162,14 @@ public class Problem {
         return coordinates;
     }
 
+    /**
+     * Hexagonal lattice.
+     * Add 1 to row
+     * @param y
+     * @param x
+     * @param minDist
+     * @return
+     */
     private double[] getCoordinatesX(int y, int x, double minDist) {
         double [] coordinates = new double[2];
         if (y % 2 == 0) {
@@ -269,6 +310,11 @@ public class Problem {
         return columns * rows;
     }
 
+    /**
+     * Creates a string from an array of 1s and 0s
+     * @param indivArray
+     * @return
+     */
     private String createString(int[] indivArray) {
         StringBuilder sb = new StringBuilder();
         for(int i : indivArray) {
@@ -306,47 +352,6 @@ public class Problem {
         return sd;
     }
 
-    /**
-     * Repair operator.
-     * Shoots randomly at the farm
-     * and eliminates or introduces 
-     * as many turbines as needed.
-     * @param pop
-     * @return
-     */
-    public List<Individual> repairRandom(List<Individual> pop) {
-        Random r = new Random();
-        List<Individual> cleanPop = new ArrayList<>();
-
-        for (int i = 0; i < pop.size(); i++) {
-            Individual individual = pop.get(i);
-            String value = pop.get(i).getValue();
-            StringBuilder sb = new StringBuilder(value);
-
-            int turbineCount = countTurbines(value);
-            int difference = turbineCount - N_TURBINES;
-            
-            while (difference > 0) {    //we have too many turbines
-                int position = r.nextInt(INDIV_LENGTH); //position to remove turbine from
-                Character c = sb.charAt(position);
-                if (c == '1') {
-                    sb.setCharAt(position, '0');
-                    difference--;
-                }
-            }
-            while (difference < 0) {    //we have too few turbines
-                int position = r.nextInt(INDIV_LENGTH); //position to add turbine to
-                Character c = sb.charAt(position);
-                if (c == '0') {
-                    sb.setCharAt(position, '1');
-                    difference++;
-                }
-            }
-            individual.setValue(sb.toString());
-            cleanPop.add(individual);
-        }
-        return cleanPop;
-    }
 
     /**
      * Counts the number of
@@ -479,5 +484,4 @@ public class Problem {
         }
         return i;
     }
-
 }

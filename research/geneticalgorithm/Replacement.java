@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * updateAllFitnesses must be called at the start of every function since children's fitness hasnt been tested just yet
+ * Also known as Survivor Selection
  */
 public class Replacement {
     Problem problem;
@@ -17,30 +17,19 @@ public class Replacement {
         this.problem = problem;
     }
     
+    /**
+     * Generational. Removes all parents and replaces them with offspring
+     * @param parents
+     * @param offSpring
+     * @return
+     */
     public List<Individual> deleteOldest(List<Individual> parents, List<Individual> offSpring) {
         problem.updateAllFitnesses(offSpring);
         return offSpring;
     }
 
-    // /**
-    //  * Replace worst n from initial population
-    //  * @param parents
-    //  * @param offSpring
-    //  * @param popSize The population size of offspring
-    //  * @return
-    //  */
-    // public List<Individual> deleteOldestN(List<Individual> parents, List<Individual> offSpring, int popSize) {//??????about this method - not sure it is genitorius
-    //     offSpring = offSpring.stream().sorted(Comparator.comparingDouble(individual -> individual.getFitness())).collect(Collectors.toList());    //sort arraylist by fitness
-    //     List<Individual> newOffSpring = new ArrayList<>();
-
-    //     for (int i = popSize; i > 0; i++) {
-    //         newOffSpring.add(offSpring.get(i));
-    //     }
-    //     return newOffSpring;
-    // }
-
     /**
-     * Elitism 
+     * Elitism
      * @param parents
      * @param offSpring
      * @param n
@@ -53,17 +42,11 @@ public class Replacement {
 
         parents = parents.stream().sorted(Comparator.comparingDouble(individual -> individual.getFitness())).collect(Collectors.toList());    //sort arraylist by fitness
         offSpring = offSpring.stream().sorted(Comparator.comparingDouble(individual -> individual.getFitness())).collect(Collectors.toList());    
-        // System.out.println("Before Parents" + Arrays.toString(problem.getFitnesses(parents)));
-        // System.out.println("Before Children" + Arrays.toString(problem.getFitnesses(offSpring)));
         
         int parentIndex = parents.size() - 1;
 
         for (int i = 0; i < n; i++) {
             offSpring.set(i, parents.get(parentIndex));
-
-            // System.out.println("Best from previous: " + parents.get(parentIndex).getFitness());
-            // System.out.println("After Children " + Arrays.toString(problem.getFitnesses(offSpring)));
-
             parentIndex--;
         }
 

@@ -7,7 +7,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-//remember, since the lists contains objects, changing their values in a function will change their true values
+/**
+ * Use this class to run tests on the genetic algorithm and reproduce the results in the dissertation.
+ */
 public class Tests {
 
     public static void run(Problem problem, int generations) {

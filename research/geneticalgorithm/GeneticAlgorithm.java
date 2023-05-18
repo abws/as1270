@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-//remember, since the lists contains objects, changing their values in a function will change their true values
+/**
+ * Instantiate the 4 components below
+ * Follow the template below to change the different schemes
+ */
 public class GeneticAlgorithm {
 
     public static void run(Problem problem, int generations) {
@@ -23,13 +26,8 @@ public class GeneticAlgorithm {
             List<Individual> offSpring = new ArrayList<>();
 
             matingPool = ps.tournamentSelection(population, popSize, popSize/2, false); //parent selection
-
-            // offSpring = r.recombineUniform(matingPool, popSize, 0.5); //recombination
             offSpring = r.recombineNPoint(matingPool, popSize, problem.N_TURBINES/4); //recombination
-            // offSpring = r.recombineOnePoint(matingPool, popSize); //recombination
-            // offSpring = r.recombineNPoint(matingPool, popSize, 50); //recombination
-
-            offSpring = re.repairRandom(m.mutatePopulationSwapSlidingBox(offSpring)); //mutation and repair
+            offSpring = re.repairRandom(m.mutatePopulationSwap(offSpring)); //mutation and repair
             population = rp.elitism(population, offSpring, 1); //survival selection
         }
     }

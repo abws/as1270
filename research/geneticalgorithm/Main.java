@@ -3,6 +3,11 @@ package research.geneticalgorithm;
 import research.api.java.KusiakLayoutEvaluator;
 import research.api.java.WindScenario;
 
+
+/**
+ * Main class. Run this to start the Genetic Algorithm.
+ * For more scenarios, check the API package. All obstacles must be removed
+ */
 public class Main {
     public static void main(String[] args) throws Exception {
 
@@ -10,9 +15,9 @@ public class Main {
 
         KusiakLayoutEvaluator evaluator = new KusiakLayoutEvaluator();
         evaluator.initialize(ws);
-        Problem problem = new Problem(evaluator, ws, 25);    
+        Problem problem = new Problem(evaluator, ws, 10);    
         
-        Tests.run(problem, 200);
+        GeneticAlgorithm.run(problem, 500);
 
         
 

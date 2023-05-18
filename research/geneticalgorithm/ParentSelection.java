@@ -82,6 +82,8 @@ public class ParentSelection {
 
 
 
+    /* Inner implementations. Please refer back to chapter 4.1 of the disesertation */
+
     /**
      * 
      * Without replacement has less vaiance
@@ -200,11 +202,7 @@ public class ParentSelection {
 
     private Individual tournament(List<Individual> candidates) {
         candidates = candidates.stream().sorted(Comparator.comparingDouble(individual -> individual.getFitness())).collect(Collectors.toList());    //sort candidates by fitness
-        // double[] p = problem.getFitnesses(candidates);
-        // System.out.println(Arrays.toString(p));
         Individual best = candidates.get(candidates.size() - 1);
-        // System.out.println(best.getFitness());
-
         return best;
     }
 
