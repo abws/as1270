@@ -28,9 +28,12 @@
                 </svg>
             </div>
             <div class=" header-optimise">
-                <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M17.4206 17.88C17.6644 18.2962 17.8125 18.7744 17.8125 19.29C17.8125 20.8425 16.5544 22.1025 15 22.1025C13.4456 22.1025 12.1875 20.8425 12.1875 19.29C12.1875 17.7375 13.4456 16.4775 15 16.4775C15.1406 16.4775 15.2738 16.4981 15.4088 16.5188L22.965 7.08187L23.5837 7.47L17.4206 17.88ZM15 7.5C16.2075 7.5 17.3663 7.70062 18.4575 8.05687C18.54 8.08312 19.395 8.23312 19.7175 7.5C20.0231 6.80437 19.3931 6.38438 19.1325 6.29625C17.8313 5.86313 16.4456 5.625 15 5.625C7.75125 5.625 1.875 11.5012 1.875 18.75C1.875 19.9631 2.05312 21.1331 2.3625 22.2487C2.3625 22.2487 2.9025 23.0756 3.72188 22.6519C4.39875 22.2994 4.17563 21.8062 4.1175 21.5812C3.8775 20.6756 3.75 19.7287 3.75 18.75C3.75 12.5456 8.79562 7.5 15 7.5ZM24.2587 10.9275C23.7019 11.4844 24.1275 12.1987 24.1781 12.2737C25.4775 14.1075 26.25 16.3387 26.25 18.75C26.25 19.8187 26.0963 20.8519 25.8188 21.8306C25.7775 21.9712 25.8206 22.7137 26.4263 22.8356C27.3469 23.0231 27.6375 22.2506 27.6375 22.2506C27.9469 21.1331 28.125 19.9631 28.125 18.75C28.125 15.8662 27.195 13.2019 25.6162 11.04C25.4456 10.8056 24.6712 10.5131 24.2587 10.9275Z" fill="#656565"/>
-                </svg>
+                <a target="_blank" href="/wind-farm">
+                    <svg width="20" height="20" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M29.144 0H20.9558C20.4801 0 20.0996 0.38055 20.0996 0.856237C20.0996 1.33192 20.4801 1.71247 20.9558 1.71247H27.0763L13.8776 14.9112C13.5415 15.2474 13.5415 15.7865 13.8776 16.1226C14.0425 16.2875 14.2645 16.3763 14.4801 16.3763C14.6958 16.3763 14.9178 16.2939 15.0827 16.1226L28.2878 2.92389V9.0444C28.2878 9.52008 28.6683 9.90063 29.144 9.90063C29.6197 9.90063 30.0002 9.52008 30.0002 9.0444V0.856237C30.0002 0.38055 29.6197 0 29.144 0Z" fill="#656565"/>
+                        <path d="M29.1438 14.6638C28.6681 14.6638 28.2875 15.0444 28.2875 15.5201V23.8224C28.2875 26.2833 26.2833 28.2875 23.8224 28.2875H6.17759C3.7167 28.2875 1.71247 26.2833 1.71247 23.8224V6.17759C1.71247 3.7167 3.7167 1.71247 6.17759 1.71247H14.4165C14.8922 1.71247 15.2727 1.33192 15.2727 0.856237C15.2727 0.38055 14.8922 0 14.4165 0H6.17759C2.77167 0 0 2.77167 0 6.17759V23.8224C0 27.2283 2.77167 30 6.17759 30H23.8224C27.2283 30 30 27.2283 30 23.8224V15.5201C30 15.0444 29.6194 14.6638 29.1438 14.6638Z" fill="#656565"/>
+                    </svg>
+                </a>
             </div>
             <svg class="header-line" width="1" height="39" viewBox="0 0 1 39" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <line x1="0.25" x2="0.25" y2="39" stroke="#464646" stroke-width="0.5"/>
@@ -86,14 +89,14 @@
                     <div class="algorithm" id="geneticAlgorithm">
                         <div><img th:src="@{images/dna-image.jpeg}" alt="dna-image"></div>
                         <p>Genetic Algorithm</p>
-                        <input type="hidden" name="algorithm" value="geneticAlgorithm">
+                        <input type="hidden" name="geneticAlgorithm" value="0">
                         <input class="algorithm-input destroy" name="popSize" id="popSize" type="number" placeholder="Population Size" />
                         <input class="algorithm-input destroy" name="generations" id="generations" type="number" placeholder="Generations" />
                     </div>
                     <div class="algorithm" id="particeSwarmOptimisation">
                         <div><img th:src="@{images/birds-flocking.jpeg}" alt="birds-flocking"></div>
                         <p>Particle Swarm Optimisation</p>
-                        <input type="hidden" name="algorithm" value="particeSwarmOptimisation">
+                        <input type="hidden" name="particeSwarmOptimisation" value="0">
 
                         <input class="algorithm-input destroy" name="swarmSize" id="swarmSize" type="number" placeholder="Swarm Size" />
                         <input class="algorithm-input destroy" name="inertiaWeight" id="inertiaWeight" type="number" placeholder="Inertia Weight" />
@@ -106,7 +109,7 @@
                     <div class="algorithm" id="simulatedAnnealing">
                         <div><img th:src="@{images/explosion.png}" alt="explosion-annealing-in-nebula"></div>
                         <p>Simulated Annealing</p>
-                        <input type="hidden" name="algorithm" value="simulatedAnnealing">
+                        <input type="hidden" name="simulatedAnnealing" value="0">
 
                         <input class="algorithm-input destroy" name="initialTemperature" id="initialTemperature" type="number" placeholder="Initial Temperature" />
                     </div>

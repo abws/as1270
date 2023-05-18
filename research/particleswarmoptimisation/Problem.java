@@ -278,13 +278,13 @@ public class Problem {
             manner = layout[m];
 
             for (int r = 0; r < layout.length; r++) {
-                // if (r != m) {
+                if (r != m) {
                     repulser = layout[r];
                     double distance = calculateEuclideanDistance(repulser, manner);
                     if (distance > z) continue;
 
                     manner = spacialShift(repulser, manner, distance, z, 1); 
-                // }
+                }
             }
 
             layout[m] = manner;

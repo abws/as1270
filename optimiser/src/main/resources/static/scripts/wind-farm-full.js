@@ -6,6 +6,20 @@ import Stats from 'three/addons/libs/stats.module.js';
 import { addTurbine } from './components/turbine.js';
 
 const input = document.getElementById('coordinates');
+const toggle = document.getElementById('toggle');
+
+toggle.addEventListener('click', (e) => {
+    if (input.style.display === 'none') {
+        input.style.display = 'block';
+        toggle.classList.add('reverse');
+    }
+    else {
+        input.style.display = 'none';
+        toggle.classList.remove('reverse');
+
+    }
+});
+
 if (localStorage.getItem('coordinates')) {
     input.value = localStorage.getItem('coordinates');
 }

@@ -2,7 +2,6 @@ package com.as1270.optimiser.controllers;
 
 import com.as1270.optimiser.models.api.java.*;
 import com.as1270.optimiser.models.geneticalgorithm.*;
-import com.as1270.optimiser.models.geneticalgorithm.Problem;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.web.socket.TextMessage;
@@ -19,7 +18,6 @@ public class GeneticAlgorithmHandler extends TextWebSocketHandler {
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
         // Deserialize input parameters from the received message 
         Map<String, String> data = objectMapper.readValue(message.getPayload(), new TypeReference<>() {});
-        int popSize = Integer.parseInt(data.get("popSize"));
         int generations = Integer.parseInt(data.get("generations"));
         String environmentB64 = data.get("environment");
         byte[] environmentBytes = Base64.getDecoder().decode(environmentB64);
@@ -29,10 +27,14 @@ public class GeneticAlgorithmHandler extends TextWebSocketHandler {
         WindScenario ws = new WindScenario(environmentXml);
         KusiakLayoutEvaluator evaluator = new KusiakLayoutEvaluator();
         evaluator.initialize(ws);
-        Problem problem = new Problem(evaluator, ws, popSize);
-
+        double[][] coordinates = new double[ws.nturbines][2];
         // Run genetic algorithm
-        double[][] coordinates = GeneticAlgorithm.run(problem, generations, problem.POP_SIZE, session, objectMapper);
+        System.out.println(data.get("algorithm"));
+        if (data.get("algorithm") == "geneticAlgorithm") {
+            int popSize = Integer.parseInt(data.get("popSize"));
+            com.as1270.optimiser.models.geneticalgorithm.Problem problem = new com.as1270.optimiser.models.geneticalgorithm.Problem(evaluator, ws, popSize);
+            coordinates = GeneticAlgorithm.run(problem, generations, problem.POP_SIZE, session, objectMapper);
+        }
 
         // Send the results to the client
         session.sendMessage(new TextMessage(objectMapper.writeValueAsString(coordinates)));

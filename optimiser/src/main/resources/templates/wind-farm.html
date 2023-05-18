@@ -10,9 +10,30 @@
             width: 100vw;
             height: 100vh;
         }
-        input {
-            margin-left: 70em;
+        #coordinates {
+            position: absolute;
+            top: 7em;
+            left: 0;
         }
+
+        .toggle {
+            position: absolute;
+            top: 3em;
+            left: 0;
+            z-index: 100;
+            color: #ffffff;
+            cursor: pointer;
+        }
+
+        .reverse {
+            transform: rotate(180deg);
+        }
+
+        .hide {
+            display: none;
+        }
+
+
     </style>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -24,11 +45,10 @@
 <body>
     <div class="wind-farm">
         <!--HTML small, transparent and collapsable input field-->
-        <input type="text" id="coordinates">
-
-
-
-
+        <svg class="toggle" id="toggle" width="2em" height="2em" viewBox="0 0 24 24" fill="" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M12.7071 14.7071C12.3166 15.0976 11.6834 15.0976 11.2929 14.7071L6.29289 9.70711C5.90237 9.31658 5.90237 8.68342 6.29289 8.29289C6.68342 7.90237 7.31658 7.90237 7.70711 8.29289L12 12.5858L16.2929 8.29289C16.6834 7.90237 17.3166 7.90237 17.7071 8.29289C18.0976 8.68342 18.0976 9.31658 17.7071 9.70711L12.7071 14.7071Z" fill="#ffffff"/>
+        </svg>
+        <textarea class="hide" id="coordinates"></textarea>
     </div>
 
     <script async src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>

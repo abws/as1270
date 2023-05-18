@@ -11,7 +11,7 @@ public class Main {
         evaluator.initialize(ws);
         Problem problem = new Problem(evaluator, ws);
 
-        SimulatedAnnealing sa = new SimulatedAnnealing(100, 0.95, 5000, 1, problem);
+        SimulatedAnnealing sa = new SimulatedAnnealing(1, 0.98, 5000, 5, problem);
         sa.run();
     }
     

@@ -404,7 +404,7 @@ public class Mutation {
             position2 = getNearest(indivArray.toString(), position2, newChar);
 
             double rate = slidingBox(new String(indivArray.toString()), position1);
-            rate = MUT_RATE * (1 + (1.5*(rate)));
+            rate = MUT_RATE * (1 + (2*(rate)));
 
             if (Math.random() < rate) {
                 char temp = indivArray.charAt(position1);

@@ -14,28 +14,27 @@ public class Tests {
         int popSize = problem.POP_SIZE;
         ParentSelection ps = new ParentSelection(problem);
         Recombination r = new Recombination(problem, 0.8);
-        Mutation m = new Mutation(problem, 0.03);
+        Mutation m = new Mutation(problem, 0.01);
         Replacement rp = new Replacement(problem);
         Repair re = new Repair(problem);
 
 
-        String outputFilename = "/Users/abdiwahabsalah/Documents/GitLab/as1270/research/geneticalgorithm/lattice/ga-bit-3.txt";
+        String outputFilename = "/Users/abdiwahabsalah/Documents/GitLab/as1270/research/geneticalgorithm/results/04-op-swap-g.txt";
 
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(outputFilename))) {
-            for (int n = 0; n < 1; n++) {
+            for (int n = 0; n < 30; n++) {
+                System.out.println(n);
                 List<Individual> population = problem.getRandomPopulation(popSize, problem.INDIV_LENGTH, problem.N_TURBINES);
                 for (int i = 0; i < generations; i++) {
                     double maxFitness = Collections.max(problem.getFitnessesArrayList(population));
-                    System.out.println(maxFitness);
-                    // bw.write(maxFitness + " ");
+                    bw.write(maxFitness + " ");
 
                     List<Individual> matingPool = new ArrayList<>();
                     List<Individual> offSpring = new ArrayList<>();
 
                     matingPool = ps.tournamentSelection(population, popSize, popSize / 2, false); //parent selection
                     offSpring = r.recombineNPoint(matingPool, popSize, problem.N_TURBINES/4); //recombination
-
-                    offSpring = re.repairInformed(m.mutatePopulationSwap(offSpring)); //mutation and repair
+                    offSpring = re.repairRandom(m.mutatePopulationSwap(offSpring)); //mutation and repair
                     population = rp.elitism(population, offSpring, 1); //survival selection
                 }
                 bw.newLine();
