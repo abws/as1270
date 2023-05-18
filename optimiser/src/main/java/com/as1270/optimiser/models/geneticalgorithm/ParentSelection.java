@@ -1,7 +1,6 @@
 package com.as1270.optimiser.models.geneticalgorithm;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
@@ -24,6 +23,9 @@ public class ParentSelection {
     ParentSelection(Problem problem) { //add so user can change using input
         this.problem = problem;
     }
+
+    
+    /* Main callable classes  */
 
     public List<Individual> fitnessProportionalSelection(List<Individual> population, int populationSize) {
         List<Double> weights = calculateWeights(population);
@@ -69,6 +71,19 @@ public class ParentSelection {
         return matingPool;
     }
 
+
+
+
+
+
+
+
+
+
+
+
+    /* Inner implementations. Please refer back to chapter 4.1 of the disesertation */
+
     /**
      * 
      * Without replacement has less vaiance
@@ -83,7 +98,7 @@ public class ParentSelection {
         List<Integer> indexes;
         List<Individual> candidates;
         Random r = new Random();
-        if (withoutReplacement) Math.min(k, popSize); //limit k value or we'll get stuck in foreverness
+        if (withoutReplacement) k = Math.min(k, popSize); //limit k value or we'll get stuck in foreverness
 
         while (matingPool.size() < popSize) {
             candidates = new ArrayList<>(); //thanks for garbage collection mr Jaavapius
@@ -120,7 +135,7 @@ public class ParentSelection {
      * Tested
      */
 
-    public List<Double> calculateWeights(List<Individual> population) {
+    private List<Double> calculateWeights(List<Individual> population) {
         double sum = 0;
         double fitness;
         List<Double> weights = new ArrayList<>(population.size());
@@ -148,7 +163,7 @@ public class ParentSelection {
      * @param c Sigma constant
      * @return
      */
-    public List<Double> calculateSigmaWeights(List<Individual> population, double c) {
+    private List<Double> calculateSigmaWeights(List<Individual> population, double c) {
         double sum = 0;
         List<Double> weights = new ArrayList<>();
         double[] fitnesses = problem.getFitnesses(population);
@@ -174,7 +189,7 @@ public class ParentSelection {
      * @param c
      * @return
      */
-    public List<Double> calculateLinearRankedWeights(List<Individual> population, double c) {
+    private List<Double> calculateLinearRankedWeights(List<Individual> population, double c) {
         List<Double> weights = new ArrayList<>();
         double popSize = (double) population.size();
 
@@ -187,11 +202,7 @@ public class ParentSelection {
 
     private Individual tournament(List<Individual> candidates) {
         candidates = candidates.stream().sorted(Comparator.comparingDouble(individual -> individual.getFitness())).collect(Collectors.toList());    //sort candidates by fitness
-        // double[] p = problem.getFitnesses(candidates);
-        // System.out.println(Arrays.toString(p));
         Individual best = candidates.get(candidates.size() - 1);
-        // System.out.println(best.getFitness());
-
         return best;
     }
 
@@ -206,7 +217,7 @@ public class ParentSelection {
      * @param populationSize
      * @return
      */
-    public List<Individual> rouletteWheel(List<Individual> population, List<Double> weights, int n) {
+    private List<Individual> rouletteWheel(List<Individual> population, List<Double> weights, int n) {
         List<Individual> matingPool = new ArrayList<>();
 
         while (matingPool.size() < n) {  //Repeat so we select n individuals
@@ -237,19 +248,20 @@ public class ParentSelection {
      * @param n
      * @return
      */
-    public List<Individual> stochasticUniversalSample(List<Individual> population, List<Double> weights, int n) { //n is population size
+    private List<Individual> stochasticUniversalSample(List<Individual> population, List<Double> weights, int n) { //n is population size
         List<Individual> matingPool = new ArrayList<>();
         double cumulativeWeight = 0;   //Represents the starting position of the roulette wheel
-        int index = 0; int p = 0; 
+        int index = 0; int p = 0;
+        double pointerDistance = 1 / (double) n; //Distance between each arrow
 
 
         Random rand = new Random();
-        double randomSpin = rand.nextDouble(1 / (double) n); //uniformly random number between 0 and 1/n, once
+        double randomSpin = rand.nextDouble(pointerDistance); //uniformly random number between 0 and 1/n, once
         double[] pointers = new double[n];
-        IntStream.range(0, pointers.length).forEach(i -> pointers[i] = (i * 1/ (double) n) + randomSpin); //fil array with arrow/pointer positions, and (mini)spin them randomly
-        
-        while (index < weights.size()) {  //we've exhausted all the weights
-            cumulativeWeight += weights.get(index);
+        IntStream.range(0, pointers.length).forEach(i -> 
+                                                    pointers[i] = (i * pointerDistance) + randomSpin); //fil array with arrow/pointer positions, and (mini)spin them randomly
+        while (index < weights.size()) {  //we've exhausted all the partitions
+            cumulativeWeight += weights.get(index); //thickness of current partition
 
             while ((p < pointers.length) && (pointers[p] <= cumulativeWeight)) {
                 matingPool.add(population.get(index));

@@ -1,6 +1,4 @@
 package research.particleswarmoptimisation;
-
-import java.util.Arrays;
 import java.util.List;
 
 /**

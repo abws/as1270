@@ -14,7 +14,6 @@ import java.util.stream.IntStream;
  * Made up of two type of methods.
  * One method simply combines n parents.
  * The other uses these methods to create n offspring.
- * ONE POINT CROSSOVER is A SPECIAL FORM OF N POINT CROSSOVER
  * @author Abdiwahab Salah
  * @version 07/02/23
  */
@@ -30,7 +29,14 @@ public class Recombination {
         this.CROSSOVER_RATE = crossoverRate;
     }
 
-    public List<Individual> recombineOnePoint(ArrayList<Individual> matingPool, int offspringSize) {
+    /**
+     * One point crossover (overview method)
+     * ONE POINT CROSSOVER is A SPECIAL FORM OF N POINT CROSSOVER
+     * @param matingPool
+     * @param offspringSize
+     * @return
+     */
+    public List<Individual> recombineOnePoint(List<Individual> matingPool, int offspringSize) {
         //crossover
         List<Individual> offSpring = new ArrayList<>();
         while (offSpring.size() < offspringSize) {
@@ -40,7 +46,7 @@ public class Recombination {
             Individual parent1; Individual parent2;
             parent1 = matingPool.get(r.nextInt(offspringSize)); parent2 = matingPool.get(r.nextInt(offspringSize));
 
-            //Crossover at rate 0.7
+            //Crossover at rate
             if (Math.random() < CROSSOVER_RATE) {
                 offSpring.addAll(onePointCrossover(parent1, parent2));
             }
@@ -54,6 +60,13 @@ public class Recombination {
         return offSpring;
     }
 
+    /**
+     * N point crossover (overview method)
+     * @param matingPool
+     * @param offspringSize
+     * @param n
+     * @return
+     */
     public List<Individual> recombineNPoint(List<Individual> matingPool, int offspringSize, int n) {
         //crossover
         List<Individual> offSpring = new ArrayList<>();
@@ -64,7 +77,7 @@ public class Recombination {
             Individual parent1; Individual parent2;
             parent1 = matingPool.get(r.nextInt(offspringSize)); parent2 = matingPool.get(r.nextInt(offspringSize));
 
-            //Crossover at rate 0.7
+            //Crossover at rate
             if (Math.random() < CROSSOVER_RATE) {
                 offSpring.addAll(nPointCrossover(parent1, parent2, n));
             }
@@ -78,6 +91,14 @@ public class Recombination {
         return offSpring;
     }
 
+
+    /**
+     * Uniform crossover (overview method)
+     * @param matingPool
+     * @param offspringSize
+     * @param p
+     * @return
+     */
     public List<Individual> recombineUniform(List<Individual> matingPool, int offspringSize, double p) {
         //crossover
         List<Individual> offSpring = new ArrayList<>();
@@ -88,7 +109,7 @@ public class Recombination {
             Individual parent1; Individual parent2;
             parent1 = matingPool.get(r.nextInt(offspringSize)); parent2 = matingPool.get(r.nextInt(offspringSize));
 
-            //Crossover at rate 0.7
+            //Crossover at rate
             if (Math.random() < CROSSOVER_RATE) {
                 offSpring.addAll(uniformCrossover(parent1, parent2, p));
             }

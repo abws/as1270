@@ -20,8 +20,6 @@ import research.api.java.*;
 public class Problem {
     private KusiakLayoutEvaluator evaluator;
     private WindScenario scenario;
-    private static int bound = 0;
-
     public int nDimension;
     public int popSize;
     public int nTurbines;
@@ -58,7 +56,7 @@ public class Problem {
      */
     public double evaluate(int[] position) {
         double[][] particleCoordinates = decode(position);
-        double fitness = evaluator.evaluate(particleCoordinates);
+        double fitness = evaluator.evaluate_2014(particleCoordinates);
 
         return fitness;
     }

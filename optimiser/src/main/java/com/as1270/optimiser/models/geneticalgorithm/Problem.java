@@ -1,7 +1,6 @@
 package com.as1270.optimiser.models.geneticalgorithm;
 
 import java.util.*;
-
 import com.as1270.optimiser.models.api.java.*;
 
 /**
@@ -14,36 +13,32 @@ import com.as1270.optimiser.models.api.java.*;
  * @version 08.02.23
  */
 public class Problem {
-    private KusiakLayoutEvaluator evaluator;
-    private WindScenario scenario;
+    public KusiakLayoutEvaluator evaluator;
+    public WindScenario scenario;
     public int INDIV_LENGTH;
     public int N_TURBINES;
     public int POP_SIZE;
-    double minDist;
 
+    public double minDist;
     public int columns;
     public int rows;
-
-
 
     public Problem(KusiakLayoutEvaluator evaluator, WindScenario scenario, int populationSize) throws Exception {
         this.scenario = scenario;
         this.evaluator = evaluator;
 
         //Commonly used
-        INDIV_LENGTH = this.getStringLength();
         N_TURBINES = scenario.nturbines;
         POP_SIZE = populationSize;
         minDist = 8 * scenario.R;
+        columns = (int) (scenario.width / minDist);     //one to n
         rows = (int) (scenario.height / minDist);
-        columns = (int) (scenario.width / minDist);
-
-
-
+        INDIV_LENGTH = this.getStringLength();
     }
 
     public double evaluate(String individual) {
         double[][] phenotype = decode(individual);
+        // System.out.println(Arrays.deepToString(phenotype));
         double fitness = evaluator.evaluate_2014(phenotype);
 
         return fitness;
@@ -58,14 +53,10 @@ public class Problem {
      * Tested
      */
     public double[][] decode(String individual) {
-        double minDist = 8 * scenario.R;
-
-        int columns = (int) (scenario.width / minDist);
-        int rows = (int) (scenario.height / minDist);
 
         int[][] gridIndividual = gridify(individual, columns, rows);
 
-        double[][] layout = new double [scenario.nturbines][2];
+        double[][] layout = new double [countTurbines(individual)][2];
         int count = 0;
 
         for (int i = 0; i < rows; i++) {
@@ -82,12 +73,45 @@ public class Problem {
     /**
      * Helper method to return
      * turbine coordinates given 
-     * cell they're in within grid
+     * cell they're in within grid.
+     * Add 1 to both the column and row
      * @param y
      * @param x
      * @param minDist
      * @return Coordinates (x, y)
-     * Tested
+     * @tested
+     */
+    private double[] getCoordinates(int y, int x, double minDist) {
+        double [] coordinates = new double[2];
+        coordinates[0] = (x * minDist);
+        coordinates[1] = (y * minDist);
+
+        return coordinates;
+    }
+
+    /**
+     * Obsolete centered turbines grid
+     * Do not add anything to column and row
+     * @param y
+     * @param x
+     * @param minDist
+     * @return
+     */
+    private double[] getCoordinatesCenter(int y, int x, double minDist) {
+        double [] coordinates = new double[2];
+        coordinates[0] = ((x * minDist) + (minDist / 2));
+        coordinates[1] = ((y * minDist) + (minDist / 2));
+
+        return coordinates;
+    }
+
+    /**
+     * Left to right mesh.
+     * Do not add anything to column and row
+     * @param y
+     * @param x
+     * @param minDist
+     * @return
      */
     private double[] getMeshCoordinatesLR(int y, int x, double minDist) {
         int maxX = columns;
@@ -100,12 +124,71 @@ public class Problem {
     }
 
     /**
+     * Right to left mesh
+     * Do not add anything to column and row
+     * @param y
+     * @param x
+     * @param minDist
+     * @return
+     */
+    private double[] getMeshCoordinatesRL(int y, int x, double minDist) {
+        int maxX = columns;
+        int maxY = rows;
+        double [] coordinates = new double[2];
+        coordinates[0] = ((maxX - x) * minDist) - (y * (minDist / maxY));
+        coordinates[1] = ((maxY - y) * minDist) - (x * (minDist / maxX));
+
+        return coordinates;
+    }
+
+    /**
+     * Hexagonal lattice
+     * Add 1 to column
+     * @param y
+     * @param x
+     * @param minDist
+     * @return
+     */
+    private double[] getCoordinatesY(int y, int x, double minDist) {
+        double [] coordinates = new double[2];
+        coordinates[0] = ((x * minDist));
+        if (x % 2 == 0) {
+            coordinates[1] = ((y * minDist) + (minDist / 2));
+        } else {
+            coordinates[1] = ((y * minDist));
+        }
+
+        return coordinates;
+    }
+
+    /**
+     * Hexagonal lattice.
+     * Add 1 to row
+     * @param y
+     * @param x
+     * @param minDist
+     * @return
+     */
+    private double[] getCoordinatesX(int y, int x, double minDist) {
+        double [] coordinates = new double[2];
+        if (y % 2 == 0) {
+            coordinates[0] = ((x * minDist) + (minDist / 2));
+        } else {
+            coordinates[0] = ((x * minDist));
+        }
+        coordinates[1] = y * minDist;
+
+        return coordinates;
+    }
+
+
+    /**
      * Gridifies a string
      * @param ind The string to be gridified
      * @param x The width of the grid
      * @param y The height of the grid
      * @return A two-dimensional array representing the grid
-     * Tested
+     * @tested
      */
     public int[][] gridify(String ind, int x, int y) {
         int[][] grid = new int[y][x]; //[rows][columns] since rows are 'bigger' and classified by first
@@ -140,23 +223,21 @@ public class Problem {
         int pos = 0;
 
         for (int i = 0; i < y; i ++) {
-
-            switch (i % 2) {
-                case 0:
+            if (i % 2 == 0) 
                     for (int j = 0; j < x; j++) { //this part must go down for i % 2 == 0
                         grid[i][j] = Character.getNumericValue(ind.charAt(pos));
                         pos++;
                     }
-                case 1:
-                    for (int j = x; j > 0; j--) { 
-                        grid[i][j] = Character.getNumericValue(ind.charAt(pos)); //we start from the right and fill in from the left now
-                        pos++;
-                    }
-            }
+            else
+                for (int j = (x - 1); j >= 0; j--) { 
+                    grid[i][j] = Character.getNumericValue(ind.charAt(pos)); //we start from the right and fill in from the left now
+                    pos++;
+                }
         }
-
+        
         return grid;
     }
+
 
     /**
      * Generates a random string population
@@ -189,7 +270,7 @@ public class Problem {
      * @param popSize
      * @param bits
      * @return Random population
-     * Tested
+     * @tested
      */
     public List<Individual> getRandomPopulation(int popSize, int bits, int turbines) {
         Random rand = new Random();
@@ -225,13 +306,14 @@ public class Problem {
      * @return
      */
     public int getStringLength() {
-        double minDist = 8 * scenario.R;
-
-        int columns = (int) (scenario.width / minDist);
-        int rows = (int) (scenario.height / minDist);
         return columns * rows;
     }
 
+    /**
+     * Creates a string from an array of 1s and 0s
+     * @param indivArray
+     * @return
+     */
     private String createString(int[] indivArray) {
         StringBuilder sb = new StringBuilder();
         for(int i : indivArray) {
@@ -269,47 +351,6 @@ public class Problem {
         return sd;
     }
 
-    /**
-     * Repair operator.
-     * Shoots randomly at the farm
-     * and eliminates or introduces 
-     * as many turbines as needed.
-     * @param pop
-     * @return
-     */
-    public List<Individual> legalise(List<Individual> pop) {
-        Random r = new Random();
-        List<Individual> cleanPop = new ArrayList<>();
-
-        for (int i = 0; i < pop.size(); i++) {
-            Individual individual = pop.get(i);
-            String value = pop.get(i).getValue();
-            StringBuilder sb = new StringBuilder(value);
-
-            int turbineCount = countTurbines(value);
-            int difference = turbineCount - N_TURBINES;
-            
-            while (difference > 0) {    //we have too many turbines
-                int position = r.nextInt(INDIV_LENGTH); //position to remove turbine from
-                Character c = sb.charAt(position);
-                if (c == '1') {
-                    sb.setCharAt(position, '0');
-                    difference--;
-                }
-            }
-            while (difference < 0) {    //we have too few turbines
-                int position = r.nextInt(INDIV_LENGTH); //position to add turbine to
-                Character c = sb.charAt(position);
-                if (c == '0') {
-                    sb.setCharAt(position, '1');
-                    difference++;
-                }
-            }
-            individual.setValue(sb.toString());
-            cleanPop.add(individual);
-        }
-        return cleanPop;
-    }
 
     /**
      * Counts the number of
@@ -396,6 +437,53 @@ public class Problem {
         return fitnesses;
     }
 
+    /**
+     * The index of the lowest value in the array
+     * @param array
+     * @return
+     */
+    public int lowestIndex(double[] array) {
+        int lowest = 0;
+        for (int i = 1; i < array.length; i++) {
+            if (array[i] <= array[lowest]) lowest = i;
+        }
+        array[lowest] = 1;
+        return lowest;
+    }
+
+    /**
+     * The index of the highest value in the array
+     * @param array
+     * @return
+     */
+    public int highestIndex(double[] array) {
+        int highest = 0;
+        for (int i = 1; i < array.length; i++) {
+            if (array[i] >= array[highest]) highest = i;
+        }
+        array[highest] = 0;
+        return highest;
+    }
+
+    /**
+     * Maps the coordinate array coordinate to a bit in the string
+     * @param ind
+     * @param coordinatePosition
+     * @return
+     */
+    public int getPosition(String ind, int coordinatePosition) {
+        int count, i;
+        count = i = 0;
+        
+        while(i < ind.length() && count!=coordinatePosition ) {
+            if (ind.charAt(i) == '1') {
+                count++;
+            } 
+            i++;
+        }
+        return i;
+    }
+
     public double[][] getFittest(List<Individual> population) {
         double max = 0;
         Individual fittest = null;
@@ -408,8 +496,5 @@ public class Problem {
             }
         }
         return decode(fittest.getValue());
-
     }
-
-
 }

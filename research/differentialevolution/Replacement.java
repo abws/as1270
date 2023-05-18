@@ -9,6 +9,13 @@ public class Replacement {
     Replacement(Problem problem) {
         this.problem = problem;
     }
+
+    /**
+     * Selects best from parents and trials
+     * @param parents
+     * @param trials
+     * @return
+     */
     public List<Vector> selectBest(List<Vector> parents, List<Vector> trials) {
         List<Vector> offSpring = new ArrayList<>();
         for (int i = 0; i < parents.size(); i++) {
@@ -22,6 +29,13 @@ public class Replacement {
         return offSpring;
     }
 
+    /**
+     * Special replacement to 
+     * remove constraint violations.
+     * @param parents
+     * @param trials
+     * @return
+     */
     public List<Vector> selectBestSpecial(List<Vector> parents, List<Vector> trials) {
         List<Vector> offSpring = new ArrayList<>();
         double violationSumP = 0;

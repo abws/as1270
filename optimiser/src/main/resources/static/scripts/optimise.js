@@ -12,6 +12,7 @@ algorithms.forEach((algorithm) => {
         algorithms.forEach((otherAlgorithm) => {
             if (otherAlgorithm !== algorithm) {
                 otherAlgorithm.classList.remove("active");
+                otherAlgorithm.querySelector('.algo').value = 0;
                 let otherInputs = otherAlgorithm.querySelectorAll('.algorithm-input');
                 otherInputs.forEach((input) => {
                     input.classList.add("destroy");
@@ -21,6 +22,7 @@ algorithms.forEach((algorithm) => {
 
         // Add active class to the clicked algorithm
         algorithm.classList.add("active")
+        algorithm.querySelector('.algo').value = 1;
         let inputs = algorithm.querySelectorAll('.algorithm-input');
         inputs.forEach((input) => {
             input.classList.remove("destroy");

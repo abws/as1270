@@ -30,8 +30,8 @@ public class Recombination {
             if (Math.random() < crossoverRate) trial[i] = mutant[i];
             else trial[i] = parent[i]; 
         }
-        double[][] layout = new double[problem.nTurbines][2];
-
+        // untoggle comment to use geometric reformer. Mix and match as needed
+        // double[][] layout = new double[problem.nTurbines][2];
         // layout = problem.geometricReformer(problem.decodeDirect(trial), problem.minDist);
         // trial = problem.encodeDirect(layout);
 

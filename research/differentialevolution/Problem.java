@@ -63,7 +63,6 @@ public class Problem {
         double fitness = evaluator.evaluate_2014(vectorCoordinates);
         // System.out.println("mindist: " + countViolations(vectorCoordinates));
 
-
         return fitness;
     }
 
@@ -84,7 +83,6 @@ public class Problem {
             }
             // violationSum2 += boundConstraintViolation(particleCoordinates[i]);
         }
-
          p1 = binaryProximityViolation(particleCoordinates);
         System.out.println("Violations: " + binaryProximityViolation(particleCoordinates));
 
@@ -222,8 +220,6 @@ public class Problem {
 
         double constraint = minDist - distance;     // If violated, distance will be less than minDist and we'll get a negative value
         constraint = Math.max(0, constraint);     // 0 if good
-        // constraint = Math.pow(constraint, k);       // Square the value
-        // constraint = w1 * constraint;               // Multiply by the weight
 
         return constraint;
     }
@@ -349,8 +345,7 @@ public class Problem {
         double shiftedPositionY = (sign*(y1 - y2) * (z + c) / distance) + y1;
 
         double[] shiftedPosition = new double[]{shiftedPositionX, shiftedPositionY};
-        // double d = calculateEuclideanDistance(repulser, shiftedPosition);
-        // System.out.println(d);
+
         return shiftedPosition;
     }
     
@@ -382,19 +377,17 @@ public class Problem {
                     if (distance > z) continue;
 
                     layout = repulse(layout, repulser, manner, r, m, distance, z); 
-                    // layout = decodeDirect(periodicBoundHandle(encodeDirect(layout)));
                 }
             }
-            for (int r = layout.length-1; r > 0; r--) {
-                if (r != m) {
-                    repulser = layout[r];
-                    double distance = calculateEuclideanDistance(repulser, manner);
-                    if (distance > z) continue;
+            // for (int r = layout.length-1; r > 0; r--) {
+            //     if (r != m) {
+            //         repulser = layout[r];
+            //         double distance = calculateEuclideanDistance(repulser, manner);
+            //         if (distance > z) continue;
 
-                    layout = repulse(layout, repulser, manner, r, m, distance, z); 
-                    // layout = decodeDirect(periodicBoundHandle(encodeDirect(layout)));
-                }
-            }
+            //         layout = repulse(layout, repulser, manner, r, m, distance, z); 
+            //     }
+            // }
         }
 
         return layout;
@@ -513,7 +506,7 @@ public class Problem {
         return layout;
     }
     
-        /**
+    /**
      * Boundary handling mechanism.
      * Moves particles that fly out
      * of boundary to the closest feasible
@@ -533,6 +526,14 @@ public class Problem {
         return particlePosition;
     }
 
+    /**
+     * Boundary handling mechanism.
+     * Moves particles that fly out
+     * of boundary to a random feasible
+     * position.
+     * @param particlePosition
+     * @return
+     */
     public double[] randomBoundHandle(double[] particlePosition) {
         Random r = new Random();
 
@@ -547,6 +548,14 @@ public class Problem {
         return particlePosition;
     }
 
+    /**
+     * Boundary handling mechanism.
+     * Moves particles that fly out
+     * of boundary to a periodic feasible
+     * position.
+     * @param particlePosition
+     * @return
+     */
     public double[] periodicBoundHandle(double[] position) {
         for (int i = 0; i < position.length; i+=2) {
             if (position[i] < 0) {

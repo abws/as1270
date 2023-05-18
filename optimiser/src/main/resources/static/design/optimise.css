@@ -387,25 +387,56 @@ a {
 
 .environment {
     /* box-shadow: 5px 5px 20px #c2c1c1; */
+    /*border-radius: 0.5em;*/
+    /*padding: 0.2em 0.5em;*/
+    /*background-color: #FAFAFA!important;*/
+    /*border: 1px solid #1274d69d;*/
+    /*font-family: 'Space Mono', monospace;*/
+    /*font-size: 0.9rem;*/
+    /*display: flex;*/
+    /*flex-direction: column;*/
+    /*align-items: center;*/
+    /*justify-content: flex-start;*/
+    /*font-family: 'Space Mono', monospace;*/
+    /*font-size: 0.8rem;*/
+    /*background-color: white!important;*/
+    /*box-shadow: 5px 5px 20px #c2c1c1;*/
+    /*border-radius: 2em;*/
+    /*max-width: 15em;*/
+    /*min-width: 15em;*/
+    /*height: fit-content;*/
+    /*overflow-wrap: break-word;*/
+    /*text-align: center;*/
+    /*margin: 1.2em;*/
+    opacity: 0;
+    z-index: -1;
+}
+
+.input {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-content: center!important;
+    width: fit-content;
+    box-shadow: 5px 5px 20px #c2c1c1;
     border-radius: 0.5em;
     padding: 0.2em 0.5em;
     background-color: #FAFAFA!important;
-    border: 1px solid #1274d69d;
+
     font-family: 'Space Mono', monospace;
     font-size: 0.9rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    font-family: 'Space Mono', monospace;
-    font-size: 0.8rem;
     background-color: white!important;
-    box-shadow: 5px 5px 20px #c2c1c1;
-    border-radius: 2em;
-    max-width: 15em;
-    min-width: 15em;
-    height: fit-content;
-    overflow-wrap: break-word;
-    text-align: center;
     margin: 1.2em;
+    margin-left: 3.5em;
+    cursor: pointer;
+}
+
+label {
+    width: fit-content;
+    cursor: pointer;
+}
+
+.input > svg {
+    align-self: center;!important;
+    cursor: pointer;
 }

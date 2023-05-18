@@ -2,6 +2,15 @@ package research.differentialevolution;
 
 import java.util.List;
 
+/**
+ * Differential Evolution
+ * Algorithm for the Wind Farm Layout
+ * Optimisation problem
+ * Runnable class that optimises 
+ * a list of vectors based on
+ * a variable input.
+ * @author Abdiwahab Salah
+ */
 public class DifferentialEvolution {
     int popSize;      //Size of population
     double crossoverRate;
@@ -19,6 +28,10 @@ public class DifferentialEvolution {
         this.problem = problem;
     }
 
+
+    /**
+     * Configure parameters
+     */
     public void run() {
         int iteration = 0;
         Mutation mutation = new Mutation(scalingFactor, problem);

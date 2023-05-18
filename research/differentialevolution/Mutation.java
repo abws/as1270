@@ -14,6 +14,11 @@ public class Mutation {
         this.problem = problem;
     }
 
+    /**
+     * Classical version
+     * @param pop
+     * @return
+     */
     public List<Vector> differentialMutation(List<Vector> population) {
         List<Vector> mutants = new ArrayList<Vector>();
 
@@ -32,6 +37,11 @@ public class Mutation {
     }
 
 
+    /**
+     * DE/best/1/z
+     * @param pop
+     * @return
+     */
     public List<Vector> differentialMutationBest1Z(List<Vector> pop) {
         List<Vector> mutants = new ArrayList<Vector>();
 
@@ -49,7 +59,11 @@ public class Mutation {
         return mutants;
     }
 
-
+    /**
+     * DE/random/n/z
+     * @param pop
+     * @return
+     */
     public List<Vector> differentialMutationRandomNZ(List<Vector> pop) {
         List<Vector> mutants = new ArrayList<Vector>();
 
@@ -74,6 +88,11 @@ public class Mutation {
         return mutants;
     }
 
+    /**
+     * DE/best/n/z
+     * @param pop
+     * @return
+     */
     public List<Vector> differentialMutationBestNZ(List<Vector> pop) {
         List<Vector> mutants = new ArrayList<Vector>();
 
@@ -134,7 +153,7 @@ public class Mutation {
     }
 
     /**
-     * DE/rand-to-best/n/z
+     * DE/current-to-best/n/z
      * @param pop
      * @param g Greediness 
      * @return
