@@ -34,6 +34,7 @@ public class SimulatedAnnealing {
         while (i < iterations) {
             System.out.println(current.getFitness());
 
+            //Choose a neighbourhood function here
             State neighbour = perturbate(current);
             // State neighbour = relocate(current);
             // State neighbour = relocateSlidingBox(current);
@@ -175,6 +176,12 @@ public class SimulatedAnnealing {
         return new State(grid, problem);
     }
 
+    /**
+     * Neighbourhood function.
+     * Uses sliding box heuristic
+     * @param current
+     * @return
+     */
     private State relocateSlidingBox(State current) {
         Random r = new Random();
         String state = problem.stringify(current.getGrid());
@@ -187,6 +194,7 @@ public class SimulatedAnnealing {
             int position2 = r.nextInt(stateArray.length());
 
             double rate = problem.slidingBox(new String(stateArray.toString()), position1);
+            //experiment rate with any formula
             if (Math.random() < rate*(1-temperature)) {
                 char temp = stateArray.charAt(position1);
                 stateArray.setCharAt(position1, stateArray.charAt(position2));
@@ -198,7 +206,7 @@ public class SimulatedAnnealing {
         return new State(grid, problem);
     }
 
-    private State relocateSlidingBoxGreedy(State current) {
+    private State relocateSlidingBoxPersist(State current, double g, boolean persist) {
         Random r = new Random();
         String state = problem.stringify(current.getGrid());
         StringBuilder stateArray = new StringBuilder(state);
@@ -206,14 +214,12 @@ public class SimulatedAnnealing {
         for (int i = 0; i < (stateArray.length()); i++) {
             if (stateArray.charAt(i) != '1') continue; //only change if its a one
             int position1 = i;
-
-
             int position2 = r.nextInt(stateArray.length());
-            char newChar = stateArray.charAt(position2) == '1' ? '0' : '1'; //flips the bit, //could use XOR
-
-            position2 = problem.getNearest(stateArray.toString(), position2, newChar);
-
-            // double rate = MUT_RATE;
+            if (persist) {
+                char newChar = stateArray.charAt(position2) == '1' ? '0' : '1'; //flips the bit, //could use XOR
+                position2 = problem.getNearest(stateArray.toString(), position2, newChar);
+            }
+            //experiment rate with any formula
             double rate = problem.slidingBox(new String(stateArray.toString()), position1);
             if (Math.random() < rate*(1-temperature)) {
                 char temp = stateArray.charAt(position1);
@@ -221,7 +227,6 @@ public class SimulatedAnnealing {
                 stateArray.setCharAt(position2, temp);  
             }
         }
-
         int[][] grid = problem.gridify(stateArray.toString(), problem.col, problem.row);
         return new State(grid, problem);
     }

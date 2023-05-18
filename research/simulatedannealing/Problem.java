@@ -1,9 +1,15 @@
 package research.simulatedannealing;
-import java.util.Arrays;
 import java.util.Random;
 
 import research.api.java.*;
 
+/**
+ * Simulated Annealing problem class. 
+ * Holds the minimum needed unlike the GA problem class.
+ * Some things like the turbine arrangements are outdated.
+ * Please refer back to the genetic algorithm for the latest 
+ * implementations.
+ */
 public class Problem {
     public KusiakLayoutEvaluator evaluator;
     public WindScenario scenario;
@@ -150,6 +156,13 @@ public class Problem {
         return coordinates;
     }
 
+    /**
+     * Persistence operator
+     * @param indiv
+     * @param position
+     * @param value
+     * @return
+     */
     public int getNearest(String indiv, int position, char value) {//value is either '1' or '0'
     Random rand = new Random();
     int r, l;
@@ -165,8 +178,6 @@ public class Problem {
             if (indiv.charAt(l) == value) return l;
 
         }
-
-
     }
     return position;
 }
