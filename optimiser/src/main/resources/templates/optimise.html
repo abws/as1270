@@ -70,13 +70,15 @@
         <div class="optimise" id="optimise-main">
             <form th:action="@{/optimise}" method="post" id="form">
                 <div class="title">Input</div>
+
                 <div class="input">
+                    <div><img th:src="@{images/power-plant.jpg}" alt="explosion-annealing-in-nebula"></div>
                     <label for="environment">Environment</label>
-                    <svg input="input-svg" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <svg input="input-svg" width="25" height="25" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M9.99992 11.6666V3.33331M9.99992 3.33331L7.91667 5.41665M9.99992 3.33331L12.0833 5.41665M12.9167 11.6666H13.3332C14.1189 11.6666 14.5117 11.6666 14.7558 11.9107C14.9999 12.1548 14.9999 12.5476 14.9999 13.3333V15C14.9999 15.7856 14.9999 16.1785 14.7558 16.4226C14.5117 16.6666 14.1189 16.6666 13.3332 16.6666H6.66667C5.88099 16.6666 5.48815 16.6666 5.24408 16.4226C5 16.1785 5 15.7856 5 15V13.3333C5 12.5476 5 12.1548 5.24408 11.9107C5.48815 11.6666 5.88099 11.6666 6.66667 11.6666H7.08333" stroke="#464455" stroke-width="0.833333" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
-                </div><br>
-                    <input class="environment" name="environment" id="environment"type="file" accept="text/xml" value="Environment">
+                </div>
+                <input class="environment" name="environment" id="environment"type="file" accept="text/xml" value="Environment">
 
                 <div class="title">Algorithm</div>
                 <div class="algorithms">

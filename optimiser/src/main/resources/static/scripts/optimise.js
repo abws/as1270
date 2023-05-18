@@ -5,6 +5,12 @@ const energy = document.getElementById("energy")
 const stop = document.getElementById("stop")
 const complete = document.getElementById("complete")
 const algorithms = document.querySelectorAll(".algorithm")
+const file = document.getElementById("environment")
+
+file.addEventListener("change", (event) => {
+    document.querySelector(".input").classList.add("activeInput")
+});
+
 algorithms.forEach((algorithm) => {
     algorithm.addEventListener("click", () => {
 
@@ -87,6 +93,7 @@ form.addEventListener("submit", (event) => {
     socket.onopen = (event) => {
         socket.send(JSON.stringify(jsonData));
         updateChart(plotData);
+        console.log(plotData)
     };
 
     socket.onmessage = (event) => {
@@ -99,9 +106,11 @@ form.addEventListener("submit", (event) => {
         }
         plotData.push({ generation: i++, fitness: parseFloat(event.data) });
         updateChart(plotData);
-        update.innerHTML = "optimising...(" + Math.round(((i) / jsonData["generations"])*100)+"%)"
+        update.innerHTML = "optimising...(" + (((i) / jsonData["generations"])*100).toFixed(2)+"%)"
         max = Math.max(...plotData.map(row => row.fitness))
         energy.innerHTML = "best: " + max;
+        console.log(plotData)
+
     };
 
     socket.onerror = (error) => {
@@ -161,8 +170,6 @@ function showVisualise() {
                 </div>
                 <div>
                     <span class="result"></span><br>
-                    <span class="result">Economical: 0.56kJ/h</span><br>
-                    <span class="result">Energy: 789999.87kJ</span>
         
                     <div class="report">
                         <span>Report</span>
@@ -196,7 +203,7 @@ function showVisualise() {
     body.classList.toggle("blur")
 
     main.appendChild(visualise)
-    visualise.querySelector(".result").innerHTML = "Output: "+ max
+    visualise.querySelector(".result").innerHTML = "Wake Free Ratio: "+ (max*100).toFixed(3)
 
 }
 
