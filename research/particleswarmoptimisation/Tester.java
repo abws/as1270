@@ -7,6 +7,10 @@ import java.util.List;
 
 import research.api.java.*;
 
+/**
+ * Class for testing geometric reformers.
+ * Feel free to ammend the scenario
+ */
 public class Tester {
     public static void main(String[] args) throws Exception {
         WindScenario ws = new WindScenario("/Users/abdiwahabsalah/Documents/GitLab/as1270/research/testscenarios/2.xml");

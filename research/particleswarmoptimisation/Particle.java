@@ -8,7 +8,7 @@ package research.particleswarmoptimisation;
  * No operations should be performed
  * here. Only knows about himself.
  * @author Abdiwahab Salah
- * @version 14.02.23
+ * @version 18.05.23
  */
 public class Particle {
     private static int globalcounter=0;
@@ -83,12 +83,4 @@ public class Particle {
    }
 
 
-//    public boolean updatePersonalBest() {
-//     if ((fitness > pBestFitness) && !(problem.boundaryViolated(currentPosition))) { //assuming maximisation
-//          pBest = currentPosition;
-//          pBestFitness = fitness;
-//          return true;
-//     }
-//     return false;    //feed back to user in case of necessity
-// }
 }

@@ -248,11 +248,10 @@ public class Problem {
             randomPosition[i] = random.nextDouble(width);    //x coordinate
             randomPosition[i + 1] = random.nextDouble(height);  //y coordinate
         }
-
+        // can be used to test geometric reformer 
         // layout = geometricReformer(decodeDirect(randomPosition), minDist);
         // randomPosition = encodeDirect(layout);
         // randomPosition = absorbBoundHandle(randomPosition);
-
         // randomPosition = encodeDirect(decodeDirect(randomPosition));
 
         Particle randomParticle = new Particle(randomPosition, velocity, this);
@@ -293,6 +292,12 @@ public class Problem {
         return layout;
     }
 
+    /**
+     * RMTRA
+     * @param layout
+     * @param z
+     * @return
+     */
     public double[][] geometricReformerRight(double[][] layout, double z) {
         double[] manner;
         double[] repulser;
@@ -520,7 +525,6 @@ public class Problem {
         if (coordinate[1] > this.height) {yDistance+=(coordinate[1]-this.height); bound++;}
 
         distanceSquared = Math.pow((xDistance), 2) + Math.pow((yDistance), 2);
-        // System.out.println("Vio; "+ distanceSquared);
         return distanceSquared;
     }
 
@@ -555,6 +559,14 @@ public class Problem {
         return particlePosition;
     }
 
+    /**
+     * Boundary handling mechanism.
+     * Moves particles that fly out
+     * of boundary to a random feasible
+     * position.
+     * @param particlePosition
+     * @return
+     */
     public double[] randomBoundHandle(double[] particlePosition) {
         Random r = new Random();
 
@@ -569,6 +581,15 @@ public class Problem {
         return particlePosition;
     }
 
+
+    /**
+     * Boundary handling mechanism.
+     * Moves particles that fly out
+     * of boundary to a periodic
+     * position.
+     * @param particlePosition
+     * @return
+     */
     public double[] periodicBoundHandle(double[] position) {
         for (int i = 0; i < position.length; i+=2) {
             if (position[i] < 0) {
@@ -652,6 +673,11 @@ public class Problem {
         return lBestFitnesses[index];
     }
 
+    /**
+     * Updates the local best
+     * @param swarm
+     * @param index
+     */
     public void updateLocalBest(List<Particle> swarm, int index) {
         int indexB = Math.floorMod(index + 1, swarmSize);   //indexes wrap around the ends, such that we build a ring topology
         int indexC = Math.floorMod(index - 1, swarmSize);

@@ -9,7 +9,9 @@ import java.util.List;
  * Optimisation problem
  * Runnable class that optimises 
  * a list of particles based on
- * a variable input
+ * a variable input.
+ * Has more direct control over the
+ * binary PSO.
  * @author Abdiwahab Salah
  * @version 03/03/23
  */
@@ -43,7 +45,11 @@ public class ParticleSwarmOptimisation {
     /**
     * Main loop iteratively moving particles along search space 
     * By using the particle class, we avoid having to loop multiple
-    * times over the swarm as seen on most implementations of PSO 
+    * times over the swarm as seen on most implementations of PSO.
+    * Requires knowledge of the algorithm to change. Feel free to ammend
+    * and design own variant.
+    * Certain parts that are commented out are for template purposes. Comment out
+    * to see performance
     */
     public void run() {
         /* Initialise weight step size for inertia */
@@ -55,8 +61,8 @@ public class ParticleSwarmOptimisation {
     
 
         while (iteration < maxIterations) {
-            // System.out.println(problem.gBestFitness);
-            System.out.println(problem.avgFitness(swarm));
+            System.out.println(problem.gBestFitness); // can also be used for the lBest variant
+            // System.out.println(problem.avgFitness(swarm));
             double[] randomiserArray1 = generateRandomiserVector(problem.particleDimension);
             double[] randomiserArray2 = generateRandomiserVector(problem.particleDimension);
 
@@ -103,7 +109,6 @@ public class ParticleSwarmOptimisation {
                 // p.updatePersonalBest();
                 problem.updateGlobalBest(p.getPersonalBestFitness(), p.getPersonalBest());    //will only update if pBest is better than gBest
                 // problem.updateLocalBest(swarm, swarm.indexOf(p));    //will only update if pBest is better than lBest
-
             }
             weight -= wStep;
             iteration++;
