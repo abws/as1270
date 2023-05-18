@@ -2,6 +2,10 @@ package research.binaryparticleswarmoptimisation;
 
 import research.api.java.*;
 
+/**
+ * Main class for the binary particle swarm optimisation.
+ * Run the algorithm from here. Enter into the ParticleSwarmOptimisation class for more control
+ */
 public class Main {
     public static void main(String[] args) throws Exception {
         WindScenario ws = new WindScenario("/Users/abdiwahabsalah/Documents/GitLab/as1270/research/testscenarios/1.xml");

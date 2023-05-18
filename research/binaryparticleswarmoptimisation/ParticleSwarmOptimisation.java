@@ -1,12 +1,11 @@
 package research.binaryparticleswarmoptimisation;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
- * Standard Particle Swarm Optimisation
+ * Binary Particle Swarm Optimisation
  * Algorithm for the Wind Farm Layout
- * Optimisation problem
+ * Optimisation problem.
  * Runnable class that optimises 
  * a list of particles based on
  * a variable input
@@ -62,7 +61,9 @@ public class ParticleSwarmOptimisation {
     /**
     * Main loop iteratively moving particles along search space 
     * By using the particle class, we avoid having to loop multiple
-    * times over the swarm as seen on most implementations of PSO 
+    * times over the swarm as seen on most implementations of PSO.
+    * Requires knowledge of the algorithm to change. Feel free to ammend
+    * and design own variant.
     */
     public void run() {
         /* Initialise weight step size for inertia */

@@ -15,6 +15,10 @@ import research.api.java.*;
  * providing access to the 
  * API as well as performing
  * helpful claculations
+ * Holds the minimum needed unlike the GA problem class.
+ * Some things like the turbine arrangements are outdated.
+ * Please refer back to the genetic algorithm for the latest 
+ * implementations.
  * @author Abdiwahab Salah
  * @version 14.02.23
  */
@@ -133,7 +137,7 @@ public class Problem {
         return coordinates;
     }
     
-        /**
+    /**
      * Gridifies a string
      * @param ind The string to be gridified
      * @param x The width of the grid
@@ -222,10 +226,6 @@ public class Problem {
             }
         }
 
-        // for (int i = 0; i < particleDimension; i++) {
-        //     randomPosition[i] = random.nextInt(2);    //x coordinate
-        // }
-
         Particle randomParticle = new Particle(randomPosition, velocity, this);
         return randomParticle;
     }
@@ -244,14 +244,15 @@ public class Problem {
             }
         }
 
-        // for (int i = 0; i < particleDimension; i++) {
-        //     randomPosition[i] = random.nextInt(2);    //x coordinate
-        // }
-
         Particle randomParticle = new Particle(randomPosition, velocity, this);
         return randomParticle;
     }
 
+    /**
+     * Random Repair operator.
+     * @param position
+     * @return
+     */
     public int[] repairRandom(int[] position) {
         Random r = new Random();
         int n = countTurbines(position);
@@ -276,6 +277,11 @@ public class Problem {
         return position;
     }
 
+    /**
+     * Informed Repair operator.
+     * @param position
+     * @return
+     */
     public int[] repairWorst(int[] position) {
         int[] tempPosition = Arrays.copyOf(position, position.length);
 
@@ -310,6 +316,7 @@ public class Problem {
         return tempPosition; 
     }
     
+    /* Helper functions for repair operators */
     public int lowestIndex(double[] array) {
         int lowest = 0;
         for (int i = 1; i < array.length; i++) {
@@ -364,7 +371,6 @@ public class Problem {
 
     public boolean updateGlobalBest(double newFitness, int[] newPosition) {
         if ((newFitness >= gBestFitness)) { //assuming maximisation
-            // System.out.println(countViolations(decodeDirect(newPosition)));
             this.gBest = newPosition;
             this.gBestFitness = newFitness;
             return true;
@@ -380,6 +386,12 @@ public class Problem {
         return lBestFitnesses[index];
     }
 
+    /**
+     * Updates the local best for a particle.
+     * Ring topology
+     * @param swarm
+     * @param index
+     */
     public void updateLocalBest(List<Particle> swarm, int index) {
         int indexB = Math.floorMod(index + 1, swarmSize);   //indexes wrap around the ends, such that we build a ring topology
         int indexC = Math.floorMod(index - 1, swarmSize);
@@ -392,6 +404,15 @@ public class Problem {
         if (this.gBestFitness < gBestTemp)this.gBestFitness = maxFitness(lBestFitnesses); //debugging purposes
     }
 
+    /**
+     * Returns the best neighbour in
+     * the local neigbourhood (size 2)
+     * @param swarm
+     * @param indexA
+     * @param indexB
+     * @param indexC
+     * @return
+     */
     public int getBestNeighbour(List<Particle> swarm, int indexA, int indexB, int indexC) {
         int maxIndex = indexA;
         double maxFitness = swarm.get(indexA).fitness;
@@ -442,11 +463,11 @@ public class Problem {
         return sum/swarm.size(); 
     }
 
-    public double maxFitness(List<Particle> pop) {
-        double maxFitness = pop.get(0).fitness;
+    public double maxFitness(List<Particle> swarm) {
+        double maxFitness = swarm.get(0).fitness;
 
-        for (int i = 1; i < pop.size(); i++) {
-            double current = pop.get(i).fitness;
+        for (int i = 1; i < swarm.size(); i++) {
+            double current = swarm.get(i).fitness;
             if (current >= maxFitness) {maxFitness = current;}
         }
         return maxFitness; 
