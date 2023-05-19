@@ -19,14 +19,19 @@ Implemented algorithms include:
 5. Binary Particle Swarm Optimisation
 6. Angle Moduled Differential Evolution
 
+All algorithms are written in java and can be run in any IDE. The algorithm of choice, along with the 'api' package must be compiled. Compilation comands will differ for operating systems.
+
 ---
 
-## Installation
+## Part 2 Software Tool Installation
 
-### Part 1
-1. 
+To install maven project
 
+1.    git clone https://campus.cs.le.ac.uk/gitlab/ug_project/22-23/as1270.git
+2.    cd optimise
+3.    mvn compile
+4.    mvn package
+5.    mvn exec:java -Dexec.mainClass="com.as1270.optimiser.OptimiserApplication"
 
-### Part 2
-1. 
+6. Open your favourite web-browser and enter 'localhost:8080/optimise'
 

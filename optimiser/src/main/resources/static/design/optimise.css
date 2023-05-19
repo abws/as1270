@@ -202,7 +202,7 @@ input::-webkit-inner-spin-button {
     align-items: center;
     box-sizing: border-box;
     padding: 20px;
-    background-color: rgba(255, 255, 255, 0.89);
+    background-color: rgba(255, 255, 255, 0.93);
     border: 1px solid #ddd;
     border-radius: 2em;
     font-family: 'Space Mono', monospace;

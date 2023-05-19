@@ -84,7 +84,7 @@ public class Problem {
             // violationSum2 += boundConstraintViolation(particleCoordinates[i]);
         }
          p1 = binaryProximityViolation(particleCoordinates);
-        System.out.println("Violations: " + binaryProximityViolation(particleCoordinates));
+        // System.out.println("Violations: " + binaryProximityViolation(particleCoordinates));
 
         bound =0;
         p1 = Math.pow(p1, k);

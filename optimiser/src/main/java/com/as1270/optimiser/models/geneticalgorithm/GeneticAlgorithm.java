@@ -26,12 +26,13 @@ public class GeneticAlgorithm {
 
         List<Individual> population = problem.getRandomPopulation(popSize, problem.INDIV_LENGTH, problem.N_TURBINES);
         for (int i = 0; i < generations; i++) {
-            session.sendMessage(new TextMessage(objectMapper.writeValueAsString(Collections.max(problem.getFitnessesArrayList(population)))));            List<Individual> matingPool = new ArrayList<>();
+            session.sendMessage(new TextMessage(objectMapper.writeValueAsString(Collections.max(problem.getFitnessesArrayList(population)))));
+            List<Individual> matingPool = new ArrayList<>();
             List<Individual> offSpring = new ArrayList<>();
 
             matingPool = ps.tournamentSelection(population, popSize, popSize/2, false); //parent selection
             offSpring = r.recombineNPoint(matingPool, popSize, problem.N_TURBINES/4); //recombination
-            offSpring = re.repairRandom(m.mutatePopulationSwap(offSpring)); //mutation and repair
+            offSpring = re.repairRandom(m.mutatePopulationSwapSlidingBox(offSpring, 2)); //mutation and repair
             population = rp.elitism(population, offSpring, 1); //survival selection
         }
         return problem.getFittest(population);

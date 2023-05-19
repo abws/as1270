@@ -20,6 +20,8 @@ import research.api.java.*;
 public class Problem {
     private KusiakLayoutEvaluator evaluator;
     private WindScenario scenario;
+    private static int bound = 0;
+
     public int nDimension;
     public int popSize;
     public int nTurbines;
@@ -224,7 +226,9 @@ public class Problem {
         for (int i = 0; i < 4; i++) {
             randomPosition[i] = random.nextInt(2000)- 1000;    //a, b, c, d
         }
+
         Vector randomvector = new Vector(randomPosition, true, this);
+        System.out.println(Arrays.toString(randomvector.getLayout()));
         return randomvector;
     }
 

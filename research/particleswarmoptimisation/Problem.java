@@ -97,16 +97,12 @@ public class Problem {
             }
             // violationSum2 += boundConstraintViolation(particleCoordinates[i]);
         }
-        // System.out.printf(" :%d: ",bound/2);
-        // System.out.println("Vio;0000 "+violationSum2);
 
         bound =0;
         
         // double penalty1 = this.penaltyCoefficient1 * (Math.sqrt(violationSum1));
-        // System.out.println("Vio;1111 "+penalty1);
 
         // double penalty2 = this.penaltyCoefficient2 * (Math.sqrt(violationSum2));
-        // System.out.println("Vio;2222 "+penalty2);
 
 
         // double fitness = (energyProduction - (penalty1 + penalty2)) / (scenario.wakeFreeEnergy * nTurbines);

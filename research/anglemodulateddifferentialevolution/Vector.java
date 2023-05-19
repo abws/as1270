@@ -48,3 +48,4 @@ public class Vector {
         this.fitness = fitness;
    } 
 }
+

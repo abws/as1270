@@ -11,5 +11,4 @@ public class Main {
         AngleModulatedDE de = new AngleModulatedDE(0.7, 1000, 0.55, problem);
         de.run();
     }
-
 }
