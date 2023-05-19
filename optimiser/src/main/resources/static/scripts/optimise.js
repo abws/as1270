@@ -203,7 +203,7 @@ function showVisualise() {
     body.classList.toggle("blur")
 
     main.appendChild(visualise)
-    visualise.querySelector(".result").innerHTML = "Wake Free Ratio: "+ (max*100).toFixed(3)
+    visualise.querySelector(".result").innerHTML = "Wake Free Ratio: "+ (max*100).toFixed(3) + "%"
 
 }
 

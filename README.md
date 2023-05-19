@@ -23,15 +23,15 @@ All algorithms are written in java and can be run in any IDE. The algorithm of c
 
 ---
 
-## Part 2 Software Tool Installation
+## Part 2 3D Visualisation Tool Installation
 
-To install maven project
+To install 3D visualisation tool:
 
-1.    git clone https://campus.cs.le.ac.uk/gitlab/ug_project/22-23/as1270.git
-2.    cd optimise
-3.    mvn compile
-4.    mvn package
-5.    mvn exec:java -Dexec.mainClass="com.as1270.optimiser.OptimiserApplication"
+1.`git clone https://campus.cs.le.ac.uk/gitlab/ug_project/22-23/as1270.git`
+2.`cd optimise`
+3.`mvn compile`
+4.`mvn package`
+5.`mvn exec:java -Dexec.mainClass="com.as1270.optimiser.OptimiserApplication"`
 
 6. Open your favourite web-browser and enter 'localhost:8080/optimise'
 

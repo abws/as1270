@@ -42,8 +42,8 @@ public class GeneticAlgorithmHandler extends TextWebSocketHandler {
         else if (data.get("particleSwarmOptimisation").equals("1")) {
             System.out.println("Running pso");
             int swarmSize = Integer.parseInt(data.get("swarmSize"));
-            int c1 = Integer.parseInt(data.get("c1"));
-            int c2 = Integer.parseInt(data.get("c2"));
+            double c1 = Double.parseDouble(data.get("c1"));
+            double c2 = Double.parseDouble(data.get("c2"));
             int k = Integer.parseInt(data.get("k"));
             int iterations = Integer.parseInt(data.get("iterations"));
 
